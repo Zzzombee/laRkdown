@@ -1,6 +1,6 @@
 {
   "project": "laRkdown",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "adapted_at": "2026-10-13",
   "source": {
     "repository": "https://github.com/Zzzombee/maRkdown",
@@ -189,5 +189,14 @@
       "source_sha256": "9e91d9a0225e2066476fc3cbadec41635ed5a420187cd3eeeb5da9c5062d06fb",
       "status": "adapted"
     }
-  }
+  },
+  "extensions": [
+    {
+      "skill": "research-docs-to-base",
+      "origin": "laRkdown-native",
+      "added_at": "2026-10-13",
+      "upstream_status": "not present in pinned maRkdown v0.1.0",
+      "purpose": "Derive six collaboration Base tables from three native Feishu research documents"
+    }
+  ]
 }

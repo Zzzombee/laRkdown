@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "documents": {
+    "CURRENT_STATE": "",
+    "RESEARCH_QUESTIONS": "",
+    "PROJECT_STORY": ""
+  },
+  "base_token": "",
+  "base_url": "",
+  "selectors": {
+    "CURRENT_STATE": {},
+    "RESEARCH_QUESTIONS": {},
+    "PROJECT_STORY": {}
+  }
+}

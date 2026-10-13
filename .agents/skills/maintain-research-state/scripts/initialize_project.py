@@ -19,7 +19,7 @@ def prepare(root: Path, name: str, scope: str, date: str):
             raise ValueError('Existing legacy research state detected; do not replace it with blank documents')
     layout = root / '.agents/config/project-layout.json'
     if not layout.is_file() or not (root / 'AGENTS.md').is_file():
-        raise ValueError('Copy laRkdown rules and four skills to the specified research workspace first')
+        raise ValueError('Copy laRkdown rules and skills to the specified research workspace first')
     for folder in json.loads(layout.read_text(encoding='utf-8'))['directories']:
         local(root, folder).mkdir(parents=True, exist_ok=True)
     headings = {

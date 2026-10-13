@@ -3,7 +3,7 @@
 创建和移动文件前读取本合同；目录清单由 `.agents/config/project-layout.json` 管理。
 
 - 根目录：AGENTS.md、README.md、依赖清单和开发测试；不在此维护第二套科研状态正文。
-- `.agents/instructions/`：共享规则；`.agents/config/`：版本来源、长期配置与本机飞书文档登记；`.agents/skills/`：四个科研技能及资源。
+- `.agents/instructions/`：共享规则；`.agents/config/`：版本来源、长期配置与本机飞书文档登记；`.agents/skills/`：五个科研技能及资源。
 - `sources/presentations/`：输入 PPTX；`sources/literature/`：指定论文与补充材料。原始数据可留在项目外，不为目录整理搬动唯一副本。
 - `.work/`：DocxXML 工作稿、最新飞书快照、提取图片、整页渲染、证据台账、校验结果及临时依赖。
 - `.planning/`：任务计划和恢复检查点。

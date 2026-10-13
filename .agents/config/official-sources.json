@@ -2,14 +2,57 @@
   "reviewed_at": "2026-10-13",
   "cli_version_verified": "1.0.97",
   "sources": [
-    {"url": "https://www.feishu.cn/content/article/7677519271848610746", "supports": "豆包工作支持自定义技能、脚本/参考资料/模板和本地文件工作任务", "limit": "不证明自动加载 .agents 或完整读取 PPTX 每张图片"},
-    {"url": "https://www.feishu.cn/hc/zh-CN/articles/257240089464-快速了解飞书-ai", "supports": "豆包工作与飞书的入口和能力区分"},
-    {"url": "https://www.feishu.cn/content/article/7623291503305083853", "supports": "官方 lark-cli 安装及 Agent 使用"},
-    {"url": "https://github.com/larksuite/cli", "supports": "官方维护的 CLI、当前命令与内嵌技能入口"},
-    {"url": "https://github.com/larksuite/cli/blob/main/skills/lark-doc/references/lark-doc-xml.md", "supports": "DocxXML 原生块、图片、链接和表格", "runtime_source": "lark-cli skills read lark-doc/references/lark-doc-xml.md"},
-    {"url": "https://github.com/larksuite/cli/blob/main/skills/lark-doc/references/lark-doc-fetch.md", "supports": "读取范围、版本、block ID、完整 JSON 与资源", "runtime_source": "lark-cli skills read lark-doc/references/lark-doc-fetch.md"},
-    {"url": "https://github.com/larksuite/cli/blob/main/skills/lark-doc/references/lark-doc-update.md", "supports": "局部编辑和回读", "runtime_source": "lark-cli skills read lark-doc/references/lark-doc-update.md"},
-    {"url": "https://docs.volcengine.com/docs/ark/image-understanding?lang=zh", "supports": "豆包模型图片理解、缩放和小字细节限制", "limit": "模型 API 文档不能证明工作客户端的加载方式或精度设置"},
-    {"url": "https://open.doubao.com/document/doubao-developer-guide/skill-integration-guide", "supports": "开发者平台检索入口", "limit": "正文无法稳定获取，不据此声称导入机制或平台目录协议"}
+    {
+      "url": "https://www.feishu.cn/content/article/7677519271848610746",
+      "supports": "豆包工作支持自定义技能、脚本/参考资料/模板和本地文件工作任务",
+      "limit": "不证明自动加载 .agents 或完整读取 PPTX 每张图片"
+    },
+    {
+      "url": "https://www.feishu.cn/hc/zh-CN/articles/257240089464-快速了解飞书-ai",
+      "supports": "豆包工作与飞书的入口和能力区分"
+    },
+    {
+      "url": "https://www.feishu.cn/content/article/7623291503305083853",
+      "supports": "官方 lark-cli 安装及 Agent 使用"
+    },
+    {
+      "url": "https://github.com/larksuite/cli",
+      "supports": "官方维护的 CLI、当前命令与内嵌技能入口"
+    },
+    {
+      "url": "https://github.com/larksuite/cli/blob/main/skills/lark-doc/references/lark-doc-xml.md",
+      "supports": "DocxXML 原生块、图片、链接和表格",
+      "runtime_source": "lark-cli skills read lark-doc/references/lark-doc-xml.md"
+    },
+    {
+      "url": "https://github.com/larksuite/cli/blob/main/skills/lark-doc/references/lark-doc-fetch.md",
+      "supports": "读取范围、版本、block ID、完整 JSON 与资源",
+      "runtime_source": "lark-cli skills read lark-doc/references/lark-doc-fetch.md"
+    },
+    {
+      "url": "https://github.com/larksuite/cli/blob/main/skills/lark-doc/references/lark-doc-update.md",
+      "supports": "局部编辑和回读",
+      "runtime_source": "lark-cli skills read lark-doc/references/lark-doc-update.md"
+    },
+    {
+      "url": "https://docs.volcengine.com/docs/ark/image-understanding?lang=zh",
+      "supports": "豆包模型图片理解、缩放和小字细节限制",
+      "limit": "模型 API 文档不能证明工作客户端的加载方式或精度设置"
+    },
+    {
+      "url": "https://open.doubao.com/document/doubao-developer-guide/skill-integration-guide",
+      "supports": "开发者平台检索入口",
+      "limit": "正文无法稳定获取，不据此声称导入机制或平台目录协议"
+    },
+    {
+      "url": "https://github.com/larksuite/cli/blob/main/skills/lark-base/SKILL.md",
+      "supports": "Base creation, schemas, record writes and real record ID links",
+      "runtime_source": "lark-cli skills read lark-base"
+    },
+    {
+      "url": "https://github.com/larksuite/cli/blob/main/skills/lark-base/references/lark-base-record-query-and-analysis-sop.md",
+      "supports": "NDJSON manifests, full-table pagination, revision consistency",
+      "runtime_source": "lark-cli skills read lark-base references/lark-base-record-query-and-analysis-sop.md"
+    }
   ]
 }

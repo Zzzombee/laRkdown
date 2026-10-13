@@ -1,6 +1,6 @@
 # laRkdown
 
-独立科研工具项目：豆包工作 + 飞书原生文档 + Python。当前仅维护 academic-writing-editor、maintain-research-state、pptx-to-research-state、literature-source-gate 四个技能。上游版本与逐文件来源记录在 `.agents/config/upstream.json`，不修改 maRkdown 或其原科研项目。
+独立科研工具项目：豆包工作 + 飞书原生文档 + Python。维护四个上游适配技能及 research-docs-to-base 原生扩展，共五个技能。上游版本与逐文件来源记录在 `.agents/config/upstream.json`，不修改 maRkdown 或其原科研项目。
 
 创建或移动文件前读取 `.agents/instructions/project-layout.md`，按 `.agents/config/project-layout.json` 执行。正式本地产物唯一根目录为 `outputs/`；飞书文档是科研记录和用户交付的默认载体，本地 XML/JSON 是工作稿、读取快照与校验记录。
 
@@ -10,12 +10,13 @@
 
 CURRENT_STATE 对应的飞书文档是事实权威；RESEARCH_QUESTIONS 管问题与优先级；PROJECT_STORY 管目标叙事；指定 RQ 的 SOL 管候选路线。稳定研究 ID 不改号、不复用。可靠新结果先更新 CURRENT_STATE，后续文档仅在受影响时更新。路线变化只在明确授权时执行。
 
-## 四个技能
+## 五个技能
 
 - 学术正文起草、改写、翻译、润色、审阅：`.agents/skills/academic-writing-editor/SKILL.md`。审阅只报告问题；其他流程先处理事实与结构再编辑。
 - 空白科研初始化和研究条目结构维护：`.agents/skills/maintain-research-state/SKILL.md`。已有科研状态不重新初始化。
 - 指定实验 PPTX 导入：`.agents/skills/pptx-to-research-state/SKILL.md`。结构与视觉两条路径均完成后才录入事实。
 - 外部学术文献：`.agents/skills/literature-source-gate/SKILL.md`。指定文献与自主检索分别执行来源政策；工具官方文档不触发学术指标门槛。
+- 三篇飞书科研文档构建/同步多维表格：`.agents/skills/research-docs-to-base/SKILL.md`。六表是派生协作视图，源文档仍为事实权威；保护 AI/人工字段，缺失条目归档不删，不回写源文档。
 
 ## 飞书操作
 
