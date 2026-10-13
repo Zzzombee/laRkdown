@@ -15,7 +15,7 @@
     ".agents/skills/literature-source-gate/references/normal-screening.md": "d0b019e2d3f215cffe0fa469954008c24eac327337e4151c6f12ee6befed40dc",
     ".agents/skills/literature-source-gate/references/screening-policy.md": "4ef2528df38e399ab4a83329f06719d366472ae23eeb48ef746c9d93dffdb207",
     ".agents/skills/maintain-research-state/SKILL.md": "565dcf7287d581e95728eec97855a499c5d88c340fbf99b8b17f23a91fac9697",
-    ".agents/skills/maintain-research-state/references/initialization.md": "a29ade0f9ad570e4c7a0a6e3a8e75c1552c81d68e6e2c258cd07b620f308371f",
+    ".agents/skills/maintain-research-state/references/initialization.md": "f6781d9d1045d8b14dfcd2f9f312b430adc62a2fca84b42ca28bc52d802e915b",
     ".agents/skills/maintain-research-state/references/state-schema.md": "d847083eb3b4c4dfb5bfb8c2d2d8b5912c5200fce9897d690b416ca692045e8c",
     ".agents/skills/maintain-research-state/scripts/feishu_bridge.py": "332bad33abbfe0c1090ef1f6f4307d11c7e359fa68088e3c7f10a9def9daf209",
     ".agents/skills/maintain-research-state/scripts/initialize_project.py": "bf35771fea34e5c2f99870bfa4696167e107475b58ba892351bdd900dfc892e2",

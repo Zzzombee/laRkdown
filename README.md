@@ -4,7 +4,7 @@
 
 在能够访问本地文件并运行命令的豆包工作任务中，复制发送：
 
-> 请按照 https://github.com/Zzzombee/laRkdown 的 README 安装 laRkdown。先确认豆包当前打开的项目根目录；让 `.agents/skills/` 直接位于该根目录，不能只位于其 `laRkdown/` 子目录。确认六个技能被自动识别后，配置 Python 和官方飞书 CLI，引导我完成飞书用户授权并验收环境。
+> 请直接读取 https://raw.githubusercontent.com/Zzzombee/laRkdown/main/README.md 并按其中指引安装 laRkdown；若 GitHub 页面受 robots.txt 限制，不要反复访问页面。先确认豆包当前打开的项目根目录，让 `.agents/skills/` 直接位于该目录；核对六个技能已识别后，配置 Python 和官方飞书 CLI，引导我完成飞书用户授权并验收。
 
 也可在这句话末尾补充目标文件夹路径。用户只需提供必要的目录或项目信息，并亲自完成账户授权；下面的安装与检查由豆包执行。
 
@@ -23,7 +23,7 @@ laRkdown 是面向 **豆包工作 + 飞书原生文档 + Python** 的科研进�
 ### 1. 下载并确定工作目录
 
 - 先确认豆包当前打开的项目根目录 `P`。若下载到 `P/laRkdown/`，须将 **`P/laRkdown/` 重新作为豆包项目打开**；若必须保留 `P` 为项目根目录，则仅在检查文件冲突后，把发行包内容放到 `P/` 根目录。不能仅凭终端当前目录推断豆包打开的项目根目录。
-- 从 [最新 Release](https://github.com/Zzzombee/laRkdown/releases/latest) 下载 `laRkdown-v<版本>.zip`，解压后定位含 README.md、AGENTS.md、requirements.txt 与 `.agents/` 的目录，并在豆包中打开**这个目录本身**。这是给同事使用的精简产品包；仓库克隆还包含发布工作流、构建工具和测试文件。未指定路径时可在当前明确的本地工作目录下创建 `laRkdown/`，然后将它作为豆包项目打开。
+- 先读 [README 原始文件](https://raw.githubusercontent.com/Zzzombee/laRkdown/main/README.md)。若 `github.com` 页面被 robots.txt 阻止，不要把它当作安装失败；通过 `gh release download --repo Zzzombee/laRkdown --pattern '*.zip' --pattern '*.sha256'` 或 [GitHub Releases API](https://api.github.com/repos/Zzzombee/laRkdown/releases/latest) 获取最新公开 Release 的 `laRkdown-v<版本>.zip` 及同名 `.sha256`，核对校验值后解压。两种下载入口都不可用时，请用户提供已下载的 ZIP 和校验文件。定位含 README.md、AGENTS.md、requirements.txt 与 `.agents/` 的目录，在豆包中打开**这个目录本身**。这是给同事使用的精简产品包；仓库克隆还包含发布工作流、构建工具和测试文件。未指定路径时可在当前明确的本地工作目录下创建 `laRkdown/`，然后将它作为豆包项目打开。
 - 同名目录已存在时先检查并复用正确版本，不覆盖既有科研资料、文档登记或本机配置。保留 `.agents/` 的名称与层级。
 - 在实际打开的项目根目录读取 AGENTS.md、目录合同和飞书工作流。该目录也是后续脚本与配置的工作根目录。
 
@@ -42,7 +42,7 @@ laRkdown 是面向 **豆包工作 + 飞书原生文档 + Python** 的科研进�
 
 六个 `SKILL.md` 都须存在于项目根目录直接下属的 `.agents/skills/` 中。若只存在于 `P/laRkdown/.agents/skills/`，先按第 1 步改为打开内层目录，或安全地将内容放到 `P/`；这是项目根目录错位，不能据此判断必须手动导入。不要覆盖同名的用户文件。
 
-根目录正确后刷新或重开豆包项目，确认六个技能可选或可加载。只有根目录正确而仍未识别时，才使用当前豆包工作提供的自定义技能/本地导入入口；若界面必须由用户操作，再给出完整路径与必要点击步骤。不要猜测豆包私有技能目录或注册协议，也不要把文件已解压当作技能已识别。在无法自动识别或导入的环境，可显式读取对应 SKILL.md 试运行，并如实标明技能注册状态。
+根目录正确后刷新或重开豆包项目，确认六个技能可选或可加载。v0.1.0 曾在豆包工作中通过将四个完整技能目录复制到已确认的 `.user_skills` 用户技能目录完成导入；这是一条已观察到的回退路径，不能仅凭目录名推断当前客户端仍使用同一位置。若项目根目录正确却仍未识别，先确认当前客户端实际使用的用户技能根目录；确认为 `.user_skills` 时，检查现有同名技能，缺失的才复制上述六个**完整目录**，同名且内容不同则停止并报告冲突，不覆盖。然后刷新或重开项目并实际核对技能是否可选或可加载。若不能确认用户技能目录，则使用客户端提供的自定义技能/本地导入入口；必须由用户操作时给出完整路径与点击步骤。不要把文件已复制当作技能已识别。在无法自动识别或导入的环境，可显式读取对应 SKILL.md 试运行，并如实标明技能注册状态。
 
 ### 3. 配置 Python 与飞书 CLI
 
