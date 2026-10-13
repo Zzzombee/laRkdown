@@ -77,7 +77,7 @@ class UpgradeTests(unittest.TestCase):
         self.assertEqual(plan['from_version'], '0.1.0')
         self.assertEqual(up.existing_hash(user / up.MANIFEST), None)
         self.assertTrue(up.apply_plan(user, release, plan)['ok'])
-        self.assertEqual(json.loads((user / up.MANIFEST).read_text(encoding='utf-8'))['version'], '0.2.1')
+        self.assertEqual(json.loads((user / up.MANIFEST).read_text(encoding='utf-8'))['version'], release.manifest['version'])
         self.assertTrue((user / '.agents/skills/upgrade-larkdown/SKILL.md').is_file())
         self.assertTrue((user / 'upgrade_larkdown.py').is_file())
         self.assertEqual(before, {name: up.sha((user / name).read_bytes()) for name in private})
@@ -183,10 +183,11 @@ class UpgradeTests(unittest.TestCase):
         altered.manifest['supported_from'] = ['0.2.0']
         with self.assertRaises(ValueError): up.make_plan(user, altered)
 
-    def test_actual_v01_and_v02_published_projects_upgrade_without_reinitialization(self):
+    def test_published_projects_upgrade_without_reinitialization(self):
         release, _, _ = self.fixture()
-        for version in ('0.1.0', '0.2.0'):
-            result = subprocess.run(['git', 'archive', '--format=zip', 'v' + version], cwd=ROOT,
+        release = up.Release(release.archive)
+        for version in ('0.1.0', '0.2.0', '0.2.1'):
+            result = subprocess.run(['git', '-c', 'core.autocrlf=false', 'archive', '--format=zip', 'v' + version], cwd=ROOT,
                                     capture_output=True)
             if result.returncode:
                 self.skipTest('Published Git tags are unavailable in a downloaded source ZIP')
@@ -199,9 +200,15 @@ class UpgradeTests(unittest.TestCase):
                             path.mkdir(parents=True, exist_ok=True)
                         else:
                             path.parent.mkdir(parents=True, exist_ok=True)
-                            path.write_bytes(archive.read(name))
+                            blob = archive.read(name)
+                            wanted = release.legacy['releases'][version]['managed_files'].get(name)
+                            if wanted and up.sha(blob) != wanted:
+                                windows_blob = blob.replace(b'\r\n', b'\n').replace(b'\n', b'\r\n')
+                                if up.sha(windows_blob) == wanted:
+                                    blob = windows_blob
+                            path.write_bytes(blob)
                 candidate = up.Release(release.archive)
-                if version == '0.2.0':
+                if version in {'0.2.0', '0.2.1'}:
                     with (root / 'AGENTS.md').open('ab') as stream:
                         stream.write(b'\n## Colleague-specific research rules\nKeep my local instructions.\n')
                 plan = up.make_plan(root, candidate)
@@ -213,10 +220,10 @@ class UpgradeTests(unittest.TestCase):
                 source.parent.mkdir(parents=True)
                 source.write_bytes(b'keep raw presentation')
                 self.assertTrue(up.apply_plan(root, candidate, plan)['ok'])
-                self.assertEqual(json.loads((root / up.MANIFEST).read_text(encoding='utf-8'))['version'], '0.2.1')
+                self.assertEqual(json.loads((root / up.MANIFEST).read_text(encoding='utf-8'))['version'], release.manifest['version'])
                 self.assertIn(b'real-project-fixture', private.read_bytes())
                 self.assertEqual(source.read_bytes(), b'keep raw presentation')
-                if version == '0.2.0':
+                if version in {'0.2.0', '0.2.1'}:
                     self.assertIn(b'Keep my local instructions.', (root / 'AGENTS.md').read_bytes())
 
 

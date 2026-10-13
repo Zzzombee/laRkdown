@@ -1,10 +1,10 @@
 {
   "managed_files": {
     ".agents/config/feishu.example.json": "62fac7918e48e8d182591fab96acc23252b0d367c5d43dd9db22b92938daca79",
-    ".agents/config/legacy-release-baselines.json": "b2548ccf80cbe820c774ea5cb1ec5108efed6f75eea343d12750575195cd5179",
+    ".agents/config/legacy-release-baselines.json": "3279237290639ca6d913c0f9ac8caacb7a369fb4f965f32636014ff815b2ab38",
     ".agents/config/official-sources.json": "5800a2804be050bed786cf19e179c72bb95ec5a5e43b5ff14695aa812096d67b",
     ".agents/config/project-layout.json": "9c867fbe6899c76945a415a50897bfb84fbc00f9d067d1c11f2b1aef3566495e",
-    ".agents/config/upstream.json": "6205241aad5d1685f3445cce49674b512e4696f5a3bba37383e1cf286bc983b7",
+    ".agents/config/upstream.json": "73b720425ddd447963678581989ba5435d9aefc0d0aa355a34227e2785d94984",
     ".agents/instructions/feishu-workflow.md": "ab515c2c9392142a5b9c86f5ed7ed397750832ad12f3b8c376b470211942d298",
     ".agents/instructions/project-layout.md": "cce57f0a2cb761197f6297802333bade489721fe973500baf07d9a6c9ac9c80c",
     ".agents/instructions/story-policy.md": "d330c2969f61071f2dc6b9d9705d5e1f805b930d225102c69507564b3f97f7c5",
@@ -48,7 +48,8 @@
   "schema_version": 1,
   "supported_from": [
     "0.1.0",
-    "0.2.0"
+    "0.2.0",
+    "0.2.1"
   ],
-  "version": "0.2.1"
+  "version": "0.2.2"
 }

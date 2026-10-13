@@ -23,7 +23,7 @@ laRkdown 是面向 **豆包工作 + 飞书原生文档 + Python** 的科研进�
 ### 1. 下载并确定工作目录
 
 - 使用用户指定的本地文件夹；未指定时，使用当前明确的本地工作目录下 `laRkdown/`。工作目录无法确定时只询问目标路径。
-- 优先 `git clone https://github.com/Zzzombee/laRkdown.git`。没有 Git 时，从 [v0.2.1 Release](https://github.com/Zzzombee/laRkdown/releases/tag/v0.2.1) 下载 `laRkdown-v0.2.1.zip`，解压后定位含 README.md、AGENTS.md、requirements.txt 与 `.agents/` 的目录。
+- 优先 `git clone https://github.com/Zzzombee/laRkdown.git`。没有 Git 时，从 [v0.2.2 Release](https://github.com/Zzzombee/laRkdown/releases/tag/v0.2.2) 下载 `laRkdown-v0.2.2.zip`，解压后定位含 README.md、AGENTS.md、requirements.txt 与 `.agents/` 的目录。
 - 同名目录已存在时先检查并复用正确版本，不覆盖既有科研资料、文档登记或本机配置。保留 `.agents/` 的名称与层级。
 - 在该目录读取 AGENTS.md、目录合同和飞书工作流。该目录是后续脚本与配置的工作根目录，技能平台的托管目录不是项目根目录。
 
@@ -142,7 +142,7 @@ PPTX 的结构提取、原图保留、整页渲染和实际视觉核验分开记
 
 ## 来源与验证
 
-当前版本为 laRkdown v0.2.1，新增已初始化项目的升级器；v0.2.0 引入 research-docs-to-base 原生扩展。上游引用版本见“项目概述”；官方资料、核验日期和能力边界见 [official-sources.json](.agents/config/official-sources.json)。公开源码与 Release 不包含实验数据、账户凭证、飞书资源登记和本机快照。
+当前版本为 laRkdown v0.2.2，包含已初始化项目的升级器及跨平台发布校验；v0.2.0 引入 research-docs-to-base 原生扩展。上游引用版本见“项目概述”；官方资料、核验日期和能力边界见 [official-sources.json](.agents/config/official-sources.json)。公开源码与 Release 不包含实验数据、账户凭证、飞书资源登记和本机快照。
 
 CLI 用法按本机 1.0.97 的官方内嵌技能核验，运行时以当前 `lark-cli --help` 与 `lark-cli skills read` 为准。学术编辑技能保留其第三方 MIT LICENSE；不将该许可推定为其他文件的统一许可。
 
