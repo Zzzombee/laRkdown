@@ -1,6 +1,6 @@
 {
   "project": "laRkdown",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "adapted_at": "2026-10-13",
   "source": {
     "repository": "https://github.com/Zzzombee/maRkdown",
@@ -197,6 +197,13 @@
       "added_at": "2026-10-13",
       "upstream_status": "not present in pinned maRkdown v0.1.0",
       "purpose": "Derive six collaboration Base tables from three native Feishu research documents"
+    },
+    {
+      "skill": "upgrade-larkdown",
+      "origin": "laRkdown-native",
+      "added_at": "2026-10-13",
+      "upstream_status": "not present in pinned maRkdown v0.1.0",
+      "purpose": "Upgrade initialized user projects between laRkdown release versions without rewriting research data"
     }
   ]
 }

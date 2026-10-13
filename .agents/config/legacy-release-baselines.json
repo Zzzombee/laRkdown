@@ -1,0 +1,92 @@
+{
+  "releases": {
+    "0.1.0": {
+      "managed_files": {
+        ".agents/config/feishu.example.json": "cda861214c9fd5f84810984ac1e0b840a11a3659fa916e80a89930ae5fa1d483",
+        ".agents/config/official-sources.json": "aac67802e79785b5e0b8564718c53bd3b9d61141225f2af9bfa5c84d4b4cb76b",
+        ".agents/config/project-layout.json": "f3f08075c410da86fcaa01c96b6bc07cfb59be82498b46dcfd9db936975c549e",
+        ".agents/config/upstream.json": "5c4f2265237706a66e094bd9f9f5af2507cb5d6a229ae723b7f6666f193b7490",
+        ".agents/instructions/feishu-workflow.md": "b133dc1ada321471217bd6ea7af6f80bd171bd1e404b99ac0b9161e00fcad9a9",
+        ".agents/instructions/project-layout.md": "2af786fd029a5004aa73d9ce5d362d42477256081610bc4e9c0f6948b7f7f69a",
+        ".agents/instructions/story-policy.md": "5e4998ecb71c0dcccc2612720cfe7ab76705936757ae86bd852916a0843aaf77",
+        ".agents/skills/academic-writing-editor/LICENSE": "4c8bf334f715c1efa8d6aa442b79e5fa0a9c4486e231846858d5b4ef932bc8ea",
+        ".agents/skills/academic-writing-editor/SKILL.md": "040087cbc21d58cc8b227603f95d34ea38589ff939d0923d07ac6d670c596166",
+        ".agents/skills/literature-source-gate/SKILL.md": "da3c8637cf47823a9fc41820df5090aedbfc66ab670c771ac0ecf8fc1249c5e0",
+        ".agents/skills/literature-source-gate/references/designated-sources.md": "656f2090d3b8381edc41627b9ce4cd6026a10870f1bb7177ab9f55a4ead0190d",
+        ".agents/skills/literature-source-gate/references/normal-screening.md": "3e125f0bca0fad1e70a6ccabe1ab8b3ce79e8142846b160d5099f221ca2680c5",
+        ".agents/skills/literature-source-gate/references/screening-policy.md": "950fb6b392169cc7dcff8a732f6a0d8f0a846eac834e401d6a4b8c82535a6765",
+        ".agents/skills/maintain-research-state/SKILL.md": "da8023b2312434dc0ee39b817fa22386ee2f138e9a1516a680dfcf0e9e5c360c",
+        ".agents/skills/maintain-research-state/references/initialization.md": "597a780c2f593f989429a08a4fef14e3f8cc59a721caa93712a42abe57466564",
+        ".agents/skills/maintain-research-state/references/state-schema.md": "3e8a6d0f85520536f40fdaf10d25da10ada19d6563e3760c976dd9376ceee0e7",
+        ".agents/skills/maintain-research-state/scripts/feishu_bridge.py": "e6f0a17c9a363dac80e33f6f437c566751070b8f54ba7100231cc6a82d78f38e",
+        ".agents/skills/maintain-research-state/scripts/initialize_project.py": "f1353d0575bcc2452bd162600f706b4544a741159a79e04521c76907b9f1552c",
+        ".agents/skills/maintain-research-state/scripts/validate_state.py": "f3e38cf01df200d1e70c7eaaf7b1139b4a7d0332c07bd93a8a52e1a64dd0f206",
+        ".agents/skills/pptx-to-research-state/SKILL.md": "2e1218dd98faf57ed00e267dbc8e41f340a592a8e1d619d6a8fe4a6aee3c2982",
+        ".agents/skills/pptx-to-research-state/references/incremental-update.md": "0f4fde3877b43aa2e0f3dee1e2edf4479c94404cee0741546c6eef7595a94823",
+        ".agents/skills/pptx-to-research-state/references/initialization.md": "59381d6113b9567858d105b047261acdb2d840b7bd4e33632736af010f3c8ccc",
+        ".agents/skills/pptx-to-research-state/references/pptx-evidence.md": "9426198d19184a375354055244d7d588c2952e9f791b389763e2047097932624",
+        ".agents/skills/pptx-to-research-state/references/solution-workflow.md": "848a75fe9e1aa235b5d2467e2a6fec524867b57d02e09c760677752479921370",
+        ".agents/skills/pptx-to-research-state/references/story-workflow.md": "3dc4fd9c9cebc91c7e006da56be776d7487c2481ee07260262c2aebb97bb483d",
+        ".agents/skills/pptx-to-research-state/scripts/extract_pptx.py": "ab94fadc8629ceb3e0052a30be6a803440ab240cb68a8277c65cbc84049afc52",
+        ".agents/skills/pptx-to-research-state/scripts/make_contact_sheet.py": "10ce5feb71fc0bb1c15bd4131bb9099effcff289afe7fdecfb34f0286ede4b05",
+        ".agents/skills/pptx-to-research-state/scripts/preflight.py": "0342634f229d9829521ef278374f0927851c7cfa450a39db8c7b6fd0c7ef8ab4",
+        ".agents/skills/pptx-to-research-state/scripts/prepare_media_preview.py": "2116cb4dbe39d8278e762517f1e0340ce09f0c66bd71311a3ab148ba76993144",
+        ".agents/skills/pptx-to-research-state/scripts/render_pptx.ps1": "e45c640f5c9d0133a7861fd97f4a04f9a70d8d1a1ad597eee8eb90f7630cecb0",
+        ".agents/skills/pptx-to-research-state/scripts/validate_extraction.py": "f14500c09dff426b37c13fe956d8e8f74c6f236725d3c22d46f485314bf6f63b",
+        "AGENTS.md": "a408c53918a23567c74d4c09bd586521fc15149d59cd6f2442adb438a32e93cb",
+        "requirements.txt": "8384b492b3aa1d8e4a41c25feb35cc7b228d8ccc8af5c9572922446ce5ea51db"
+      },
+      "merge_base": {
+        "AGENTS.md": "# laRkdown\r\n\r\n独立科研工具项目：豆包工作 + 飞书原生文档 + Python。当前仅维护 academic-writing-editor、maintain-research-state、pptx-to-research-state、literature-source-gate 四个技能。上游版本与逐文件来源记录在 `.agents/config/upstream.json`，不修改 maRkdown 或其原科研项目。\r\n\r\n创建或移动文件前读取 `.agents/instructions/project-layout.md`，按 `.agents/config/project-layout.json` 执行。正式本地产物唯一根目录为 `outputs/`；飞书文档是科研记录和用户交付的默认载体，本地 XML/JSON 是工作稿、读取快照与校验记录。\r\n\r\n## 科研事实与范围\r\n\r\n用户的只读问答不写科研记录。先按稳定 ID、标题和关键词定位，再读取直接相关条目；纯工具维护不读取科研状态。OBS 只记直接观察，CON 链接 OBS 并标注证据等级，HYP 保持未验证解释。保留阴性、矛盾、不显著与缺失信息，不猜测关键参数。\r\n\r\nCURRENT_STATE 对应的飞书文档是事实权威；RESEARCH_QUESTIONS 管问题与优先级；PROJECT_STORY 管目标叙事；指定 RQ 的 SOL 管候选路线。稳定研究 ID 不改号、不复用。可靠新结果先更新 CURRENT_STATE，后续文档仅在受影响时更新。路线变化只在明确授权时执行。\r\n\r\n## 四个技能\r\n\r\n- 学术正文起草、改写、翻译、润色、审阅：`.agents/skills/academic-writing-editor/SKILL.md`。审阅只报告问题；其他流程先处理事实与结构再编辑。\r\n- 空白科研初始化和研究条目结构维护：`.agents/skills/maintain-research-state/SKILL.md`。已有科研状态不重新初始化。\r\n- 指定实验 PPTX 导入：`.agents/skills/pptx-to-research-state/SKILL.md`。结构与视觉两条路径均完成后才录入事实。\r\n- 外部学术文献：`.agents/skills/literature-source-gate/SKILL.md`。指定文献与自主检索分别执行来源政策；工具官方文档不触发学术指标门槛。\r\n\r\n## 飞书操作\r\n\r\n默认使用官方 `lark-cli`，优先 `docs +fetch/+create/+update`，默认 `--as user`。先读 `.agents/instructions/feishu-workflow.md`，再查当前 CLI 内嵌的官方技能或 `--help`；不凭旧教程猜参数。文档采用飞书 DocxXML 原生块，交付实际返回的飞书 URL。原生 Markdown 云盘文件不是默认交付。\r\n\r\n飞书记录每次修改前读取最新正文、版本及当前 block ID。保护人类编辑、评论、图片和附件；优先局部补丁，不自动整篇覆盖。`ok=true`、warnings 检查和写后回读共同构成完成条件。创建结果不确定时停止重复创建并查证已创建的文档。\r\n\r\n飞书文档是唯一正式科研记录，本地快照不作为独立事实层。研究 ID 与飞书 block ID 分开：前者永久，后者在结构修改后重新查询。关联条目使用真实飞书文档/块链接；不使用双括号链接、行尾锚点、专有笔记属性或自动反向链接。\r\n\r\n缺失 CLI、权限、渲染器或视觉入口只阻塞相关部分。不得宣称豆包已经看过未实际加载的图片；不得用标题或 OCR 代替图形证据。当前环境的能力检查优先于产品宣传。\r\n\r\n## 工具项目开发\r\n\r\n只改用户指定范围。保留第三方 LICENSE。修改可执行脚本后做对应行为检查；没有科研条目变更时不运行真实科研状态审计。文档中引用官方来源并记录核验日期，推断与未实测能力分开。\r\n"
+      },
+      "project_schema_version": 1
+    },
+    "0.2.0": {
+      "managed_files": {
+        ".agents/config/feishu.example.json": "cda861214c9fd5f84810984ac1e0b840a11a3659fa916e80a89930ae5fa1d483",
+        ".agents/config/official-sources.json": "130b927ea2f1cf16858a3c3ddfe90427911940b27fb0b014b69e7dae42702d8e",
+        ".agents/config/project-layout.json": "f3f08075c410da86fcaa01c96b6bc07cfb59be82498b46dcfd9db936975c549e",
+        ".agents/config/upstream.json": "138a269c5d838a52c29c8d37a146d2c6e216ab6087899fbda7e0396d9b8391d0",
+        ".agents/instructions/feishu-workflow.md": "b133dc1ada321471217bd6ea7af6f80bd171bd1e404b99ac0b9161e00fcad9a9",
+        ".agents/instructions/project-layout.md": "8ce5e9d12cce3e22d87763e8b73587d129c7705071921896b9f7d16909106a34",
+        ".agents/instructions/story-policy.md": "5e4998ecb71c0dcccc2612720cfe7ab76705936757ae86bd852916a0843aaf77",
+        ".agents/skills/academic-writing-editor/LICENSE": "4c8bf334f715c1efa8d6aa442b79e5fa0a9c4486e231846858d5b4ef932bc8ea",
+        ".agents/skills/academic-writing-editor/SKILL.md": "040087cbc21d58cc8b227603f95d34ea38589ff939d0923d07ac6d670c596166",
+        ".agents/skills/literature-source-gate/SKILL.md": "da3c8637cf47823a9fc41820df5090aedbfc66ab670c771ac0ecf8fc1249c5e0",
+        ".agents/skills/literature-source-gate/references/designated-sources.md": "656f2090d3b8381edc41627b9ce4cd6026a10870f1bb7177ab9f55a4ead0190d",
+        ".agents/skills/literature-source-gate/references/normal-screening.md": "3e125f0bca0fad1e70a6ccabe1ab8b3ce79e8142846b160d5099f221ca2680c5",
+        ".agents/skills/literature-source-gate/references/screening-policy.md": "950fb6b392169cc7dcff8a732f6a0d8f0a846eac834e401d6a4b8c82535a6765",
+        ".agents/skills/maintain-research-state/SKILL.md": "da8023b2312434dc0ee39b817fa22386ee2f138e9a1516a680dfcf0e9e5c360c",
+        ".agents/skills/maintain-research-state/references/initialization.md": "597a780c2f593f989429a08a4fef14e3f8cc59a721caa93712a42abe57466564",
+        ".agents/skills/maintain-research-state/references/state-schema.md": "3e8a6d0f85520536f40fdaf10d25da10ada19d6563e3760c976dd9376ceee0e7",
+        ".agents/skills/maintain-research-state/scripts/feishu_bridge.py": "e6f0a17c9a363dac80e33f6f437c566751070b8f54ba7100231cc6a82d78f38e",
+        ".agents/skills/maintain-research-state/scripts/initialize_project.py": "b7af878ab1be1f918f89df13bc33d304eb499a313147c698bc29c27a2df5c6ef",
+        ".agents/skills/maintain-research-state/scripts/validate_state.py": "f3e38cf01df200d1e70c7eaaf7b1139b4a7d0332c07bd93a8a52e1a64dd0f206",
+        ".agents/skills/pptx-to-research-state/SKILL.md": "2e1218dd98faf57ed00e267dbc8e41f340a592a8e1d619d6a8fe4a6aee3c2982",
+        ".agents/skills/pptx-to-research-state/references/incremental-update.md": "0f4fde3877b43aa2e0f3dee1e2edf4479c94404cee0741546c6eef7595a94823",
+        ".agents/skills/pptx-to-research-state/references/initialization.md": "59381d6113b9567858d105b047261acdb2d840b7bd4e33632736af010f3c8ccc",
+        ".agents/skills/pptx-to-research-state/references/pptx-evidence.md": "9426198d19184a375354055244d7d588c2952e9f791b389763e2047097932624",
+        ".agents/skills/pptx-to-research-state/references/solution-workflow.md": "848a75fe9e1aa235b5d2467e2a6fec524867b57d02e09c760677752479921370",
+        ".agents/skills/pptx-to-research-state/references/story-workflow.md": "3dc4fd9c9cebc91c7e006da56be776d7487c2481ee07260262c2aebb97bb483d",
+        ".agents/skills/pptx-to-research-state/scripts/extract_pptx.py": "ab94fadc8629ceb3e0052a30be6a803440ab240cb68a8277c65cbc84049afc52",
+        ".agents/skills/pptx-to-research-state/scripts/make_contact_sheet.py": "10ce5feb71fc0bb1c15bd4131bb9099effcff289afe7fdecfb34f0286ede4b05",
+        ".agents/skills/pptx-to-research-state/scripts/preflight.py": "0342634f229d9829521ef278374f0927851c7cfa450a39db8c7b6fd0c7ef8ab4",
+        ".agents/skills/pptx-to-research-state/scripts/prepare_media_preview.py": "2116cb4dbe39d8278e762517f1e0340ce09f0c66bd71311a3ab148ba76993144",
+        ".agents/skills/pptx-to-research-state/scripts/render_pptx.ps1": "e45c640f5c9d0133a7861fd97f4a04f9a70d8d1a1ad597eee8eb90f7630cecb0",
+        ".agents/skills/pptx-to-research-state/scripts/validate_extraction.py": "f14500c09dff426b37c13fe956d8e8f74c6f236725d3c22d46f485314bf6f63b",
+        ".agents/skills/research-docs-to-base/SKILL.md": "d35f5fe75abf4e24da841ebd119a06dc1ba6f4a6fdb237f33a05dad927fcb4ba",
+        ".agents/skills/research-docs-to-base/assets/research-base.example.json": "280330e2b3138d18808f628022694b4c6a5ca02e39b7d30834e11805043899bd",
+        ".agents/skills/research-docs-to-base/references/mapping.md": "9d122c8fb68db80c203265c21d9227e5848c7501ecd8941812441b5f2cc023da",
+        ".agents/skills/research-docs-to-base/references/operations.md": "0b5e87b34219fb878496832fb17023313e84d964113396ea02e7332d8dd7911f",
+        ".agents/skills/research-docs-to-base/scripts/research_base.py": "7d22e71a085868db869eeeb858781f5167ad5859680ba7363f839c35227ce7e3",
+        "AGENTS.md": "295584aa0658ebc8bbf3ae7d16e99500a2bfbd3f0b862dc629429283e7a6eff1",
+        "requirements.txt": "8384b492b3aa1d8e4a41c25feb35cc7b228d8ccc8af5c9572922446ce5ea51db"
+      },
+      "merge_base": {
+        "AGENTS.md": "# laRkdown\r\n\r\n独立科研工具项目：豆包工作 + 飞书原生文档 + Python。维护四个上游适配技能及 research-docs-to-base 原生扩展，共五个技能。上游版本与逐文件来源记录在 `.agents/config/upstream.json`，不修改 maRkdown 或其原科研项目。\r\n\r\n创建或移动文件前读取 `.agents/instructions/project-layout.md`，按 `.agents/config/project-layout.json` 执行。正式本地产物唯一根目录为 `outputs/`；飞书文档是科研记录和用户交付的默认载体，本地 XML/JSON 是工作稿、读取快照与校验记录。\r\n\r\n## 科研事实与范围\r\n\r\n用户的只读问答不写科研记录。先按稳定 ID、标题和关键词定位，再读取直接相关条目；纯工具维护不读取科研状态。OBS 只记直接观察，CON 链接 OBS 并标注证据等级，HYP 保持未验证解释。保留阴性、矛盾、不显著与缺失信息，不猜测关键参数。\r\n\r\nCURRENT_STATE 对应的飞书文档是事实权威；RESEARCH_QUESTIONS 管问题与优先级；PROJECT_STORY 管目标叙事；指定 RQ 的 SOL 管候选路线。稳定研究 ID 不改号、不复用。可靠新结果先更新 CURRENT_STATE，后续文档仅在受影响时更新。路线变化只在明确授权时执行。\r\n\r\n## 五个技能\r\n\r\n- 学术正文起草、改写、翻译、润色、审阅：`.agents/skills/academic-writing-editor/SKILL.md`。审阅只报告问题；其他流程先处理事实与结构再编辑。\r\n- 空白科研初始化和研究条目结构维护：`.agents/skills/maintain-research-state/SKILL.md`。已有科研状态不重新初始化。\r\n- 指定实验 PPTX 导入：`.agents/skills/pptx-to-research-state/SKILL.md`。结构与视觉两条路径均完成后才录入事实。\r\n- 外部学术文献：`.agents/skills/literature-source-gate/SKILL.md`。指定文献与自主检索分别执行来源政策；工具官方文档不触发学术指标门槛。\r\n- 三篇飞书科研文档构建/同步多维表格：`.agents/skills/research-docs-to-base/SKILL.md`。六表是派生协作视图，源文档仍为事实权威；保护 AI/人工字段，缺失条目归档不删，不回写源文档。\r\n\r\n## 飞书操作\r\n\r\n默认使用官方 `lark-cli`，优先 `docs +fetch/+create/+update`，默认 `--as user`。先读 `.agents/instructions/feishu-workflow.md`，再查当前 CLI 内嵌的官方技能或 `--help`；不凭旧教程猜参数。文档采用飞书 DocxXML 原生块，交付实际返回的飞书 URL。原生 Markdown 云盘文件不是默认交付。\r\n\r\n飞书记录每次修改前读取最新正文、版本及当前 block ID。保护人类编辑、评论、图片和附件；优先局部补丁，不自动整篇覆盖。`ok=true`、warnings 检查和写后回读共同构成完成条件。创建结果不确定时停止重复创建并查证已创建的文档。\r\n\r\n飞书文档是唯一正式科研记录，本地快照不作为独立事实层。研究 ID 与飞书 block ID 分开：前者永久，后者在结构修改后重新查询。关联条目使用真实飞书文档/块链接；不使用双括号链接、行尾锚点、专有笔记属性或自动反向链接。\r\n\r\n缺失 CLI、权限、渲染器或视觉入口只阻塞相关部分。不得宣称豆包已经看过未实际加载的图片；不得用标题或 OCR 代替图形证据。当前环境的能力检查优先于产品宣传。\r\n\r\n## 工具项目开发\r\n\r\n只改用户指定范围。保留第三方 LICENSE。修改可执行脚本后做对应行为检查；没有科研条目变更时不运行真实科研状态审计。文档中引用官方来源并记录核验日期，推断与未实测能力分开。\r\n"
+      },
+      "project_schema_version": 1
+    }
+  },
+  "schema_version": 1
+}

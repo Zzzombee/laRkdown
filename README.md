@@ -4,13 +4,13 @@
 
 在能够访问本地文件并运行命令的豆包工作任务中，复制发送：
 
-> 请按照 https://github.com/Zzzombee/laRkdown 的 README，将 laRkdown 安装到当前本地工作目录，导入五个科研技能并配置 Python 和官方飞书 CLI，引导我完成飞书用户授权，验收环境后告诉我如何开始使用。
+> 请按照 https://github.com/Zzzombee/laRkdown 的 README，将 laRkdown 安装到当前本地工作目录，导入六个科研技能并配置 Python 和官方飞书 CLI，引导我完成飞书用户授权，验收环境后告诉我如何开始使用。
 
 也可在这句话末尾补充目标文件夹路径。用户只需提供必要的目录或项目信息，并亲自完成账户授权；下面的安装与检查由豆包执行。
 
 ## 项目概述
 
-laRkdown 是面向 **豆包工作 + 飞书原生文档 + Python** 的科研进度管理工具，由 [maRkdown](https://github.com/Zzzombee/maRkdown) 的科研工作流适配而来。包含四个上游适配技能：学术写作编辑、研究状态维护、实验 PPTX 提取、外部文献门槛；另有 laRkdown 原生扩展“科研文档转多维表格”，共五个技能。
+laRkdown 是面向 **豆包工作 + 飞书原生文档 + Python** 的科研进度管理工具，由 [maRkdown](https://github.com/Zzzombee/maRkdown) 的科研工作流适配而来。包含四个上游适配技能：学术写作编辑、研究状态维护、实验 PPTX 提取、外部文献门槛；另有“科研文档转多维表格”和“已有项目升级”两个 laRkdown 原生扩展，共六个技能。
 
 飞书文档保存正式科研记录，Python 完成材料提取与结构校验，豆包工作按技能组织任务并调用工具。观察、结论、假设、研究问题和候选路线以稳定编号关联。技能指令使用普通 Markdown，工作稿使用 DocxXML/JSON；项目关联使用真实飞书文档与块链接。
 
@@ -23,11 +23,11 @@ laRkdown 是面向 **豆包工作 + 飞书原生文档 + Python** 的科研进�
 ### 1. 下载并确定工作目录
 
 - 使用用户指定的本地文件夹；未指定时，使用当前明确的本地工作目录下 `laRkdown/`。工作目录无法确定时只询问目标路径。
-- 优先 `git clone https://github.com/Zzzombee/laRkdown.git`。没有 Git 时，从 [v0.2.0 Release](https://github.com/Zzzombee/laRkdown/releases/tag/v0.2.0) 下载 `laRkdown-v0.2.0.zip`，解压后定位含 README.md、AGENTS.md、requirements.txt 与 `.agents/` 的目录。
+- 优先 `git clone https://github.com/Zzzombee/laRkdown.git`。没有 Git 时，从 [v0.2.1 Release](https://github.com/Zzzombee/laRkdown/releases/tag/v0.2.1) 下载 `laRkdown-v0.2.1.zip`，解压后定位含 README.md、AGENTS.md、requirements.txt 与 `.agents/` 的目录。
 - 同名目录已存在时先检查并复用正确版本，不覆盖既有科研资料、文档登记或本机配置。保留 `.agents/` 的名称与层级。
 - 在该目录读取 AGENTS.md、目录合同和飞书工作流。该目录是后续脚本与配置的工作根目录，技能平台的托管目录不是项目根目录。
 
-### 2. 导入五个科研技能
+### 2. 导入六个科研技能
 
 通过当前豆包工作提供的自定义技能/本地导入入口，分别导入以下完整文件夹，保留 SKILL.md 及其 references、scripts 和许可文件：
 
@@ -37,11 +37,12 @@ laRkdown 是面向 **豆包工作 + 飞书原生文档 + Python** 的科研进�
 .agents/skills/pptx-to-research-state/
 .agents/skills/literature-source-gate/
 .agents/skills/research-docs-to-base/
+.agents/skills/upgrade-larkdown/
 ```
 
 若当前工具能操作导入界面，完成导入并核对技能名称；界面必须由用户操作时，给出上述本地完整路径与必要点击步骤。平台将技能复制到托管目录后，仍从研究工作根目录定位共享规则和脚本。不要猜测豆包私有技能目录或注册协议，不把复制文件当作平台导入成功。
 
-确认五个技能可选或可加载。平台要求刷新或重开任务时按实际提示操作；新任务再次明确工作目录并读取 AGENTS.md。在不能导入的环境，可显式读取项目中对应 SKILL.md 试运行，但须标明尚未完成平台注册。
+确认六个技能可选或可加载。平台要求刷新或重开任务时按实际提示操作；新任务再次明确工作目录并读取 AGENTS.md。在不能导入的环境，可显式读取项目中对应 SKILL.md 试运行，但须标明尚未完成平台注册。
 
 ### 3. 配置 Python 与飞书 CLI
 
@@ -81,7 +82,7 @@ lark-cli skills read lark-doc
 - 运行 `python .agents/skills/maintain-research-state/scripts/feishu_bridge.py --root . preflight`，确认用户身份可用；不要打印认证密钥。
 - 创建一篇简短的飞书原生“laRkdown 安装验收”文档并回读，确认正文和真实 URL。保留同一文档，失败时修复它，避免重复创建；不自动改共享权限或发送消息。
 - PPTX 功能另检查 Windows、PowerShell、桌面 PowerPoint 与当前豆包视觉工具。缺少条件时标明“PPTX 图片完整导入待配置”，先交付其他功能的配置结果。
-- 最后交付本地工作目录、五个技能导入状态、Python/CLI 可用状态、飞书验收链接和具体缺口。不因为环境配置完成就自动建立科研记录。
+- 最后交付本地工作目录、六个技能导入状态、Python/CLI 可用状态、飞书验收链接和具体缺口。不因为环境配置完成就自动建立科研记录。
 
 仅有云端问答且不能读写本地文件或运行命令的入口，无法执行当前完整版本；需使用具备这些工具的工作任务环境。豆包官方描述支持自定义技能与附带资源，但具体入口和开放能力以当前账号为准。[豆包工作官方说明](https://www.feishu.cn/content/article/7677519271848610746)
 
@@ -95,13 +96,25 @@ lark-cli skills read lark-doc
 
 日常可以要求“从指定 PPTX 更新研究状态”“将这次结果区分为观察、结论与假设”“润色这篇飞书文档，保留数字和引用”或“为这个问题检索并核验文献”。
 
-## 五个技能
+## 六个技能
 
 - `academic-writing-editor`：中英文学术正文起草、改写、翻译与审阅，保护数字、引用和证据强度；默认交付飞书原生文档。
 - `maintain-research-state`：维护 OBS／CON／HYP／RQ／SOL 的稳定编号、证据关系及原生文档结构。
 - `pptx-to-research-state`：提取文字、备注、表格、原生图表及原图，渲染整页并实际逐图读取后更新科研记录。
 - `literature-source-gate`：区分用户指定文献与自主检索，核验来源、主张匹配、指标、例外与受限来源警示。
 - `research-docs-to-base`：从三篇飞书科研文档构建/同步六表科研工作台，保留来源、稳定编号和提及关联；预览增量差异，缺失条目归档，保护 AI 与人工协作字段。
+- `upgrade-larkdown`：对已经初始化的科研项目预览版本差异、处理托管文件冲突并执行可恢复的原位升级。
+
+## 已有项目升级
+
+把新版本完整 ZIP 下载并解压在**已有科研项目目录之外**。从新包运行 `upgrade_larkdown.py`，先预览，再按用户的升级指令应用：
+
+```text
+python <新包目录>/upgrade_larkdown.py --project <已有科研项目目录> --package <新包ZIP>
+python <新包目录>/upgrade_larkdown.py --project <已有科研项目目录> --package <新包ZIP> --apply
+```
+
+已有升级器的项目也可使用 `--latest`，读取 GitHub 最新公开 Release 并校验资产 SHA256。v0.1.0/v0.2.0 项目没有升级器，首次从下载的新包执行。升级器更新发行版托管文件，保留项目本机配置、飞书文档登记、科研资料和多维表格同步基线。AGENTS.md 中不重叠的用户增补会合并；重叠编辑及其他被修改的托管文件列为冲突，不自动覆盖。中断时运行 `--recover`。更新后按豆包客户端实际入口刷新或重新导入技能。详细规则见 [UPGRADING.md](UPGRADING.md)。
 
 ## 科研文档转多维表格
 
@@ -129,7 +142,7 @@ PPTX 的结构提取、原图保留、整页渲染和实际视觉核验分开记
 
 ## 来源与验证
 
-当前版本为 laRkdown v0.2.0，新增 research-docs-to-base 原生扩展。上游引用版本见“项目概述”；官方资料、核验日期和能力边界见 [official-sources.json](.agents/config/official-sources.json)。公开源码与 Release 不包含实验数据、账户凭证、飞书资源登记和本机快照。
+当前版本为 laRkdown v0.2.1，新增已初始化项目的升级器；v0.2.0 引入 research-docs-to-base 原生扩展。上游引用版本见“项目概述”；官方资料、核验日期和能力边界见 [official-sources.json](.agents/config/official-sources.json)。公开源码与 Release 不包含实验数据、账户凭证、飞书资源登记和本机快照。
 
 CLI 用法按本机 1.0.97 的官方内嵌技能核验，运行时以当前 `lark-cli --help` 与 `lark-cli skills read` 为准。学术编辑技能保留其第三方 MIT LICENSE；不将该许可推定为其他文件的统一许可。
 
