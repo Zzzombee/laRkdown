@@ -1,0 +1,9 @@
+{
+  "cli": "lark-cli",
+  "identity": "user",
+  "parent_token": null,
+  "registry": ".agents/config/feishu-documents.json",
+  "cache_root": ".work/feishu",
+  "deliverable_format": "docx",
+  "authoring_format": "xml"
+}

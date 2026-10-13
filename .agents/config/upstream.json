@@ -1,0 +1,193 @@
+{
+  "project": "laRkdown",
+  "version": "0.1.0",
+  "adapted_at": "2026-10-13",
+  "source": {
+    "repository": "https://github.com/Zzzombee/maRkdown",
+    "tag": "v0.1.0",
+    "commit": "a189bd0755a2d1a097b0a1c6f5f5c5712135d616",
+    "release_archive_sha256": "fb5dca4f14b9c52c962342dbd5178a007678b8ecfc101b0c8ab3c0356df4d451"
+  },
+  "skills": [
+    "academic-writing-editor",
+    "maintain-research-state",
+    "pptx-to-research-state",
+    "literature-source-gate"
+  ],
+  "source_file_sha256": {
+    ".agents/skills/academic-writing-editor/LICENSE": "4c8bf334f715c1efa8d6aa442b79e5fa0a9c4486e231846858d5b4ef932bc8ea",
+    ".agents/skills/academic-writing-editor/SKILL.md": "dfd29be3cbcb180a29253c6e46c8da699d9662c33c986957c22acaeb964e6ff6",
+    ".agents/skills/pptx-to-research-state/SKILL.md": "444643140a338c3996cf4b7ca497b2f54fd26d8d0d29d0fa482882810a6b9215",
+    ".agents/skills/pptx-to-research-state/references/incremental-update.md": "8fb328ead5e1d4b94b974c3a1043a0d09e7fee9b45f11661647ab3d572ab3a22",
+    ".agents/skills/pptx-to-research-state/references/initialization.md": "67395b8593a1cdb275c46cde1d084b1c460b46e172ca45b0e7149b3adb464f93",
+    ".agents/skills/pptx-to-research-state/references/pptx-evidence.md": "c41a06a4c4a63dd09c29938c08b5b134d5668eb2c290ddd4030729c336b4baff",
+    ".agents/skills/pptx-to-research-state/references/solution-workflow.md": "25ab3a4d240ca4ad4ceff534bea2ee7a139d63c283cfc48f52a28412896243d4",
+    ".agents/skills/pptx-to-research-state/references/story-workflow.md": "6cec57b2ad380a871cd951f475a7e5d6866e11b0ebb21ac3b4fbdfd7f060c7c8",
+    ".agents/skills/pptx-to-research-state/scripts/extract_pptx.py": "ab94fadc8629ceb3e0052a30be6a803440ab240cb68a8277c65cbc84049afc52",
+    ".agents/skills/pptx-to-research-state/scripts/make_contact_sheet.py": "10ce5feb71fc0bb1c15bd4131bb9099effcff289afe7fdecfb34f0286ede4b05",
+    ".agents/skills/pptx-to-research-state/scripts/preflight.py": "a04e1dc6bccfdc432c087614cf7756e91854d241150dda1a68b5f2fc99937ab1",
+    ".agents/skills/pptx-to-research-state/scripts/prepare_media_preview.py": "c740a75bc56a161999f08a4e2e07d65029eb99ca50b5616f9db1c7d4d63f29db",
+    ".agents/skills/pptx-to-research-state/scripts/render_pptx.ps1": "e45c640f5c9d0133a7861fd97f4a04f9a70d8d1a1ad597eee8eb90f7630cecb0",
+    ".agents/skills/pptx-to-research-state/scripts/validate_extraction.py": "99db072351c0c79dc0e0557d2222258bcf2a4d44528744d6e5bc0c31c72c4a16",
+    ".agents/skills/literature-source-gate/SKILL.md": "e0c6a7ae5f15ed8042ce671594ffb400af941a3830c60d7c39aced620f19c0bc",
+    ".agents/skills/literature-source-gate/references/designated-sources.md": "71e0af55e6e1f9aa599f9544e4b70c5f7c5f15f2f56dbcd11aa2ff66e228ee5c",
+    ".agents/skills/literature-source-gate/references/normal-screening.md": "3e125f0bca0fad1e70a6ccabe1ab8b3ce79e8142846b160d5099f221ca2680c5",
+    ".agents/skills/literature-source-gate/references/screening-policy.md": "9e91d9a0225e2066476fc3cbadec41635ed5a420187cd3eeeb5da9c5062d06fb"
+  },
+  "changes": [
+    "Feishu DocxXML and official lark-cli delivery",
+    "native-document state schema and validation",
+    "explicit PPTX visual evidence path",
+    "remove editor-specific links, properties and plugins"
+  ],
+  "file_lineage": {
+    ".agents/skills/academic-writing-editor/LICENSE": {
+      "source_sha256": "4c8bf334f715c1efa8d6aa442b79e5fa0a9c4486e231846858d5b4ef932bc8ea",
+      "status": "retained"
+    },
+    ".agents/skills/academic-writing-editor/SKILL.md": {
+      "source_sha256": "dfd29be3cbcb180a29253c6e46c8da699d9662c33c986957c22acaeb964e6ff6",
+      "status": "adapted"
+    },
+    ".agents/skills/academic-writing-editor/agents/openai.yaml": {
+      "source_sha256": "5ce216c90ce3e2d5d11b11e71d97633b338ce767d55a8a730c7be48e56dc77f0",
+      "status": "omitted"
+    },
+    ".agents/skills/maintain-research-state/SKILL.md": {
+      "source_sha256": "ff83d1e203664e399a66ce02332dea5621f6af987aa9b2bc92a99f7402cb5a0d",
+      "status": "adapted"
+    },
+    ".agents/skills/maintain-research-state/agents/openai.yaml": {
+      "source_sha256": "c05d4f4044d9eb27bef5da0605b85a9c9e7c8919c09d32913778cc560bd16679",
+      "status": "omitted"
+    },
+    ".agents/skills/maintain-research-state/assets/gitignore.template": {
+      "source_sha256": "ccda57398b1a9e4243700d524f33b445798e876e2a5d59e96a5f64c6368bd787",
+      "status": "omitted"
+    },
+    ".agents/skills/maintain-research-state/assets/project-layout.json": {
+      "source_sha256": "bba0c8b9b533cefbefef94b5178533fd695db1d85436ace70ae40cd0a3379bac",
+      "status": "omitted"
+    },
+    ".agents/skills/maintain-research-state/assets/project-layout.template.md": {
+      "source_sha256": "9f354daba74e20d394ba189e420c1bc46a93a99f8244f551dd46abb3ae889b97",
+      "status": "omitted"
+    },
+    ".agents/skills/maintain-research-state/references/initialization.md": {
+      "source_sha256": "ed8852f8462dda0c389bff7454359403e4bc126fabb0521bb91a915ce0e94f7f",
+      "status": "adapted"
+    },
+    ".agents/skills/maintain-research-state/references/state-schema.md": {
+      "source_sha256": "a715277216a0ed20f8692e4b15831742e8687ed47f6650f25d6207d9886e8408",
+      "status": "adapted"
+    },
+    ".agents/skills/maintain-research-state/scripts/initialize_project.py": {
+      "source_sha256": "fe7f8a6554f78f5a67b2bccadbdf1ace5c99c38272a59f1b49d25ed41ce887b3",
+      "status": "adapted"
+    },
+    ".agents/skills/maintain-research-state/scripts/project_layout.py": {
+      "source_sha256": "82e09f1b9a4d4444057c7fb54c8c537641d1c597408c8a5da0949fe95be576e5",
+      "status": "omitted"
+    },
+    ".agents/skills/maintain-research-state/scripts/test_initialization.py": {
+      "source_sha256": "939b85b4bd02e6522c35fe9db95c016bb0c265a54614c346e4ae72d02d238247",
+      "status": "omitted"
+    },
+    ".agents/skills/maintain-research-state/scripts/validate_state.py": {
+      "source_sha256": "ac7b3591d22ce1635140781bc5df4cf50d17ff3e0b5e6db8ab6f896692823c54",
+      "status": "adapted"
+    },
+    ".agents/skills/pptx-to-research-state/SKILL.md": {
+      "source_sha256": "444643140a338c3996cf4b7ca497b2f54fd26d8d0d29d0fa482882810a6b9215",
+      "status": "adapted"
+    },
+    ".agents/skills/pptx-to-research-state/agents/openai.yaml": {
+      "source_sha256": "32e2a9fb5ec51d0100ece9b307784a1c22e2ff3c9b1978f262746743ea89b5b6",
+      "status": "omitted"
+    },
+    ".agents/skills/pptx-to-research-state/assets/AGENTS.template.md": {
+      "source_sha256": "84d44dcd270e02fa2ddabf033b4dce0f11155b4c83512450fbded8875004044a",
+      "status": "omitted"
+    },
+    ".agents/skills/pptx-to-research-state/assets/CURRENT_STATE.template.md": {
+      "source_sha256": "1fa20ed1c52631d297c41badb0ad61cf930e987cc705106296e3697ee9fe8c2b",
+      "status": "omitted"
+    },
+    ".agents/skills/pptx-to-research-state/assets/PROJECT_STORY.template.md": {
+      "source_sha256": "257e3c6c61e157d8c742d248335e6be02163ea544917d4e318e9a85660cb7d30",
+      "status": "omitted"
+    },
+    ".agents/skills/pptx-to-research-state/assets/RESEARCH_QUESTIONS.template.md": {
+      "source_sha256": "890f107803739e9d74816d37fb425605aa3ecead8f85e714ee57b6526b243e85",
+      "status": "omitted"
+    },
+    ".agents/skills/pptx-to-research-state/assets/SOLUTION.template.md": {
+      "source_sha256": "53ad4e5f5c94d1db61476faac6f879d108633beddfff247e5b62911bce06e7fe",
+      "status": "omitted"
+    },
+    ".agents/skills/pptx-to-research-state/references/incremental-update.md": {
+      "source_sha256": "8fb328ead5e1d4b94b974c3a1043a0d09e7fee9b45f11661647ab3d572ab3a22",
+      "status": "adapted"
+    },
+    ".agents/skills/pptx-to-research-state/references/initialization.md": {
+      "source_sha256": "67395b8593a1cdb275c46cde1d084b1c460b46e172ca45b0e7149b3adb464f93",
+      "status": "adapted"
+    },
+    ".agents/skills/pptx-to-research-state/references/pptx-evidence.md": {
+      "source_sha256": "c41a06a4c4a63dd09c29938c08b5b134d5668eb2c290ddd4030729c336b4baff",
+      "status": "adapted"
+    },
+    ".agents/skills/pptx-to-research-state/references/solution-workflow.md": {
+      "source_sha256": "25ab3a4d240ca4ad4ceff534bea2ee7a139d63c283cfc48f52a28412896243d4",
+      "status": "adapted"
+    },
+    ".agents/skills/pptx-to-research-state/references/story-workflow.md": {
+      "source_sha256": "6cec57b2ad380a871cd951f475a7e5d6866e11b0ebb21ac3b4fbdfd7f060c7c8",
+      "status": "adapted"
+    },
+    ".agents/skills/pptx-to-research-state/scripts/extract_pptx.py": {
+      "source_sha256": "ab94fadc8629ceb3e0052a30be6a803440ab240cb68a8277c65cbc84049afc52",
+      "status": "retained"
+    },
+    ".agents/skills/pptx-to-research-state/scripts/make_contact_sheet.py": {
+      "source_sha256": "10ce5feb71fc0bb1c15bd4131bb9099effcff289afe7fdecfb34f0286ede4b05",
+      "status": "retained"
+    },
+    ".agents/skills/pptx-to-research-state/scripts/preflight.py": {
+      "source_sha256": "a04e1dc6bccfdc432c087614cf7756e91854d241150dda1a68b5f2fc99937ab1",
+      "status": "adapted"
+    },
+    ".agents/skills/pptx-to-research-state/scripts/prepare_media_preview.py": {
+      "source_sha256": "c740a75bc56a161999f08a4e2e07d65029eb99ca50b5616f9db1c7d4d63f29db",
+      "status": "adapted"
+    },
+    ".agents/skills/pptx-to-research-state/scripts/render_pptx.ps1": {
+      "source_sha256": "e45c640f5c9d0133a7861fd97f4a04f9a70d8d1a1ad597eee8eb90f7630cecb0",
+      "status": "retained"
+    },
+    ".agents/skills/pptx-to-research-state/scripts/validate_extraction.py": {
+      "source_sha256": "99db072351c0c79dc0e0557d2222258bcf2a4d44528744d6e5bc0c31c72c4a16",
+      "status": "adapted"
+    },
+    ".agents/skills/literature-source-gate/SKILL.md": {
+      "source_sha256": "e0c6a7ae5f15ed8042ce671594ffb400af941a3830c60d7c39aced620f19c0bc",
+      "status": "adapted"
+    },
+    ".agents/skills/literature-source-gate/agents/openai.yaml": {
+      "source_sha256": "593f33d155c1599f1c06ab6c034cc2002436650ef73d7e2f08c9ebff6db258b5",
+      "status": "omitted"
+    },
+    ".agents/skills/literature-source-gate/references/designated-sources.md": {
+      "source_sha256": "71e0af55e6e1f9aa599f9544e4b70c5f7c5f15f2f56dbcd11aa2ff66e228ee5c",
+      "status": "adapted"
+    },
+    ".agents/skills/literature-source-gate/references/normal-screening.md": {
+      "source_sha256": "3e125f0bca0fad1e70a6ccabe1ab8b3ce79e8142846b160d5099f221ca2680c5",
+      "status": "retained"
+    },
+    ".agents/skills/literature-source-gate/references/screening-policy.md": {
+      "source_sha256": "9e91d9a0225e2066476fc3cbadec41635ed5a420187cd3eeeb5da9c5062d06fb",
+      "status": "adapted"
+    }
+  }
+}
