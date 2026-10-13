@@ -218,7 +218,7 @@ class UpgradeTests(unittest.TestCase):
     def test_published_projects_upgrade_without_reinitialization(self):
         release, _, _ = self.fixture()
         release = up.Release(release.archive)
-        for version in ('0.1.0', '0.2.0', '0.2.1'):
+        for version in release.manifest['supported_from']:
             result = subprocess.run(['git', '-c', 'core.autocrlf=false', 'archive', '--format=zip', 'v' + version], cwd=ROOT,
                                     capture_output=True)
             if result.returncode:
@@ -240,7 +240,7 @@ class UpgradeTests(unittest.TestCase):
                                     blob = windows_blob
                             path.write_bytes(blob)
                 candidate = up.Release(release.archive)
-                if version in {'0.2.0', '0.2.1'}:
+                if version != '0.1.0':
                     with (root / 'AGENTS.md').open('ab') as stream:
                         stream.write(b'\n## Colleague-specific research rules\nKeep my local instructions.\n')
                 plan = up.make_plan(root, candidate)
@@ -255,7 +255,7 @@ class UpgradeTests(unittest.TestCase):
                 self.assertEqual(json.loads((root / up.MANIFEST).read_text(encoding='utf-8'))['version'], release.manifest['version'])
                 self.assertIn(b'real-project-fixture', private.read_bytes())
                 self.assertEqual(source.read_bytes(), b'keep raw presentation')
-                if version in {'0.2.0', '0.2.1'}:
+                if version != '0.1.0':
                     self.assertIn(b'Keep my local instructions.', (root / 'AGENTS.md').read_bytes())
 
 

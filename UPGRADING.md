@@ -17,4 +17,4 @@ v0.1.0/v0.2.0 没有 `release-manifest.json`。升级器通过项目 `.agents/co
 
 成功后 `.agents/config/release-manifest.json` 记录当前安装发行版本和受托管文件哈希。以后升级直接以这份清单比较用户改动；缺失的研究资料不会被“补齐”或删除。发行版只声明它实际支持的旧版本；无法跨越的版本先逐版升级。
 
-**发布者规则：** 每个新版本必须携带 `upgrade_larkdown.py`、`upgrade-larkdown` 技能、准确发行清单和兼容性说明。先暂存所有发行文件，再运行 `tools/build_release.py --prepare` 并暂存生成的清单；`--check`、对应测试和 `--build` 是发布门槛。科研项目结构版本变化需要独立、可验证的迁移程序；在迁移程序完成前不得发布声称支持该结构跨度的版本。Release 压缩包从 Git 提交创建，同时上传构建器生成的同名 `.sha256` 附件；不可修改已发布 tag 的内容。
+**发布者规则：** 每个新版本必须携带 `upgrade_larkdown.py`、`upgrade-larkdown` 技能、准确发行清单和兼容性说明。先暂存所有发行文件，再运行 `tools/build_release.py --prepare` 并暂存生成的清单；`--check`、对应测试和 `--build` 是发布门槛。科研项目结构版本变化需要独立、可验证的迁移程序；在迁移程序完成前不得发布声称支持该结构跨度的版本。推送版本 tag 后由 GitHub Actions 在检查通过时自动从该提交生成 Release ZIP 与同名 `.sha256` 附件；不得绕过检查手工发布，也不可修改已发布 tag 的内容。

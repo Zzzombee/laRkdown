@@ -22,3 +22,29 @@ jobs:
       - run: python tools/build_release.py --check
       - run: python tools/build_release.py --build /tmp/laRkdown-ci.zip
       - run: python upgrade_larkdown.py --help
+
+  publish:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: validate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Build the matching tagged release
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          python -c "import json,os,pathlib; version=json.loads(pathlib.Path('.agents/config/upstream.json').read_text())['version']; assert os.environ['TAG']=='v'+version, 'Tag does not match package version'"
+          python tools/build_release.py --build "$RUNNER_TEMP/laRkdown-$TAG.zip"
+      - name: Publish the verified ZIP and checksum
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          gh release create "$TAG" "$RUNNER_TEMP/laRkdown-$TAG.zip" "$RUNNER_TEMP/laRkdown-$TAG.zip.sha256" --verify-tag --generate-notes --title "laRkdown $TAG"

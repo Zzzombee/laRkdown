@@ -1,10 +1,10 @@
 {
   "managed_files": {
     ".agents/config/feishu.example.json": "62fac7918e48e8d182591fab96acc23252b0d367c5d43dd9db22b92938daca79",
-    ".agents/config/legacy-release-baselines.json": "d1dac2e01eb6892fc3347f3efeeb6d9811a0da2417aac93a3463f4d53ecca51a",
+    ".agents/config/legacy-release-baselines.json": "0b0ca28b41b554fa2c1e4f27befb26214d49ebd216e47f4e2b6a615e959896d8",
     ".agents/config/official-sources.json": "5800a2804be050bed786cf19e179c72bb95ec5a5e43b5ff14695aa812096d67b",
     ".agents/config/project-layout.json": "9c867fbe6899c76945a415a50897bfb84fbc00f9d067d1c11f2b1aef3566495e",
-    ".agents/config/upstream.json": "238633b2cd1c763bfdc72b85c8d9840fd07c731dcfd1bc0898e3905199acd4c4",
+    ".agents/config/upstream.json": "7148c454a995cef04faa83088bf2554a613d04c7cdca07daff35779060f21d41",
     ".agents/instructions/feishu-workflow.md": "ab515c2c9392142a5b9c86f5ed7ed397750832ad12f3b8c376b470211942d298",
     ".agents/instructions/project-layout.md": "cce57f0a2cb761197f6297802333bade489721fe973500baf07d9a6c9ac9c80c",
     ".agents/instructions/story-policy.md": "d330c2969f61071f2dc6b9d9705d5e1f805b930d225102c69507564b3f97f7c5",
@@ -38,8 +38,8 @@
     ".agents/skills/research-docs-to-base/references/operations.md": "cf69a1c287cfbc4cf37afbe678066dd245b8fc0e3f41101af2ce167171fe2626",
     ".agents/skills/research-docs-to-base/scripts/research_base.py": "c2c42c99618affcfb9b71776c1efbfd551feb2ed031374e30260a5a9d4bafc8c",
     ".agents/skills/upgrade-larkdown/SKILL.md": "d06e82b36b9ffc9bdf8ab28850c31aade9cc270c414e0429553d81a43e065e9d",
-    "AGENTS.md": "bd5b50842fd4fdbe61de57322eac1bf60023797e12b52baf0635e2890d1e3e2b",
-    "UPGRADING.md": "caedc3f570c94fb868c7f9f3795f2b39f8fe9c2930401d0a21ac9f0041d898c0",
+    "AGENTS.md": "6197cc7e1e92791dae7e0ffcd600c09daa004fb16a0321217aa71ca2cf42bed1",
+    "UPGRADING.md": "ffe3d6a016888c923776eb7d2d2826883dc536924cac96da5a9264d73481cef8",
     "requirements.txt": "78bf116f3d08d939e1754704663b20ab1decb817be244a635ac94ce2c87e2e16",
     "upgrade_larkdown.py": "0d1b971e1ade2fd5e7d833fcfc43231586580fc383ea08e1e1bc87eda2bb1ca2"
   },
@@ -50,7 +50,8 @@
     "0.1.0",
     "0.2.0",
     "0.2.1",
-    "0.2.2"
+    "0.2.2",
+    "0.2.3"
   ],
-  "version": "0.2.3"
+  "version": "0.2.4"
 }
