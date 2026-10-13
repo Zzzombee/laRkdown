@@ -23,7 +23,7 @@ laRkdown 是面向 **豆包工作 + 飞书原生文档 + Python** 的科研进�
 ### 1. 下载并确定工作目录
 
 - 先确认豆包当前打开的项目根目录 `P`。若下载到 `P/laRkdown/`，须将 **`P/laRkdown/` 重新作为豆包项目打开**；若必须保留 `P` 为项目根目录，则仅在检查文件冲突后，把发行包内容放到 `P/` 根目录。不能仅凭终端当前目录推断豆包打开的项目根目录。
-- 先读 [README 原始文件](https://raw.githubusercontent.com/Zzzombee/laRkdown/main/README.md)。若 `github.com` 页面被 robots.txt 阻止，不要把它当作安装失败；通过 `gh release download --repo Zzzombee/laRkdown --pattern '*.zip' --pattern '*.sha256'` 或 [GitHub Releases API](https://api.github.com/repos/Zzzombee/laRkdown/releases/latest) 获取最新公开 Release 的 `laRkdown-v<版本>.zip` 及同名 `.sha256`，核对校验值后解压。两种下载入口都不可用时，请用户提供已下载的 ZIP 和校验文件。定位含 README.md、AGENTS.md、requirements.txt 与 `.agents/` 的目录，在豆包中打开**这个目录本身**。这是给同事使用的精简产品包；仓库克隆还包含发布工作流、构建工具和测试文件。未指定路径时可在当前明确的本地工作目录下创建 `laRkdown/`，然后将它作为豆包项目打开。
+- 先读 [README 原始文件](https://raw.githubusercontent.com/Zzzombee/laRkdown/main/README.md)。若 `github.com` 页面被 robots.txt 阻止，不要把它当作安装失败；通过 `gh release download --repo Zzzombee/laRkdown --pattern '*.zip' --pattern '*.sha256'` 或 [GitHub Releases API](https://api.github.com/repos/Zzzombee/laRkdown/releases/latest) 获取最新公开 Release 的 `laRkdown-v<版本>.zip` 及同名 `.sha256`，核对校验值后解压。两种下载入口都不可用时，请用户提供已下载的 ZIP 和校验文件。定位含 README.md、AGENTS.md、requirements.txt 与 `.agents/` 的目录，在豆包中打开**这个目录本身**。仓库克隆包含发布工作流、构建工具和测试文件；已发布的 v0.2.4 ZIP 也包含这些文件，精简打包从后续版本生效。未指定路径时可在当前明确的本地工作目录下创建 `laRkdown/`，然后将它作为豆包项目打开。
 - 同名目录已存在时先检查并复用正确版本，不覆盖既有科研资料、文档登记或本机配置。保留 `.agents/` 的名称与层级。
 - 在实际打开的项目根目录读取 AGENTS.md、目录合同和飞书工作流。该目录也是后续脚本与配置的工作根目录。
 
@@ -143,6 +143,6 @@ PPTX 的结构提取、原图保留、整页渲染和实际视觉核验分开记
 
 ## 来源与验证
 
-当前版本为 laRkdown v0.2.5，修正豆包项目根目录与技能自动发现的安装指引；v0.2.4 包含已初始化项目的升级器、跨平台发布校验、API 限流回退和检查通过后的自动发布；v0.2.0 引入 research-docs-to-base 原生扩展。上游引用版本见“项目概述”；官方资料、核验日期和能力边界见 [official-sources.json](.agents/config/official-sources.json)。公开源码与 Release 不包含实验数据、账户凭证、飞书资源登记和本机快照。
+仓库 main 当前为待发布的 laRkdown v0.2.5，修正豆包项目根目录、技能自动发现和安装引导；最新公开 Release 仍为 v0.2.4，包含已初始化项目的升级器、跨平台发布校验、API 限流回退和检查通过后的自动发布；v0.2.0 引入 research-docs-to-base 原生扩展。上游引用版本见“项目概述”；官方资料、核验日期和能力边界见 [official-sources.json](.agents/config/official-sources.json)。公开源码与 Release 不包含实验数据、账户凭证、飞书资源登记和本机快照。
 
 CLI 用法按本机 1.0.97 的官方内嵌技能核验，运行时以当前 `lark-cli --help` 与 `lark-cli skills read` 为准。学术编辑技能保留其第三方 MIT LICENSE；不将该许可推定为其他文件的统一许可。
