@@ -25,7 +25,7 @@ The story heading is its title-level claim; do not add a second core-proposition
 - The argument chain states the proposition and paper role of each result in short ordered items. The project-basis section links actual enabling observations, material foundations and capabilities. Neither section repeats a slide-by-slide extraction ledger or the full limitations list.
 - Section six maps each core claim to current support and the decisive missing connection, preserving negative/conflicting evidence and alternatives. Link OBS/CON/HYP/RQ and relevant SOL routes; put minor provenance discrepancies in an optional collapsed note. Do not turn success-complete abstract language into a CON.
 
-For an initial story, draw its selected direction from the supplied presentation, relevant bounded project findings and unresolved questions. For updates, change only the authorized stories or affected content. Ranking remains governed by evidence fit and decisive experiments, not by the abstract's assumed success.
+For an initial story, draw its selected direction from the user's stated route and relevant bounded findings and unresolved questions; a presentation is optional. If the route cannot be determined from the user's request or registered records, ask for that choice without inventing one. For updates, change only the authorized stories or affected content. Ranking remains governed by evidence fit and decisive experiments, not by the abstract's assumed success.
 
 ## Literature and final edit
 

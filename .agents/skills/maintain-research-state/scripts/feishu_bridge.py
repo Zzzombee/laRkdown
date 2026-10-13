@@ -79,6 +79,103 @@ class Bridge:
     def save(self):
         dump(self.registry_path, self.registry)
 
+    def wiki_space(self, name: str):
+        """Create one research-system Wiki space, with a guard against duplicate creates."""
+        name = name.strip()
+        if not name:
+            raise ValueError('A research-system name is required for the Wiki space')
+        known = self.registry.get('wiki_space')
+        if known:
+            if known.get('name') != name or not known.get('space_id'):
+                raise ValueError('Registered Wiki space belongs to another research system')
+            return known
+        pending = self.cache / 'pending' / 'wiki-space.json'
+        listed = call(['wiki', '+space-list', '--as', 'user', '--page-all', '--page-limit', '0'], self.root)
+        data = listed['data']
+        if data.get('has_more'):
+            raise ValueError('Wiki space listing was incomplete; do not create a duplicate')
+        matches = [space for space in data['spaces'] if space.get('name') == name]
+        if len(matches) > 1:
+            raise ValueError('Multiple Wiki spaces have the research-system name; choose one explicitly')
+        if pending.exists():
+            if len(matches) != 1:
+                raise ValueError('Unresolved Wiki space creation; inspect the pending operation before retrying')
+            if json.loads(pending.read_text(encoding='utf-8')).get('name') != name:
+                raise ValueError('Pending Wiki space belongs to another research system')
+            space = matches[0]
+        else:
+            if matches:
+                raise ValueError('A Wiki space with this name already exists; bind it explicitly instead of duplicating it')
+            pending.parent.mkdir(parents=True, exist_ok=True)
+            with pending.open('x', encoding='utf-8') as guard:
+                json.dump({'name': name, 'started_at': timestamp()}, guard)
+            response = call(['wiki', '+space-create', '--as', 'user', '--name', name], self.root)
+            dump(self.cache / 'operations' / (uuid.uuid4().hex + '.wiki-space.json'), response)
+            space = response['data'].get('space', response['data'])
+        if not space.get('space_id') or space.get('name') != name:
+            raise ValueError('Wiki space creation/listing did not return the expected identity')
+        self.registry['wiki_space'] = {'space_id': str(space['space_id']), 'name': name}
+        self.save()
+        pending.unlink()
+        return self.registry['wiki_space']
+
+    def create_in_wiki(self, key: str, xml_path: Path, space_id: str):
+        """Create a docx node directly in the Wiki, then fill its new empty document."""
+        if key in self.registry['documents']:
+            raise ValueError(f'{key} is already registered; fetch/repair it instead of creating another')
+        pending = self.cache / 'pending' / (key + '.json')
+        if pending.exists():
+            raise ValueError(f'{key} has an unresolved Wiki node creation; locate and bind it before retrying')
+        xml_path = local(self.root, xml_path)
+        content = xml_path.read_text(encoding='utf-8-sig')
+        tree = parse_xml(content)
+        if len(tree.findall('title')) != 1 or tree[0].tag != 'title':
+            raise ValueError('A new native document must start with exactly one title')
+        title = ''.join(tree[0].itertext()).strip()
+        body = ''.join(ET.tostring(node, encoding='unicode') for node in list(tree)[1:])
+        if not title or not body:
+            raise ValueError('A Wiki document requires a title and body')
+        preview = call(['docs', '+script', '--command', 'parse', '--as', 'user', '--content', '@' + xml_path.relative_to(self.root).as_posix()], self.root)
+        if preview.get('data', {}).get('assessment', {}).get('status') not in {None, 'passed'}:
+            raise ValueError('CLI draft assessment did not pass')
+        pending.parent.mkdir(parents=True, exist_ok=True)
+        with pending.open('x', encoding='utf-8') as guard:
+            json.dump({'key': key, 'space_id': space_id, 'title': title, 'started_at': timestamp()}, guard)
+        response = call(['wiki', '+node-create', '--as', 'user', '--space-id', space_id,
+                         '--obj-type', 'docx', '--title', title], self.root)
+        dump(self.cache / 'operations' / (uuid.uuid4().hex + '.wiki-node.json'), response)
+        node = response['data'].get('node', response['data'])
+        if (node.get('obj_type') != 'docx' or not node.get('obj_token') or not node.get('node_token')
+                or (node.get('resolved_space_id') and str(node['resolved_space_id']) != str(space_id))):
+            raise ValueError('Wiki node creation did not return a verified docx identity')
+        self.registry['documents'][key] = {
+            'document_id': node['obj_token'], 'wiki_node_token': node['node_token'],
+            'wiki_space_id': space_id, 'created_at': timestamp(),
+            'authored_sha256': hashlib.sha256(content.encode()).hexdigest(),
+        }
+        self.save()
+        pending.unlink()
+        initial_response = self.fetch(key)
+        initial = initial_response['data']['document']
+        if not self.registry['documents'][key].get('url'):
+            raise RuntimeError(f'Wiki document {key} exists but its document URL was not returned')
+        if (initial_response['data'].get('warnings') or initial.get('warnings')
+                or any(''.join(n.itertext()).strip() for n in list(parse_xml(initial['content']))[1:])):
+            raise RuntimeError(f'Wiki document {key} exists but is not empty; inspect it before appending the draft')
+        updated = call(['docs', '+update', '--as', 'user', '--doc', node['obj_token'], '--doc-format', 'xml',
+                        '--command', 'append', '--revision-id', str(initial['revision_id']), '--content', '-'], self.root, body)
+        dump(self.cache / 'operations' / (uuid.uuid4().hex + '.wiki-fill.json'), updated)
+        if updated.get('data', {}).get('result') not in {None, 'success'}:
+            raise RuntimeError(f'Wiki document {key} exists but its body update was incomplete; inspect it')
+        readback_response = self.fetch(key)
+        readback = readback_response['data']['document']
+        actual = ''.join(parse_xml(readback['content']).itertext())
+        missing = [block for block in text_blocks(content)[1:] if block not in actual]
+        if (missing or updated.get('data', {}).get('warnings')
+                or readback_response['data'].get('warnings') or readback.get('warnings')):
+            raise RuntimeError(f'Wiki document {key} exists but its authored body was not fully verified; repair this document')
+        return {'ok': True, 'document': self.registry['documents'][key]}
+
     def fetch(self, key: str, doc: str | None = None, scope: str | None = None, keyword: str | None = None, block_id: str | None = None):
         doc = doc or self.registry['documents'][key]['document_id']
         args = ['docs', '+fetch', '--as', 'user', '--doc', doc, '--doc-format', 'xml', '--detail', 'full']

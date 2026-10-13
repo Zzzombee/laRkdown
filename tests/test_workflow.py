@@ -79,6 +79,58 @@ class PictureTests(unittest.TestCase):
             self.assertEqual(record['frames'][0]['preview_transform']['mapping'], 'linear-minmax')
 
 class BridgeTests(unittest.TestCase):
+    def test_new_research_system_creates_wiki_space_and_fills_docx_node(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / 'draft.xml').write_text('<title>项目现状</title><p>研究范围：合成测试。</p>', encoding='utf-8')
+            bridge = fb.Bridge(root)
+            observed = []
+            filled = False
+            def operation(args, workroot, content=None):
+                nonlocal filled
+                observed.append(args[:2])
+                if args[:2] == ['wiki', '+space-list']:
+                    return {'ok': True, 'data': {'spaces': [], 'has_more': False}}
+                if args[:2] == ['wiki', '+space-create']:
+                    return {'ok': True, 'data': {'space_id': 'space123', 'name': '合成研究体系'}}
+                if args[:2] == ['wiki', '+node-create']:
+                    self.assertIn('space123', args)
+                    return {'ok': True, 'data': {'node_token': 'wikiNode', 'obj_token': 'docxNode',
+                                                 'obj_type': 'docx', 'resolved_space_id': 'space123'}}
+                if args[:2] == ['docs', '+script']:
+                    return {'ok': True, 'data': {'assessment': {'status': 'passed'}}}
+                if args[:2] == ['docs', '+fetch']:
+                    body = '<p>研究范围：合成测试。</p>' if filled else ''
+                    return {'ok': True, 'data': {'document': {'document_id': 'docxNode',
+                        'url': 'https://example.feishu.cn/docx/docxNode', 'revision_id': 2 if filled else 1,
+                        'content': '<title>项目现状</title>' + body}}}
+                if args[:2] == ['docs', '+update']:
+                    self.assertEqual(args[args.index('--command') + 1], 'append')
+                    self.assertIn('<p>研究范围：合成测试。</p>', content)
+                    filled = True
+                    return {'ok': True, 'data': {'result': 'success', 'warnings': []}}
+                raise AssertionError(args)
+            with patch.object(fb, 'call', side_effect=operation):
+                space = bridge.wiki_space('合成研究体系')
+                result = bridge.create_in_wiki('CURRENT_STATE', Path('draft.xml'), space['space_id'])
+            self.assertTrue(result['ok'])
+            self.assertEqual(bridge.registry['wiki_space']['space_id'], 'space123')
+            self.assertEqual(bridge.registry['documents']['CURRENT_STATE']['wiki_node_token'], 'wikiNode')
+            self.assertEqual(bridge.registry['documents']['CURRENT_STATE']['url'], 'https://example.feishu.cn/docx/docxNode')
+            self.assertNotIn(['docs', '+create'], observed)
+
+    def test_ambiguous_wiki_space_create_never_repeats(self):
+        with tempfile.TemporaryDirectory() as directory:
+            bridge = fb.Bridge(Path(directory))
+            def operation(args, root, content=None):
+                if args[:2] == ['wiki', '+space-list']:
+                    return {'ok': True, 'data': {'spaces': [], 'has_more': False}}
+                raise RuntimeError('synthetic uncertain create result')
+            with patch.object(fb, 'call', side_effect=operation):
+                with self.assertRaises(RuntimeError): bridge.wiki_space('合成研究体系')
+                with self.assertRaises(ValueError): bridge.wiki_space('合成研究体系')
+            self.assertTrue((Path(directory) / '.work/feishu/pending/wiki-space.json').is_file())
+
     def test_ambiguous_create_does_not_retry(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -125,6 +177,9 @@ class BridgeTests(unittest.TestCase):
             (root / '.agents/config/project-layout.json').write_text(json.dumps({'directories': ['.work', 'outputs/reports']}), encoding='utf-8')
             manifest = initializer.prepare(root, 'Synthetic project', 'Fixture only', '2026-10-13')
             self.assertEqual(len(manifest['documents']), 3)
+            self.assertEqual([fb.parse_xml((root / path).read_text(encoding='utf-8'))[0].text
+                              for path in manifest['documents'].values()],
+                             ['项目现状', '项目故事', '研究问题'])
             self.assertEqual((root / 'AGENTS.md').read_text(), 'User rules')
             for path in manifest['documents'].values():
                 self.assertNotIn('OBS-001', (root / path).read_text(encoding='utf-8'))

@@ -23,12 +23,20 @@ TASK_HEAD = re.compile(r'^(?:\d+[.、\s]*)?(近期优先事项|近期优先实�
 PROTECTED = {'核心发现', '层级', '类型', '分类', '证据强度'}
 COMMON = ['同步键', '同步项目', '来源文档', '来源链接', '来源版本', '源内容哈希', '来源语义', '关联编号']
 SCALAR = {
-    TABLES[0]: ['条目', '内容'],
-    TABLES[1]: ['编号', '标题', '原文'],
-    TABLES[2]: ['编号', '内容', '原文', '依据', '源类型', '源证据等级'],
-    TABLES[3]: ['编号', '问题', '原文', '状态'],
-    TABLES[4]: ['文献', '链接', '定位与边界'],
-    TABLES[5]: ['优先事项', '关联'],
+    TABLES[0]: ['概要', '原文', '引用', '条目', '内容'],
+    TABLES[1]: ['概要', '原文', '引用', '编号', '标题'],
+    TABLES[2]: ['概要', '原文', '引用', '编号', '内容', '依据', '源类型', '源证据等级'],
+    TABLES[3]: ['概要', '原文', '引用', '编号', '问题', '状态'],
+    TABLES[4]: ['概要', '原文', '引用', '文献', '链接', '定位与边界'],
+    TABLES[5]: ['概要', '原文', '引用', '优先事项', '关联'],
+}
+VISIBLE = {
+    TABLES[0]: ['概要', '原文', '引用', '归档'],
+    TABLES[1]: ['概要', '编号', '原文', '引用', '归档'],
+    TABLES[2]: ['概要', '编号', '源类型', '源证据等级', '原文', '引用', '依据', '关联OBS', '关联RQ', '归档'],
+    TABLES[3]: ['概要', '编号', '状态', '优先级', '原文', '引用', '关联OBS', '关联结论假设', '归档'],
+    TABLES[4]: ['概要', '文献', '链接', '原文', '引用', '序号', '归档'],
+    TABLES[5]: ['概要', '原文', '引用', '关联RQ', '序号', '归档'],
 }
 LINKS = {
     TABLES[2]: {'关联OBS': TABLES[1], '关联RQ': TABLES[3]},
@@ -59,6 +67,50 @@ def node_text(node):
     if node.tag == 'a' and node.get('href'):
         text = f'{text} ({node.get("href")})'
     return text.strip() if node.tag not in {'a', 'span', 'b', 'strong', 'em'} else text
+
+META_LINE = re.compile(r'^\s*(?:编号|来源(?:文档|链接|版本)?|引用|参考文献|证据(?:等级|强度)|依据|支持\s*OBS|状态|优先级)\s*(?:[:：]|\|)')
+RESOURCE_NAMES = {'img': '图片', 'source': '附件', 'file': '文件', 'attachment': '附件',
+                  'whiteboard': '画板', 'sheet': '表格', 'bitable': '多维表格'}
+
+
+def reading_text(node):
+    """Render readable source text without inline URLs or opaque resource tokens."""
+    if node.tag in RESOURCE_NAMES:
+        return f'〔{RESOURCE_NAMES[node.tag]}：请查看来源文档〕'
+    if node.tag in {'cite', 'synced_reference', 'equation'}:
+        return f'〔{node.tag}：请查看来源文档〕'
+    if node.tag == 'br':
+        return '\n'
+    text = node.text or ''
+    for child in node:
+        text += reading_text(child) + (child.tail or '')
+        if child.tag in {'p', 'li', 'tr', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'}:
+            text += '\n'
+        elif child.tag in {'td', 'th'}:
+            text += ' | '
+    return text.strip() if node.tag not in {'a', 'span', 'b', 'strong', 'em'} else text
+
+
+def clean_content(nodes):
+    lines = '\n'.join(reading_text(node) for node in nodes).splitlines()
+    return '\n'.join(line.strip(' |\t') for line in lines
+                     if line.strip(' |\t') and not META_LINE.match(line)
+                     and not re.fullmatch(r'\s*(?:OBS|CON|HYP|RQ|SOL|TASK)-\d{3}\s*', line)).strip()
+
+
+def citations(nodes):
+    items = []
+    for node in nodes:
+        for element in node.iter():
+            if element.tag == 'a' and element.get('href'):
+                title = ''.join(element.itertext()).strip()
+                items.append(f'{title} — {element.get("href")}' if title else element.get('href'))
+        for line in reading_text(node).splitlines():
+            if re.match(r'^\s*(?:引用|参考文献)\s*[:：]', line):
+                items.append(re.sub(r'^\s*(?:引用|参考文献)\s*[:：]\s*', '', line).strip())
+            for found in re.findall(r'\b10\.\d{4,9}/[^\s<>；，。]+', line):
+                items.append('DOI: ' + found.rstrip('.,;'))
+    return '\n'.join(dict.fromkeys(item for item in items if item))
 
 def label(text, names):
     found = []
@@ -203,6 +255,9 @@ def compile_dataset(snapshots, bindings, selectors=None):
             nodes, title = group['nodes'], group['title']
             text = '\n'.join(node_text(n) for n in nodes).strip()
             body_text = '\n'.join(node_text(n) for n in nodes[1:]).strip() if group['heading'] else text
+            body_nodes = nodes[1:] if group['heading'] else nodes
+            readable = clean_content(body_nodes)
+            references = citations(body_nodes)
             identity = chosen.get('key') or (ID.match(title)[0] if ID.match(title) else '')
             match = ID.fullmatch(identity)
             if role == 'entry' and not match:
@@ -218,9 +273,12 @@ def compile_dataset(snapshots, bindings, selectors=None):
                 if (key == DOCS[0] and prefix not in {'OBS', 'CON', 'HYP'}) or (key == DOCS[1] and prefix != 'RQ') or key == DOCS[2]:
                     raise ValueError('Research entry appears in the wrong authority document')
                 table = TABLES[1] if prefix == 'OBS' else TABLES[3] if prefix == 'RQ' else TABLES[2]
-                fields = {**base, '同步键': identity, '编号': identity, '原文': text,
-                          '来源语义': '研究问题原文' if prefix == 'RQ' else '科研状态摘录'}
                 short_title = chosen.get('title') or re.sub(r'^(?:OBS|CON|HYP|RQ)-\d{3}\s*[—–:：-]?\s*', '', title)
+                if not short_title:
+                    short_title = readable.split('\n', 1)[0].split('。', 1)[0][:100] or identity
+                fields = {**base, '同步键': identity, '编号': identity, '概要': short_title,
+                          '原文': readable, '引用': references,
+                          '来源语义': '研究问题原文' if prefix == 'RQ' else '科研状态摘录'}
                 if prefix == 'OBS':
                     fields['标题'] = short_title
                 elif prefix == 'RQ':
@@ -244,6 +302,9 @@ def compile_dataset(snapshots, bindings, selectors=None):
                         if task_key and (len(task_nodes) != 1 or len(items) != 1):
                             raise ValueError('A task selector with a fixed key must identify a single task block')
                         fields = {**base, '同步键': task_key or (task_id[0] if task_id else 'TASK:' + digest(original)),
+                                  '概要': re.sub(r'^TASK-\d{3}\s*', '', original).split('。', 1)[0][:100],
+                                  '原文': re.sub(r'^TASK-\d{3}\s*', '', clean_content([item])),
+                                  '引用': citations([item]),
                                   '优先事项': original, '关联': '\n'.join(sorted(set(REF.findall(original)))),
                                   '关联编号': '\n'.join(sorted(set(REF.findall(original)))), '来源语义': '原文任务'}
                         result['tables'][TABLES[5]].append(fields)
@@ -252,6 +313,7 @@ def compile_dataset(snapshots, bindings, selectors=None):
                 if key == DOCS[0] and re.search(r'\b(?:OBS|CON|HYP)\b', title) and role != 'overview':
                     raise ValueError(f'Unstructured content under {title}; use source block selectors')
                 fields = {**base, '同步键': chosen.get('key') or 'SECTION:' + key + ':' + '/'.join(group['ancestors'] + [title]),
+                          '概要': chosen.get('title') or title, '原文': readable, '引用': references,
                           '条目': chosen.get('title') or title, '内容': body_text,
                           '来源语义': '目标论文叙事' if key == DOCS[2] else '研究问题原文' if key == DOCS[1] else '科研状态摘录'}
                 result['tables'][TABLES[0]].append(fields)
@@ -276,8 +338,10 @@ def compile_dataset(snapshots, bindings, selectors=None):
                             if context not in existing['定位与边界'].split('\n\n'):
                                 existing['定位与边界'] += '\n\n' + context
                             continue
-                        result['tables'][TABLES[4]].append({**base, '同步键': rkey, '文献': name or href,
-                            '链接': normalize_url(href), '定位与边界': context, '来源语义': '原文引文'})
+                        result['tables'][TABLES[4]].append({**base, '同步键': rkey, '概要': name or href,
+                            '原文': clean_content([paragraph]), '引用': normalize_url(href),
+                            '文献': name or href, '链接': normalize_url(href),
+                            '定位与边界': context, '来源语义': '原文引文'})
     for table, rows in result['tables'].items():
         if len({r['同步键'] for r in rows}) != len(rows):
             raise ValueError(f'Duplicate synchronization key in {table}')
@@ -504,6 +568,67 @@ class Sync:
                 raise ValueError('Link field targets a different table')
         return missing
 
+    def views(self, table_id):
+        data = self.command('+view-list', '--base-token', self.config['base_token'], '--table-id', table_id)
+        views = data['views']
+        if data.get('has_more') or (data.get('total') is not None and data['total'] != len(views)):
+            raise ValueError('View list is incomplete; do not change visibility')
+        return views
+
+    def configure_reading_view(self, table, table_id):
+        if table in self.config.get('configured_views', {}):
+            return
+        views = self.views(table_id)
+        if self.config.get('base_origin') == 'new':
+            target = next((view for view in views if view.get('type') == 'grid'), None)
+            if not target:
+                self.command('+view-create', '--base-token', self.config['base_token'], '--table-id', table_id,
+                             '--json', json.dumps({'name': '科研阅读', 'type': 'grid'}, ensure_ascii=False))
+                target = next((view for view in self.views(table_id) if view.get('name') == '科研阅读'), None)
+        else:
+            if any(view.get('name') == '科研阅读' for view in views):
+                raise ValueError(f'{table}: an existing 科研阅读 view is not registered as managed; inspect before changing it')
+            self.command('+view-create', '--base-token', self.config['base_token'], '--table-id', table_id,
+                         '--json', json.dumps({'name': '科研阅读', 'type': 'grid'}, ensure_ascii=False))
+            target = next((view for view in self.views(table_id) if view.get('name') == '科研阅读'), None)
+        if not target or not (target.get('id') or target.get('view_id')):
+            raise ValueError(f'{table}: cannot identify the reading view')
+        view_id = target.get('id') or target['view_id']
+        visible = VISIBLE[table]
+        self.command('+view-set-visible-fields', '--base-token', self.config['base_token'],
+                     '--table-id', table_id, '--view-id', view_id,
+                     '--json', json.dumps({'visible_fields': visible}, ensure_ascii=False))
+        self.config.setdefault('configured_views', {})[table] = view_id
+        self.save_config()
+
+    def ensure_wiki_placement(self):
+        """Move a newly created Base into its research Wiki once, then verify the node."""
+        space_id = self.config.get('wiki_space_id')
+        if not space_id:
+            return
+        token = self.config['base_token']
+        if not self.config.get('wiki_move_attempted_at'):
+            self.config['wiki_move_attempted_at'] = timestamp()
+            self.save_config()
+            response = call(['wiki', '+move', '--as', 'user', '--obj-type', 'bitable',
+                             '--obj-token', token, '--target-space-id', space_id], self.root)
+            dump(self.cache / (uuid.uuid4().hex + '.wiki-move.json'), response)
+            moved = response['data']
+            if moved.get('task_id'):
+                self.config['wiki_move_task_id'] = moved['task_id']
+                self.save_config()
+            if moved.get('ready') is False:
+                raise ValueError('Base move into Wiki is pending; check the recorded task before continuing')
+        response = call(['wiki', '+node-get', '--as', 'user', '--node-token', token,
+                         '--space-id', space_id], self.root)
+        node = response['data'].get('node', response['data'])
+        if (str(node.get('space_id')) != str(space_id) or node.get('obj_type') != 'bitable'
+                or node.get('obj_token') != token or not node.get('node_token')):
+            raise ValueError('Base Wiki node does not match the registered Base and research space')
+        self.config['wiki_node_token'] = node['node_token']
+        self.config.pop('wiki_move_task_id', None)
+        self.save_config()
+
     def init(self, name, base_url=None, template_url=None):
         self.fetch()  # Resolve input first, so missing docs never cause a stray Base.
         guard = self.cache / 'init-pending.json'
@@ -528,10 +653,16 @@ class Sync:
                 data = self.command('+base-create', '--name', name, '--time-zone', 'Asia/Shanghai',
                                     '--table-name', TABLES[0], '--fields', json.dumps(schema(TABLES[0]), ensure_ascii=False))
             created = data['base']
-            self.config.update(base_token=created['base_token'], base_url=created['url'])
+            self.config.update(base_token=created['base_token'], base_url=created['url'], base_origin='new' if not template_url else 'template')
+            space = Bridge(self.root).registry.get('wiki_space')
+            if space:
+                if not space.get('space_id'):
+                    raise ValueError('Registered research Wiki space has no ID')
+                self.config['wiki_space_id'] = space['space_id']
             self.save_config()
             if template_url and created['base_token'] == source:
                 raise ValueError('Template copy did not yield a distinct target; stop')
+        self.ensure_wiki_placement()
         meta = self.command('+base-get', '--base-token', self.config['base_token'])['base']
         self.config['base_url'] = meta['url']
         self.save_config()
@@ -550,8 +681,10 @@ class Sync:
                              '--json', json.dumps(wanted, ensure_ascii=False))
             if self.validate_fields(table, self.fields(tables[table]), tables):
                 raise ValueError('Missing managed fields after schema creation')
+            self.configure_reading_view(table, tables[table])
         self.save_config()
-        return {'ok': True, 'base_url': self.config['base_url'], 'tables': tables, 'records_imported': False}
+        return {'ok': True, 'base_url': self.config['base_url'], 'wiki_space_id': self.config.get('wiki_space_id'),
+                'wiki_node_token': self.config.get('wiki_node_token'), 'tables': tables, 'records_imported': False}
 
     def current(self):
         tables = self.tables()

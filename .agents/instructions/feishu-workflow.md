@@ -1,14 +1,16 @@
 # 飞书原生文档工作流
 
-默认官方 `lark-cli`，显式 `--as user`；当前验证基线为 1.0.97。每次工具升级以 `--help`、`lark-cli skills read lark-shared` 和 `lark-cli skills read lark-doc` 的当前说明为准。缺少 CLI 时按官方安装说明安装；不自动换成第三方同名工具。
+默认官方 `lark-cli`，显式 `--as user`；当前验证基线为 1.0.97。每次工具升级以 `--help`、`lark-cli skills read lark-shared`、`lark-cli skills read lark-doc` 和涉及知识空间时的 `lark-cli skills read lark-wiki` 为准。缺少 CLI 时按官方安装说明安装；不自动换成第三方同名工具。
 
 ## 格式与身份
 
-正式记录使用 `docs` 创建的飞书原生文档，不默认创建云盘 Markdown 文件或仅上传本地附件。技能指令可用普通 Markdown；科研正文以 DocxXML 原生块编写，日期、证据等级和状态写成可见正文或原生元数据表。
+正式记录使用飞书原生 Docx 文档；空白科研初始化直接在新建知识空间创建 Wiki 文档节点，其他文档可使用 `docs` 创建。不默认创建云盘 Markdown 文件或仅上传本地附件。技能指令可用普通 Markdown；科研正文以 DocxXML 原生块编写，日期、证据等级和状态写成可见正文或原生元数据表。
 
 完整工作稿以唯一 `<title>` 开头，正文用 `<h1>` 至 `<h6>`、`<p>`、列表、表格、`<a href="真实URL">标签</a>` 和必要图片。只用当前官方 XML 文档支持的标签。需要图片时 `<img path="@./相对路径.png"/>` 指向当前工作目录内已存在的真实图片，不能用生成图补造科研证据。只转义文字中的 &、<、>，不把标签本身转义。
 
-`lark-cli auth status --json` 检查现有身份，不为了预防错误主动重新登录。缺少用户授权时按实际错误及最小 docs/drive scope 发起登录；不得将 app secret、access token 或授权 device code 写入项目、日志或分发包。认证链接按当前官方规则原样交付并附二维码，由用户完成账户授权。
+`lark-cli auth status --json` 检查现有身份，不为了预防错误主动重新登录。缺少用户授权时按实际错误及最小所需 docs/drive/wiki/base 域发起登录；新知识空间需要 Wiki 创建权限，多维表格需要 Base 权限。不得将 app secret、access token 或授权 device code 写入项目、日志或分发包。认证链接按当前官方规则原样交付并附二维码，由用户完成账户授权。
+
+空白科研初始化按 [初始化规则](../skills/maintain-research-state/references/initialization.md) 创建与研究体系同名的知识空间，用 `wiki +node-create --obj-type docx` 直接生成“项目现状”“项目故事”“研究问题”，然后向各文档填充已校验的 DocxXML 正文。记录实际返回的空间 ID、节点 ID、文档 ID 和文档 URL；创建结果不明时先核实已有资源。以下 `docs +create` 步骤用于其他新文档。
 
 ## 创建文档
 
@@ -42,6 +44,8 @@
 - https://github.com/larksuite/cli/blob/main/skills/lark-doc/references/lark-doc-xml.md
 - https://github.com/larksuite/cli/blob/main/skills/lark-doc/references/lark-doc-fetch.md
 - https://github.com/larksuite/cli/blob/main/skills/lark-doc/references/lark-doc-update.md
+- https://github.com/larksuite/cli/blob/main/skills/lark-wiki/references/lark-wiki-space-create.md
+- https://github.com/larksuite/cli/blob/main/skills/lark-wiki/references/lark-wiki-node-create.md
 - https://www.feishu.cn/content/article/7623291503305083853
 
 以上按 2026-10-13 的安装版本核对；网页 main 可能与安装版本不同，运行时帮助优先。

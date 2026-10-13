@@ -53,10 +53,16 @@ class DocumentMappingTests(unittest.TestCase):
         data = compiled()
         obs = data['tables'][rb.TABLES[1]][0]
         self.assertIn('阴性结果', obs['原文'])
-        self.assertIn('synthetic-only', obs['原文'])
+        self.assertEqual(obs['概要'], '测量')
+        self.assertNotIn('OBS-001', obs['原文'])
+        self.assertIn('图片：请查看来源文档', obs['原文'])
+        self.assertNotIn('synthetic-only', obs['原文'])
         self.assertEqual(obs['来源链接'], 'https://example.feishu.cn/docx/state#obs')
         cons = data['tables'][rb.TABLES[2]]
         self.assertEqual(cons[0]['源证据等级'], '初步')
+        self.assertEqual(cons[0]['概要'], '有限结论')
+        self.assertNotIn('证据等级', cons[0]['原文'])
+        self.assertIn('OBS-001', cons[0]['引用'])
         self.assertEqual(cons[1]['源类型'], '工作假设')
         self.assertEqual(cons[1]['源证据等级'], '')
         self.assertEqual(data['tables'][rb.TABLES[3]][0]['优先级'], ['P1'])
@@ -68,6 +74,29 @@ class DocumentMappingTests(unittest.TestCase):
         self.assertTrue(all(row['来源语义'] == '目标论文叙事' for row in data['tables'][rb.TABLES[0]] if row['来源文档'] == rb.DOCS[2]))
         self.assertIn('SOL-001', data['warnings'])
         self.assertTrue(all(not rb.PROTECTED.intersection(row) for rows in data['tables'].values() for row in rows))
+
+    def test_readable_body_separates_metadata_citations_and_source_ids(self):
+        data = sources()
+        data[rb.DOCS[0]]['data']['document']['content'] = (
+            '<title>项目现状</title><h1 id="obs">OBS-002 — 光刺激后延迟增强</h1>'
+            '<p>编号：OBS-002</p><p>来源：第 3 页</p><p>刺激停止后仍检测到增强。</p>'
+            '<p>证据等级：初步</p><p>引用：<a href="https://doi.org/10.1234/example">相关论文</a></p>')
+        result = rb.compile_dataset(data, {k: '' for k in rb.DOCS})
+        obs = result['tables'][rb.TABLES[1]][0]
+        self.assertEqual(obs['概要'], '光刺激后延迟增强')
+        self.assertEqual(obs['原文'], '刺激停止后仍检测到增强。')
+        self.assertIn('https://doi.org/10.1234/example', obs['引用'])
+        self.assertTrue(set(rb.VISIBLE[rb.TABLES[1]]) <= {f['name'] for f in rb.schema(rb.TABLES[1], True)})
+        self.assertFalse(set(rb.COMMON) & set(rb.VISIBLE[rb.TABLES[1]]))
+
+    def test_id_only_heading_uses_body_for_summary_without_repeating_id(self):
+        data = sources()
+        data[rb.DOCS[0]]['data']['document']['content'] = (
+            '<title>项目现状</title><h1 id="obs">OBS-002</h1>'
+            '<p>OBS-002</p><p>光刺激结束后持续增强。仍需重复验证。</p>')
+        obs = rb.compile_dataset(data, {k: '' for k in rb.DOCS})['tables'][rb.TABLES[1]][0]
+        self.assertEqual(obs['概要'], '光刺激结束后持续增强')
+        self.assertEqual(obs['原文'], '光刺激结束后持续增强。仍需重复验证。')
 
     def test_partial_missing_duplicate_and_wrong_document_rejected(self):
         cases = []
@@ -224,6 +253,81 @@ class OperationSafetyTests(unittest.TestCase):
         target = runner.state['tables'][rb.TABLES[1]]['OBS-001']['record_id']
         self.assertEqual(con['fields']['关联OBS'], [{'id': target}])
         self.assertNotIn('SOL-001', json.dumps(con['fields']['关联OBS']))
+
+
+class ReadingViewTests(unittest.TestCase):
+    def test_new_base_hides_sync_columns_in_its_grid_view(self):
+        with tempfile.TemporaryDirectory() as directory:
+            runner = rb.Sync(Path(directory))
+            runner.config.update(base_token='fixtureBase', base_origin='new')
+            writes = []
+            def command(verb, *args):
+                if verb == '+view-list':
+                    return {'total': 1, 'views': [{'id': 'view1', 'name': '默认视图', 'type': 'grid'}]}
+                if verb == '+view-set-visible-fields':
+                    writes.append((args[args.index('--view-id') + 1], json.loads(args[args.index('--json') + 1])))
+                    return {}
+                raise AssertionError(verb)
+            with patch.object(runner, 'command', side_effect=command):
+                runner.configure_reading_view(rb.TABLES[1], 'tblObservation')
+            self.assertEqual(writes[0][0], 'view1')
+            self.assertEqual(writes[0][1]['visible_fields'], rb.VISIBLE[rb.TABLES[1]])
+            self.assertFalse(set(rb.COMMON) & set(writes[0][1]['visible_fields']))
+            self.assertEqual(runner.config['configured_views'][rb.TABLES[1]], 'view1')
+
+    def test_existing_base_gets_separate_reading_view(self):
+        with tempfile.TemporaryDirectory() as directory:
+            runner = rb.Sync(Path(directory))
+            runner.config['base_token'] = 'fixtureBase'
+            views = [{'id': 'custom1', 'name': '同事视图', 'type': 'grid'}]
+            writes = []
+            def command(verb, *args):
+                if verb == '+view-list':
+                    return {'total': len(views), 'views': list(views)}
+                if verb == '+view-create':
+                    views.append({'id': 'reading1', 'name': '科研阅读', 'type': 'grid'})
+                    return {}
+                if verb == '+view-set-visible-fields':
+                    writes.append(args[args.index('--view-id') + 1])
+                    return {}
+                raise AssertionError(verb)
+            with patch.object(runner, 'command', side_effect=command):
+                runner.configure_reading_view(rb.TABLES[2], 'tblConclusion')
+            self.assertEqual(writes, ['reading1'])
+            self.assertEqual(views[0]['name'], '同事视图')
+
+    def test_new_base_moves_to_registered_wiki_once_and_verifies_identity(self):
+        with tempfile.TemporaryDirectory() as directory:
+            runner = rb.Sync(Path(directory))
+            runner.config.update(base_token='base123', wiki_space_id='space123')
+            calls = []
+            def operation(args, root, content=None):
+                calls.append(args[:2])
+                if args[:2] == ['wiki', '+move']:
+                    return {'ok': True, 'data': {'ready': True, 'node_token': 'wiki123'}}
+                if args[:2] == ['wiki', '+node-get']:
+                    return {'ok': True, 'data': {'node_token': 'wiki123', 'space_id': 'space123',
+                                                 'obj_type': 'bitable', 'obj_token': 'base123'}}
+                raise AssertionError(args)
+            with patch.object(rb, 'call', side_effect=operation):
+                runner.ensure_wiki_placement()
+                runner.ensure_wiki_placement()
+            self.assertEqual(calls.count(['wiki', '+move']), 1)
+            self.assertEqual(runner.config['wiki_node_token'], 'wiki123')
+
+    def test_uncertain_wiki_move_requires_readback_before_retry(self):
+        with tempfile.TemporaryDirectory() as directory:
+            runner = rb.Sync(Path(directory))
+            runner.config.update(base_token='base123', wiki_space_id='space123')
+            calls = []
+            def operation(args, root, content=None):
+                calls.append(args[:2])
+                raise RuntimeError('synthetic uncertain move result')
+            with patch.object(rb, 'call', side_effect=operation):
+                with self.assertRaises(RuntimeError): runner.ensure_wiki_placement()
+                with self.assertRaises(RuntimeError): runner.ensure_wiki_placement()
+            self.assertEqual(calls.count(['wiki', '+move']), 1)
+            self.assertTrue(runner.config['wiki_move_attempted_at'])
 
 class WorkflowTests(unittest.TestCase):
     def test_full_sync_idempotence_archive_relations_and_human_notes(self):

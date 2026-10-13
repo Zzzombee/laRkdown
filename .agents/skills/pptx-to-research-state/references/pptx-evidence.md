@@ -40,6 +40,6 @@ python SKILL/scripts/validate_extraction.py --structure ROOT/.work/pptx/输入�
 
 检查源 hash、页覆盖、原图/代理完整性和视觉台账状态，不判断科学真伪或实际识图准确率。结构与视觉路径都完成才整理正式观察。原生精确数值、图上明确标签、视觉估读分开记录。
 
-通过 feishu-workflow 的 XML img path 将必要实测图加入飞书；指向已提取真实图，不使用生成图替换。详细来源留在工作台账，用户要求时附入飞书。发布后回读确认文字与图片块，再交付链接。
+通过 feishu-workflow 的 XML img path 将必要实测图加入飞书；指向已提取真实图，不使用生成图替换。详细来源留在本地证据台账，用户要求时附入飞书。发布后回读确认文字与图片块，再交付链接。
 
 官方模型限制：https://docs.volcengine.com/docs/ark/image-understanding?lang=zh（2026-10-13 核验；不等同于工作客户端实测）。

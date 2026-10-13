@@ -1,13 +1,14 @@
 ---
 name: maintain-research-state
-description: 初始化飞书科研记录，或维护 OBS、CON、HYP、RQ、SOL 的编号、关系和结构；已有记录不重新初始化，正文编辑与只读问答不做结构审计。
+description: 初始化科研知识库文档，或将刚完成的实验和结果写入“项目现状”，维护 OBS、CON、HYP、RQ、SOL 的编号与关系。已有记录不重新初始化；只读问答不触发写入。
 ---
 
 # 飞书研究状态维护
 
-运行前定位用户指定研究工作目录，读取其 AGENTS.md、目录合同与 `.agents/instructions/feishu-workflow.md`。技能安装目录不代表研究目录。正式事实源是登记的飞书文档，本地 XML/JSON 是最新读取快照或待发布工作稿。
+在研究工作目录读取 AGENTS.md、目录合同和 `.agents/instructions/feishu-workflow.md`。登记的知识库文档是事实源；本地 XML/JSON 是工作稿或快照。
 
-- 空白初始化：读 [references/initialization.md](references/initialization.md)。先查登记与现有飞书记录，已有状态时停止初始化；不得用空白框架替代 PPTX 证据导入。
+- 空白初始化：读 [references/initialization.md](references/initialization.md)。已有科研记录时改用增量维护。
+- 即时实验记录：用户直接叙述做了什么、观察到什么，或说“刚做完实验，立刻整理到飞书”时，读最新“项目现状”及必要的相关 RQ，不要求用户先提交 PPTX 或按条目格式写稿。提取已有事实、数字、对照、阴性结果与不确定处；OBS 仅收直接观察，解释单列 CON/HYP 并限定证据，缺失关键参数只阻塞相关判断。能可靠记录的部分先写入知识库文档，回读后给实际链接；没有足够事实时明确追问，不补造结果。
 - 研究条目、关系或路线结构改变：完整读 [references/state-schema.md](references/state-schema.md)，用官方 CLI 定位并获取最新相关块。
 - 只读、拼写、日期和普通正文修改：不调用结构校验。
 
@@ -19,6 +20,6 @@ description: 初始化飞书科研记录，或维护 OBS、CON、HYP、RQ、SOL 
 
 合并相关结构修改后定向检查一次。用 `scripts/feishu_bridge.py fetch` 获取当前完整快照，再运行 `scripts/validate_state.py --snapshot 当前状态.fetch.json --snapshot 研究问题.fetch.json --changed CURRENT_STATE`；直接关联的 SOL 也传入。校验范围由 changed 决定，其他快照用于解析引用。跨文档搬动或明确全局审计时才传 `--full`，必须提供覆盖全部登记记录的快照；脚本不会自行拉取全库。
 
-`scripts/feishu_bridge.py` 提供 preflight/create/bind/fetch/patch，并保存完整返回及资源 sidecar；不自动登录、发送消息、改权限或整篇覆盖。修改前的基线 revision 必须与回读一致；pending 创建必须查证，不能重复新建。
+`scripts/feishu_bridge.py` 提供 preflight/create/bind/fetch/patch，并保存返回及资源 sidecar。修改前核对 revision；创建结果不明时先查证，再继续。
 
-交付实际飞书 URL、修改的研究 ID 与必要未解决项。脚本通过不能替代对证据的判断或图片视觉核验。
+交付实际飞书 URL、修改的研究 ID 与必要未解决项。初始化后按根目录 AGENTS.md 的引导示例，把即时实验记录放在首位，并说明“项目故事”仍是待生成的空白框架。脚本通过不能替代对证据的判断或图片视觉核验。
