@@ -35,4 +35,4 @@ CURRENT_STATE 对应的飞书文档是事实权威；RESEARCH_QUESTIONS 管问�
 
 ## 每个发行版本的升级合同
 
-未来每个公开 Release 必须携带 `upgrade_larkdown.py`、`upgrade-larkdown` 技能、`.agents/config/release-manifest.json`、旧版基线和 [UPGRADING.md](UPGRADING.md)。发布前运行 `tools/build_release.py --check` 与项目测试；打包只使用该脚本的 `--build`，核验 ZIP 后再建不可变版本 tag/Release。不能为方便发布删除升级器或跳过冲突/恢复检查。科研项目结构版本变化时先实现并验证迁移，否则发布检查必须失败。发行版本与 maRkdown 的引用版本分别记录。
+未来每个公开 Release 必须携带 `upgrade_larkdown.py`、`upgrade-larkdown` 技能、`.agents/config/release-manifest.json`、旧版基线和 [UPGRADING.md](UPGRADING.md)。发布前运行 `tools/build_release.py --check` 与项目测试；打包只使用该脚本的 `--build`，核验 ZIP 及同名 `.sha256` 附件后再建不可变版本 tag/Release。不能为方便发布删除升级器或跳过冲突/恢复检查。科研项目结构版本变化时先实现并验证迁移，否则发布检查必须失败。发行版本与 maRkdown 的引用版本分别记录。

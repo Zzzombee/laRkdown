@@ -11,9 +11,11 @@ import hashlib
 import json
 import os
 from pathlib import Path, PurePosixPath
+import re
 import shutil
 import sys
 import tempfile
+import urllib.error
 import urllib.request
 import uuid
 import zipfile
@@ -398,17 +400,41 @@ def recover(root: Path):
 def fetch_latest(destination: Path) -> Path:
     endpoint = f'https://api.github.com/repos/{REPOSITORY}/releases/latest'
     request = urllib.request.Request(endpoint, headers={'User-Agent': 'laRkdown-upgrader', 'Accept': 'application/vnd.github+json'})
-    with urllib.request.urlopen(request, timeout=30) as response:
-        release = json.load(response)
-    tag = release.get('tag_name', '')
-    if not tag.startswith('v') or '/' in tag:
+    try:
+        with urllib.request.urlopen(request, timeout=30) as response:
+            release = json.load(response)
+    except urllib.error.HTTPError as error:
+        if error.code not in {403, 429}:
+            raise
+        release = None
+    if release is None:
+        page = f'https://github.com/{REPOSITORY}/releases/latest'
+        request = urllib.request.Request(page, headers={'User-Agent': 'laRkdown-upgrader'})
+        with urllib.request.urlopen(request, timeout=30) as response:
+            final = response.geturl()
+        prefix = f'https://github.com/{REPOSITORY}/releases/tag/'
+        if not final.startswith(prefix):
+            raise ValueError('GitHub latest-release redirect is unexpected')
+        tag = final[len(prefix):]
+        asset_name = f'laRkdown-{tag}.zip'
+        asset_url = f'https://github.com/{REPOSITORY}/releases/download/{tag}/{asset_name}'
+        checksum_request = urllib.request.Request(asset_url + '.sha256', headers={'User-Agent': 'laRkdown-upgrader'})
+        with urllib.request.urlopen(checksum_request, timeout=30) as response:
+            checksum = response.read(200).decode('ascii').strip()
+        if not re.fullmatch(r'[0-9a-f]{64}  ' + re.escape(asset_name), checksum):
+            raise ValueError('Latest release checksum asset is invalid')
+        expected_digest = checksum[:64]
+        url = asset_url
+    else:
+        tag = release.get('tag_name', '')
+        asset_name = f'laRkdown-{tag}.zip'
+        assets = [a for a in release.get('assets', []) if a.get('name') == asset_name]
+        if len(assets) != 1 or not assets[0].get('digest', '').startswith('sha256:'):
+            raise ValueError('Latest release lacks a single SHA256-verifiable package asset')
+        url = assets[0].get('browser_download_url', '')
+        expected_digest = assets[0]['digest'][7:]
+    if not re.fullmatch(r'v\d+\.\d+\.\d+', tag):
         raise ValueError('Latest GitHub release has an unexpected tag')
-    asset_name = f'laRkdown-{tag}.zip'
-    assets = [a for a in release.get('assets', []) if a.get('name') == asset_name]
-    if len(assets) != 1 or not assets[0].get('digest', '').startswith('sha256:'):
-        raise ValueError('Latest release lacks a single SHA256-verifiable package asset')
-    asset = assets[0]
-    url = asset.get('browser_download_url', '')
     if not url.startswith(f'https://github.com/{REPOSITORY}/releases/download/{tag}/'):
         raise ValueError('Unexpected release asset address')
     request = urllib.request.Request(url, headers={'User-Agent': 'laRkdown-upgrader'})
@@ -421,7 +447,7 @@ def fetch_latest(destination: Path) -> Path:
                 raise ValueError('Downloaded release exceeds the supported size')
             hasher.update(chunk)
             output.write(chunk)
-    if hasher.hexdigest() != asset['digest'][7:]:
+    if hasher.hexdigest() != expected_digest:
         raise ValueError('GitHub asset SHA256 verification failed')
     return destination
 

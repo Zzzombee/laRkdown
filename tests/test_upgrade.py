@@ -2,6 +2,7 @@
 from __future__ import annotations
 import copy
 from functools import lru_cache
+import hashlib
 import io
 import json
 from pathlib import Path
@@ -9,6 +10,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+import urllib.error
 from unittest.mock import patch
 import zipfile
 
@@ -173,6 +175,36 @@ class UpgradeTests(unittest.TestCase):
             with zipfile.ZipFile(root / 'traversal.zip', 'w') as output:
                 output.writestr('laRkdown/../outside.txt', 'bad')
             with self.assertRaises(ValueError): up.Release(root / 'traversal.zip')
+
+    def test_latest_download_uses_checksum_asset_when_api_is_rate_limited(self):
+        archive = b'synthetic release bytes'
+        tag = 'v0.2.3'
+        asset = f'laRkdown-{tag}.zip'
+        base = f'https://github.com/{up.REPOSITORY}/releases/download/{tag}/{asset}'
+
+        class Response(io.BytesIO):
+            def __init__(self, content, url=''):
+                super().__init__(content)
+                self.url = url
+            def geturl(self):
+                return self.url
+
+        def open_url(request, timeout):
+            url = request.full_url
+            if url.startswith('https://api.github.com/'):
+                raise urllib.error.HTTPError(url, 403, 'rate limit', {}, None)
+            if url.endswith('/releases/latest'):
+                return Response(b'', f'https://github.com/{up.REPOSITORY}/releases/tag/{tag}')
+            if url == base + '.sha256':
+                return Response(f'{hashlib.sha256(archive).hexdigest()}  {asset}\n'.encode('ascii'))
+            if url == base:
+                return Response(archive)
+            raise AssertionError(url)
+
+        with tempfile.TemporaryDirectory() as directory, patch.object(up.urllib.request, 'urlopen', side_effect=open_url):
+            destination = Path(directory) / 'release.zip'
+            self.assertEqual(up.fetch_latest(destination), destination)
+            self.assertEqual(destination.read_bytes(), archive)
 
     def test_unsupported_project_schema_or_version_is_rejected(self):
         release, user, _ = self.fixture()

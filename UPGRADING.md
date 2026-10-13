@@ -6,7 +6,7 @@ laRkdown 发行版本和科研项目是两个不同的对象。项目内的三�
 
 1. 从 [laRkdown Releases](https://github.com/Zzzombee/laRkdown/releases) 下载新版本完整 ZIP，解压到项目**之外**。旧版本没有升级脚本时，应从新发行包运行脚本。
 2. 预览：`python <新包目录>/upgrade_larkdown.py --project <已有项目目录> --package <新包ZIP>`。输出列出增、改、删的公开托管文件及冲突，尚不修改项目。
-3. 用户要求升级时在同样参数后加 `--apply`。没有冲突且结构兼容时升级器才写入文件。也可用 `--latest` 代替 `--package`，使用 GitHub Release 最新公开 ZIP 的服务端 SHA256 校验。
+3. 用户要求升级时在同样参数后加 `--apply`。没有冲突且结构兼容时升级器才写入文件。也可用 `--latest` 代替 `--package`，使用 GitHub Release 最新公开 ZIP 的 SHA256 校验；API 限流时改从公开 Release 页面及同名 `.sha256` 附件核验。
 4. 升级完成后，依当前豆包工作客户端实际入口刷新或重新导入变动的完整技能目录。用户授权、Python/CLI 环境按当前电脑检查；科研文档及已有多维表格保持原 ID。
 
 v0.1.0/v0.2.0 没有 `release-manifest.json`。升级器通过项目 `.agents/config/upstream.json` 的发行版本和新包内的**旧版已发布文件哈希**建立首次基线。若 AGENTS.md 中的用户改动与新版规则位于不同位置，升级器会按行合并并保留两者；编辑同一处时列为冲突并停止应用。其他技能或规则被用户修改也会冲突，需人工处理后重新预览。升级器不替用户猜测两段冲突指令哪段应覆盖另一段。缺失的发行文件可补装；用户项目 README 和私有文件不纳入管理。
@@ -17,4 +17,4 @@ v0.1.0/v0.2.0 没有 `release-manifest.json`。升级器通过项目 `.agents/co
 
 成功后 `.agents/config/release-manifest.json` 记录当前安装发行版本和受托管文件哈希。以后升级直接以这份清单比较用户改动；缺失的研究资料不会被“补齐”或删除。发行版只声明它实际支持的旧版本；无法跨越的版本先逐版升级。
 
-**发布者规则：** 每个新版本必须携带 `upgrade_larkdown.py`、`upgrade-larkdown` 技能、准确发行清单和兼容性说明。先暂存所有发行文件，再运行 `tools/build_release.py --prepare` 并暂存生成的清单；`--check` 和对应测试是发布门槛。科研项目结构版本变化需要独立、可验证的迁移程序；在迁移程序完成前不得发布声称支持该结构跨度的版本。Release 压缩包从 Git 提交创建，附 SHA256；不可修改已发布 tag 的内容。
+**发布者规则：** 每个新版本必须携带 `upgrade_larkdown.py`、`upgrade-larkdown` 技能、准确发行清单和兼容性说明。先暂存所有发行文件，再运行 `tools/build_release.py --prepare` 并暂存生成的清单；`--check`、对应测试和 `--build` 是发布门槛。科研项目结构版本变化需要独立、可验证的迁移程序；在迁移程序完成前不得发布声称支持该结构跨度的版本。Release 压缩包从 Git 提交创建，同时上传构建器生成的同名 `.sha256` 附件；不可修改已发布 tag 的内容。

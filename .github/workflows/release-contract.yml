@@ -20,4 +20,5 @@ jobs:
       - run: python -m pip install -r requirements.txt
       - run: python -m unittest discover -s tests -v
       - run: python tools/build_release.py --check
+      - run: python tools/build_release.py --build /tmp/laRkdown-ci.zip
       - run: python upgrade_larkdown.py --help

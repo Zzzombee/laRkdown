@@ -68,7 +68,14 @@ def historical_tags():
 
 def previous_releases():
     catalog = {}
+    pinned = json.loads((ROOT / LEGACY).read_text(encoding='utf-8'))['releases']
     for tag in historical_tags():
+        if tag in BOOTSTRAP_TAGS:
+            entry = pinned.get(tag[1:])
+            if not entry or sha(entry['merge_base']['AGENTS.md'].encode('utf-8')) != entry['managed_files']['AGENTS.md']:
+                raise ValueError(f'Published Windows baseline is missing or invalid: {tag}')
+            catalog[tag[1:]] = entry
+            continue
         files = tree(tag)
         schema = json.loads(files['.agents/config/project-layout.json'])['schema_version']
         catalog[tag[1:]] = {'project_schema_version': schema,
@@ -144,8 +151,11 @@ def build(output: Path):
     release = Release(output)
     if release.manifest['version'] != result['version']:
         raise ValueError('Committed release version differs from working tree')
+    digest = hashlib.sha256(output.read_bytes()).hexdigest()
+    checksum = output.with_name(output.name + '.sha256')
+    checksum.write_text(f'{digest}  {output.name}\n', encoding='ascii')
     return {**result, 'asset': str(output), 'bytes': output.stat().st_size,
-            'sha256': hashlib.sha256(output.read_bytes()).hexdigest(),
+            'sha256': digest, 'checksum_asset': str(checksum),
             'archive_members': len(release.files)}
 
 

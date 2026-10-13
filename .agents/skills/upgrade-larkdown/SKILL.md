@@ -14,7 +14,7 @@ python <新版本解压目录>/upgrade_larkdown.py --project <已有科研项目
 python <新版本解压目录>/upgrade_larkdown.py --project <已有科研项目目录> --package <新版本的 laRkdown-vX.Y.Z.zip> --apply
 ```
 
-当前版本的升级器也支持 `--latest`：从 `Zzzombee/laRkdown` 公共 GitHub Release 下载 ZIP 并校验 GitHub 提供的 SHA256，再预览或应用。无 GitHub 网络时使用已下载的 `--package`。如果旧项目还没有升级器，先下载并解压含升级器的新版本，再运行其脚本。
+当前版本的升级器也支持 `--latest`：从 `Zzzombee/laRkdown` 公共 GitHub Release 下载 ZIP 并校验 SHA256；API 限流时改用 Release 页面与 `.sha256` 附件。无 GitHub 网络时使用已下载的 `--package`。如果旧项目还没有升级器，先下载并解压含升级器的新版本，再运行其脚本。
 
 AGENTS.md 中不重叠的用户增补会自动按行合并；同一处编辑冲突或其他托管规则、技能被修改时，任何冲突都阻止整次应用，不默默覆盖。项目内 `.agents/config/*.local.json`、飞书文档登记、`.work/`、`sources/`、`outputs/` 和已有飞书资源不在升级器托管范围内。升级文件时先做本地备份和写前日志；中断后运行同脚本 `--project <目录> --recover`，核对后完成或回滚。
 
