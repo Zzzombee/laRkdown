@@ -1,12 +1,12 @@
 {
   "managed_files": {
     ".agents/config/feishu.example.json": "62fac7918e48e8d182591fab96acc23252b0d367c5d43dd9db22b92938daca79",
-    ".agents/config/legacy-release-baselines.json": "0b0ca28b41b554fa2c1e4f27befb26214d49ebd216e47f4e2b6a615e959896d8",
+    ".agents/config/legacy-release-baselines.json": "e9e81d9220b42c6f2ca8ee6b7d96040f78b87a6ba4511592311b86dd11656ccd",
     ".agents/config/official-sources.json": "5800a2804be050bed786cf19e179c72bb95ec5a5e43b5ff14695aa812096d67b",
     ".agents/config/project-layout.json": "9c867fbe6899c76945a415a50897bfb84fbc00f9d067d1c11f2b1aef3566495e",
-    ".agents/config/upstream.json": "7148c454a995cef04faa83088bf2554a613d04c7cdca07daff35779060f21d41",
+    ".agents/config/upstream.json": "42dbc0f8c69c7fd4451fab630ee409fe63250e18568f7d40e98e9bffb170d50a",
     ".agents/instructions/feishu-workflow.md": "ab515c2c9392142a5b9c86f5ed7ed397750832ad12f3b8c376b470211942d298",
-    ".agents/instructions/project-layout.md": "cce57f0a2cb761197f6297802333bade489721fe973500baf07d9a6c9ac9c80c",
+    ".agents/instructions/project-layout.md": "63100e31a9ff710998e2a20c7443f9467dbceb02bed35c433f7359216bef9220",
     ".agents/instructions/story-policy.md": "d330c2969f61071f2dc6b9d9705d5e1f805b930d225102c69507564b3f97f7c5",
     ".agents/skills/academic-writing-editor/LICENSE": "a5c9e79aea3eb4e5375a440f490d0da6e1a9a59c9e843be797bd48ca57774fc4",
     ".agents/skills/academic-writing-editor/SKILL.md": "650742c1acb8f19d31b15707bd7d99e2fcd6aa14cd7dd01ce3d32d48fb78c623",
@@ -37,9 +37,9 @@
     ".agents/skills/research-docs-to-base/references/mapping.md": "4c6275aafa959d3be2659509aaa4c0bfc3c2eb85c7189638d96d02741c8862eb",
     ".agents/skills/research-docs-to-base/references/operations.md": "cf69a1c287cfbc4cf37afbe678066dd245b8fc0e3f41101af2ce167171fe2626",
     ".agents/skills/research-docs-to-base/scripts/research_base.py": "c2c42c99618affcfb9b71776c1efbfd551feb2ed031374e30260a5a9d4bafc8c",
-    ".agents/skills/upgrade-larkdown/SKILL.md": "d06e82b36b9ffc9bdf8ab28850c31aade9cc270c414e0429553d81a43e065e9d",
-    "AGENTS.md": "6197cc7e1e92791dae7e0ffcd600c09daa004fb16a0321217aa71ca2cf42bed1",
-    "UPGRADING.md": "ffe3d6a016888c923776eb7d2d2826883dc536924cac96da5a9264d73481cef8",
+    ".agents/skills/upgrade-larkdown/SKILL.md": "2830aa05da3ccd2cf3b0a301b499f02b768d9f49037ebfde30c686f6666171c3",
+    "AGENTS.md": "1161c54acce3c7c817f75a7daafda7a907a63e392b0168a900dd8a04faec77c6",
+    "UPGRADING.md": "e0fd98d4bf579a223955acdee5d9177beb2f940a4e46992e70dff38213ee69f2",
     "requirements.txt": "78bf116f3d08d939e1754704663b20ab1decb817be244a635ac94ce2c87e2e16",
     "upgrade_larkdown.py": "0d1b971e1ade2fd5e7d833fcfc43231586580fc383ea08e1e1bc87eda2bb1ca2"
   },
@@ -51,7 +51,8 @@
     "0.2.0",
     "0.2.1",
     "0.2.2",
-    "0.2.3"
+    "0.2.3",
+    "0.2.4"
   ],
-  "version": "0.2.4"
+  "version": "0.2.5"
 }

@@ -12,23 +12,33 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from upgrade_larkdown import LEGACY, MANIFEST, Release, encoded, sha
+from upgrade_larkdown import LEGACY, MANIFEST, PUBLIC_CONFIG, Release, encoded, sha
 
 BOOTSTRAP_TAGS = ('v0.1.0', 'v0.2.0')
 EXACT = {'AGENTS.md', 'UPGRADING.md', 'requirements.txt', 'upgrade_larkdown.py'}
-ROOTS = ('.agents/instructions/', '.agents/skills/', '.agents/config/')
-PRIVATE = {'feishu.json', 'feishu-documents.json', 'release-manifest.json'}
+RUNTIME_ROOTS = ('.agents/instructions/', '.agents/skills/')
+PACKAGE_EXACT = EXACT | {'README.md', MANIFEST}
 PRIVATE_ROOTS = ('outputs/', 'sources/', '.work/', '.planning/')
 
 
 def managed(name):
     if name in EXACT:
         return True
-    if not name.startswith(ROOTS):
-        return False
     parts = Path(name).parts
-    return (parts[-1] not in PRIVATE and not parts[-1].endswith('.local.json')
-            and '__pycache__' not in parts and not name.endswith(('.pyc', '.pyo')))
+    if '__pycache__' in parts or name.endswith(('.pyc', '.pyo')):
+        return False
+    if name.startswith('.agents/config/'):
+        return len(parts) == 3 and parts[-1] in PUBLIC_CONFIG
+    return name.startswith(RUNTIME_ROOTS) and not parts[-1].endswith('.local.json')
+
+
+def package_files(files):
+    """Select only the runtime product, not repository or publisher resources."""
+    selected = {name: blob for name, blob in files.items() if managed(name) or name in PACKAGE_EXACT}
+    missing = PACKAGE_EXACT - selected.keys()
+    if missing:
+        raise ValueError(f'Release package is missing required files: {sorted(missing)}')
+    return selected
 
 
 def git(*args):
@@ -146,7 +156,7 @@ def build(output: Path):
         raise ValueError('Commit all public release changes before creating a ZIP')
     output.parent.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(output, 'w', compression=zipfile.ZIP_DEFLATED) as archive:
-        for name, blob in sorted(committed_files('HEAD').items()):
+        for name, blob in sorted(package_files(committed_files('HEAD')).items()):
             archive.writestr('laRkdown/' + name, blob)
     release = Release(output)
     if release.manifest['version'] != result['version']:

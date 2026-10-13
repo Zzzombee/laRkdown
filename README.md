@@ -4,7 +4,7 @@
 
 在能够访问本地文件并运行命令的豆包工作任务中，复制发送：
 
-> 请按照 https://github.com/Zzzombee/laRkdown 的 README，将 laRkdown 安装到当前本地工作目录，导入六个科研技能并配置 Python 和官方飞书 CLI，引导我完成飞书用户授权，验收环境后告诉我如何开始使用。
+> 请按照 https://github.com/Zzzombee/laRkdown 的 README 安装 laRkdown。先确认豆包当前打开的项目根目录；让 `.agents/skills/` 直接位于该根目录，不能只位于其 `laRkdown/` 子目录。确认六个技能被自动识别后，配置 Python 和官方飞书 CLI，引导我完成飞书用户授权并验收环境。
 
 也可在这句话末尾补充目标文件夹路径。用户只需提供必要的目录或项目信息，并亲自完成账户授权；下面的安装与检查由豆包执行。
 
@@ -18,18 +18,18 @@ laRkdown 是面向 **豆包工作 + 飞书原生文档 + Python** 的科研进�
 
 ## 给豆包工作的安装指引
 
-按顺序执行，完成已具备条件的部分。当前客户端的权限和工具可用性决定是否能自动导入技能；不声称尚未完成的安装或图片读取已经成功。
+按顺序执行，完成已具备条件的部分。**豆包当前打开的项目根目录必须直接包含 `.agents/skills/`。** 已在豆包工作中实测：打开内层 `laRkdown/` 作为项目时可自动识别技能；只打开其外层文件夹时，内层技能不会被发现。不声称尚未完成的安装或图片读取已经成功。
 
 ### 1. 下载并确定工作目录
 
-- 使用用户指定的本地文件夹；未指定时，使用当前明确的本地工作目录下 `laRkdown/`。工作目录无法确定时只询问目标路径。
-- 优先 `git clone https://github.com/Zzzombee/laRkdown.git`。没有 Git 时，从 [v0.2.4 Release](https://github.com/Zzzombee/laRkdown/releases/tag/v0.2.4) 下载 `laRkdown-v0.2.4.zip`，解压后定位含 README.md、AGENTS.md、requirements.txt 与 `.agents/` 的目录。
+- 先确认豆包当前打开的项目根目录 `P`。若下载到 `P/laRkdown/`，须将 **`P/laRkdown/` 重新作为豆包项目打开**；若必须保留 `P` 为项目根目录，则仅在检查文件冲突后，把发行包内容放到 `P/` 根目录。不能仅凭终端当前目录推断豆包打开的项目根目录。
+- 从 [最新 Release](https://github.com/Zzzombee/laRkdown/releases/latest) 下载 `laRkdown-v<版本>.zip`，解压后定位含 README.md、AGENTS.md、requirements.txt 与 `.agents/` 的目录，并在豆包中打开**这个目录本身**。这是给同事使用的精简产品包；仓库克隆还包含发布工作流、构建工具和测试文件。未指定路径时可在当前明确的本地工作目录下创建 `laRkdown/`，然后将它作为豆包项目打开。
 - 同名目录已存在时先检查并复用正确版本，不覆盖既有科研资料、文档登记或本机配置。保留 `.agents/` 的名称与层级。
-- 在该目录读取 AGENTS.md、目录合同和飞书工作流。该目录是后续脚本与配置的工作根目录，技能平台的托管目录不是项目根目录。
+- 在实际打开的项目根目录读取 AGENTS.md、目录合同和飞书工作流。该目录也是后续脚本与配置的工作根目录。
 
-### 2. 导入六个科研技能
+### 2. 检查六个科研技能
 
-通过当前豆包工作提供的自定义技能/本地导入入口，分别导入以下完整文件夹，保留 SKILL.md 及其 references、scripts 和许可文件：
+在**豆包当前打开的项目根目录**检查以下六个完整文件夹，保留 SKILL.md 及其 references、scripts 和许可文件：
 
 ```text
 .agents/skills/academic-writing-editor/
@@ -40,9 +40,9 @@ laRkdown 是面向 **豆包工作 + 飞书原生文档 + Python** 的科研进�
 .agents/skills/upgrade-larkdown/
 ```
 
-若当前工具能操作导入界面，完成导入并核对技能名称；界面必须由用户操作时，给出上述本地完整路径与必要点击步骤。平台将技能复制到托管目录后，仍从研究工作根目录定位共享规则和脚本。不要猜测豆包私有技能目录或注册协议，不把复制文件当作平台导入成功。
+六个 `SKILL.md` 都须存在于项目根目录直接下属的 `.agents/skills/` 中。若只存在于 `P/laRkdown/.agents/skills/`，先按第 1 步改为打开内层目录，或安全地将内容放到 `P/`；这是项目根目录错位，不能据此判断必须手动导入。不要覆盖同名的用户文件。
 
-确认六个技能可选或可加载。平台要求刷新或重开任务时按实际提示操作；新任务再次明确工作目录并读取 AGENTS.md。在不能导入的环境，可显式读取项目中对应 SKILL.md 试运行，但须标明尚未完成平台注册。
+根目录正确后刷新或重开豆包项目，确认六个技能可选或可加载。只有根目录正确而仍未识别时，才使用当前豆包工作提供的自定义技能/本地导入入口；若界面必须由用户操作，再给出完整路径与必要点击步骤。不要猜测豆包私有技能目录或注册协议，也不要把文件已解压当作技能已识别。在无法自动识别或导入的环境，可显式读取对应 SKILL.md 试运行，并如实标明技能注册状态。
 
 ### 3. 配置 Python 与飞书 CLI
 
@@ -78,7 +78,8 @@ lark-cli skills read lark-doc
 
 ### 5. 验收并交付配置结果
 
-- 用项目环境运行 `python -m unittest discover -s tests -v`（将 python 替换为实际 `.venv` Python）。
+- 用项目环境运行 `python upgrade_larkdown.py --help`，确认升级入口可执行；按本机环境检查六个技能所需的 Python 依赖。
+- 复核豆包实际打开的项目根目录直接包含 `.agents/skills/` 和六个 `SKILL.md`，并在豆包界面确认六个技能已识别；两项都通过才能报告“技能安装完成”。
 - 运行 `python .agents/skills/maintain-research-state/scripts/feishu_bridge.py --root . preflight`，确认用户身份可用；不要打印认证密钥。
 - 创建一篇简短的飞书原生“laRkdown 安装验收”文档并回读，确认正文和真实 URL。保留同一文档，失败时修复它，避免重复创建；不自动改共享权限或发送消息。
 - PPTX 功能另检查 Windows、PowerShell、桌面 PowerPoint 与当前豆包视觉工具。缺少条件时标明“PPTX 图片完整导入待配置”，先交付其他功能的配置结果。
@@ -114,7 +115,7 @@ python <新包目录>/upgrade_larkdown.py --project <已有科研项目目录> -
 python <新包目录>/upgrade_larkdown.py --project <已有科研项目目录> --package <新包ZIP> --apply
 ```
 
-已有升级器的项目也可使用 `--latest`，读取 GitHub 最新公开 Release 并校验资产 SHA256；API 限流时使用公开校验附件。v0.1.0/v0.2.0 项目没有升级器，首次从下载的新包执行。升级器更新发行版托管文件，保留项目本机配置、飞书文档登记、科研资料和多维表格同步基线。AGENTS.md 中不重叠的用户增补会合并；重叠编辑及其他被修改的托管文件列为冲突，不自动覆盖。中断时运行 `--recover`。更新后按豆包客户端实际入口刷新或重新导入技能。详细规则见 [UPGRADING.md](UPGRADING.md)。
+已有升级器的项目也可使用 `--latest`，读取 GitHub 最新公开 Release 并校验资产 SHA256；API 限流时使用公开校验附件。v0.1.0/v0.2.0 项目没有升级器，首次从下载的新包执行。升级器更新发行版托管文件，保留项目本机配置、飞书文档登记、科研资料和多维表格同步基线。AGENTS.md 中不重叠的用户增补会合并；重叠编辑及其他被修改的托管文件列为冲突，不自动覆盖。中断时运行 `--recover`。更新后确认豆包实际打开的项目根目录直接包含 `.agents/skills/`，刷新项目并检查六个技能；根目录正确但仍未识别时再按客户端入口导入。详细规则见 [UPGRADING.md](UPGRADING.md)。
 
 ## 科研文档转多维表格
 
@@ -142,8 +143,6 @@ PPTX 的结构提取、原图保留、整页渲染和实际视觉核验分开记
 
 ## 来源与验证
 
-当前版本为 laRkdown v0.2.4，包含已初始化项目的升级器、跨平台发布校验、API 限流回退和检查通过后的自动发布；v0.2.0 引入 research-docs-to-base 原生扩展。上游引用版本见“项目概述”；官方资料、核验日期和能力边界见 [official-sources.json](.agents/config/official-sources.json)。公开源码与 Release 不包含实验数据、账户凭证、飞书资源登记和本机快照。
+当前版本为 laRkdown v0.2.5，修正豆包项目根目录与技能自动发现的安装指引；v0.2.4 包含已初始化项目的升级器、跨平台发布校验、API 限流回退和检查通过后的自动发布；v0.2.0 引入 research-docs-to-base 原生扩展。上游引用版本见“项目概述”；官方资料、核验日期和能力边界见 [official-sources.json](.agents/config/official-sources.json)。公开源码与 Release 不包含实验数据、账户凭证、飞书资源登记和本机快照。
 
 CLI 用法按本机 1.0.97 的官方内嵌技能核验，运行时以当前 `lark-cli --help` 与 `lark-cli skills read` 为准。学术编辑技能保留其第三方 MIT LICENSE；不将该许可推定为其他文件的统一许可。
-
-开发检查：`python -m unittest discover -s tests -v`。检查实际行为与关键失败分支，不能替代豆包客户端验收。

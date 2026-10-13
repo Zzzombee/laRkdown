@@ -236,6 +236,56 @@
         "AGENTS.md": "# laRkdown\n\n独立科研工具项目：豆包工作 + 飞书原生文档 + Python。维护四个上游适配技能及两个 laRkdown 原生扩展，共六个技能。上游版本与逐文件来源记录在 `.agents/config/upstream.json`，不修改 maRkdown 或其原科研项目。\n\n创建或移动文件前读取 `.agents/instructions/project-layout.md`，按 `.agents/config/project-layout.json` 执行。正式本地产物唯一根目录为 `outputs/`；飞书文档是科研记录和用户交付的默认载体，本地 XML/JSON 是工作稿、读取快照与校验记录。\n\n## 科研事实与范围\n\n用户的只读问答不写科研记录。先按稳定 ID、标题和关键词定位，再读取直接相关条目；纯工具维护不读取科研状态。OBS 只记直接观察，CON 链接 OBS 并标注证据等级，HYP 保持未验证解释。保留阴性、矛盾、不显著与缺失信息，不猜测关键参数。\n\nCURRENT_STATE 对应的飞书文档是事实权威；RESEARCH_QUESTIONS 管问题与优先级；PROJECT_STORY 管目标叙事；指定 RQ 的 SOL 管候选路线。稳定研究 ID 不改号、不复用。可靠新结果先更新 CURRENT_STATE，后续文档仅在受影响时更新。路线变化只在明确授权时执行。\n\n## 六个技能\n\n- 学术正文起草、改写、翻译、润色、审阅：`.agents/skills/academic-writing-editor/SKILL.md`。审阅只报告问题；其他流程先处理事实与结构再编辑。\n- 空白科研初始化和研究条目结构维护：`.agents/skills/maintain-research-state/SKILL.md`。已有科研状态不重新初始化。\n- 指定实验 PPTX 导入：`.agents/skills/pptx-to-research-state/SKILL.md`。结构与视觉两条路径均完成后才录入事实。\n- 外部学术文献：`.agents/skills/literature-source-gate/SKILL.md`。指定文献与自主检索分别执行来源政策；工具官方文档不触发学术指标门槛。\n- 三篇飞书科研文档构建/同步多维表格：`.agents/skills/research-docs-to-base/SKILL.md`。六表是派生协作视图，源文档仍为事实权威；保护 AI/人工字段，缺失条目归档不删，不回写源文档。\n- 已初始化项目的版本升级：`.agents/skills/upgrade-larkdown/SKILL.md`。从新版完整发行包运行 `upgrade_larkdown.py`，先预览冲突；保留科研资料、本机配置、飞书文档和多维表格同步基线。\n\n## 飞书操作\n\n默认使用官方 `lark-cli`，优先 `docs +fetch/+create/+update`，默认 `--as user`。先读 `.agents/instructions/feishu-workflow.md`，再查当前 CLI 内嵌的官方技能或 `--help`；不凭旧教程猜参数。文档采用飞书 DocxXML 原生块，交付实际返回的飞书 URL。原生 Markdown 云盘文件不是默认交付。\n\n飞书记录每次修改前读取最新正文、版本及当前 block ID。保护人类编辑、评论、图片和附件；优先局部补丁，不自动整篇覆盖。`ok=true`、warnings 检查和写后回读共同构成完成条件。创建结果不确定时停止重复创建并查证已创建的文档。\n\n飞书文档是唯一正式科研记录，本地快照不作为独立事实层。研究 ID 与飞书 block ID 分开：前者永久，后者在结构修改后重新查询。关联条目使用真实飞书文档/块链接；不使用双括号链接、行尾锚点、专有笔记属性或自动反向链接。\n\n缺失 CLI、权限、渲染器或视觉入口只阻塞相关部分。不得宣称豆包已经看过未实际加载的图片；不得用标题或 OCR 代替图形证据。当前环境的能力检查优先于产品宣传。\n\n## 工具项目开发\n\n只改用户指定范围。保留第三方 LICENSE。修改可执行脚本后做对应行为检查；没有科研条目变更时不运行真实科研状态审计。文档中引用官方来源并记录核验日期，推断与未实测能力分开。\n\n## 每个发行版本的升级合同\n\n未来每个公开 Release 必须携带 `upgrade_larkdown.py`、`upgrade-larkdown` 技能、`.agents/config/release-manifest.json`、旧版基线和 [UPGRADING.md](UPGRADING.md)。发布前运行 `tools/build_release.py --check` 与项目测试；打包只使用该脚本的 `--build`，核验 ZIP 及同名 `.sha256` 附件后再建不可变版本 tag/Release。不能为方便发布删除升级器或跳过冲突/恢复检查。科研项目结构版本变化时先实现并验证迁移，否则发布检查必须失败。发行版本与 maRkdown 的引用版本分别记录。\n"
       },
       "project_schema_version": 1
+    },
+    "0.2.4": {
+      "managed_files": {
+        ".agents/config/feishu.example.json": "62fac7918e48e8d182591fab96acc23252b0d367c5d43dd9db22b92938daca79",
+        ".agents/config/legacy-release-baselines.json": "0b0ca28b41b554fa2c1e4f27befb26214d49ebd216e47f4e2b6a615e959896d8",
+        ".agents/config/official-sources.json": "5800a2804be050bed786cf19e179c72bb95ec5a5e43b5ff14695aa812096d67b",
+        ".agents/config/project-layout.json": "9c867fbe6899c76945a415a50897bfb84fbc00f9d067d1c11f2b1aef3566495e",
+        ".agents/config/upstream.json": "7148c454a995cef04faa83088bf2554a613d04c7cdca07daff35779060f21d41",
+        ".agents/instructions/feishu-workflow.md": "ab515c2c9392142a5b9c86f5ed7ed397750832ad12f3b8c376b470211942d298",
+        ".agents/instructions/project-layout.md": "cce57f0a2cb761197f6297802333bade489721fe973500baf07d9a6c9ac9c80c",
+        ".agents/instructions/story-policy.md": "d330c2969f61071f2dc6b9d9705d5e1f805b930d225102c69507564b3f97f7c5",
+        ".agents/skills/academic-writing-editor/LICENSE": "a5c9e79aea3eb4e5375a440f490d0da6e1a9a59c9e843be797bd48ca57774fc4",
+        ".agents/skills/academic-writing-editor/SKILL.md": "650742c1acb8f19d31b15707bd7d99e2fcd6aa14cd7dd01ce3d32d48fb78c623",
+        ".agents/skills/literature-source-gate/SKILL.md": "8e991d245394d6be6a0123dd662a40efd7d124a24f43e99d05b82acf2e6e1287",
+        ".agents/skills/literature-source-gate/references/designated-sources.md": "0090d7bc108e5f0d9763002960d342aeb9a7749f072c7a5f0eaff044cf69d481",
+        ".agents/skills/literature-source-gate/references/normal-screening.md": "d0b019e2d3f215cffe0fa469954008c24eac327337e4151c6f12ee6befed40dc",
+        ".agents/skills/literature-source-gate/references/screening-policy.md": "4ef2528df38e399ab4a83329f06719d366472ae23eeb48ef746c9d93dffdb207",
+        ".agents/skills/maintain-research-state/SKILL.md": "565dcf7287d581e95728eec97855a499c5d88c340fbf99b8b17f23a91fac9697",
+        ".agents/skills/maintain-research-state/references/initialization.md": "a29ade0f9ad570e4c7a0a6e3a8e75c1552c81d68e6e2c258cd07b620f308371f",
+        ".agents/skills/maintain-research-state/references/state-schema.md": "d847083eb3b4c4dfb5bfb8c2d2d8b5912c5200fce9897d690b416ca692045e8c",
+        ".agents/skills/maintain-research-state/scripts/feishu_bridge.py": "332bad33abbfe0c1090ef1f6f4307d11c7e359fa68088e3c7f10a9def9daf209",
+        ".agents/skills/maintain-research-state/scripts/initialize_project.py": "bf35771fea34e5c2f99870bfa4696167e107475b58ba892351bdd900dfc892e2",
+        ".agents/skills/maintain-research-state/scripts/validate_state.py": "040ab66c0f032b73b6d8cc46851897d6ac3b57499ff2d4a97e07f5e1dd92a978",
+        ".agents/skills/pptx-to-research-state/SKILL.md": "116615d916c2db078c5c6ba7df8a42065b9e370872c070ba4fac0d1219f2f7c0",
+        ".agents/skills/pptx-to-research-state/references/incremental-update.md": "03947d8e86b9d51b9772195d9a48e2c2785ae8f984aa9b7a7b4cb5f9bcfc1623",
+        ".agents/skills/pptx-to-research-state/references/initialization.md": "8952f0567383288cb78e22b0443bad8f616df930ea034d83bec2cbc251fd5ae0",
+        ".agents/skills/pptx-to-research-state/references/pptx-evidence.md": "bc431f5a5f089c950eede896ea066ec5d89e4a37d8c4407733ca21b21b0ff334",
+        ".agents/skills/pptx-to-research-state/references/solution-workflow.md": "00cbeeb4d8a12e31dd0ec4c1dbd82edb23705310d23a8d4465ddebeb52191b05",
+        ".agents/skills/pptx-to-research-state/references/story-workflow.md": "f86f21cd40bef260c9bc6cd363479f4df3051cbd375187dceb86ccc5f0b7b72b",
+        ".agents/skills/pptx-to-research-state/scripts/extract_pptx.py": "e58b5e8f8f472ebfb2e3aea542be5af0c0fc50095f7bfec313f3219ae1bf190c",
+        ".agents/skills/pptx-to-research-state/scripts/make_contact_sheet.py": "3611e0b3d4e212a1a259508e5ad639a55f8c0bb47fb60587a4b82b1fae733e41",
+        ".agents/skills/pptx-to-research-state/scripts/preflight.py": "120c8620d2b5577420890c3f03392c0312e245de6e7b33f26f599e48eb3d7e0b",
+        ".agents/skills/pptx-to-research-state/scripts/prepare_media_preview.py": "3ecae0fb153d0bbd8f5895986927c1fada0dd5039252ca2c2698c8c96e747d86",
+        ".agents/skills/pptx-to-research-state/scripts/render_pptx.ps1": "98377862f9f58b12b3d6eac31740129f7e668a30ee0b0dc2446fd0e52ca004be",
+        ".agents/skills/pptx-to-research-state/scripts/validate_extraction.py": "40520db8ec3fc28141cedf8e7a40b550c52574f2c1425ccc61265fb69a298d71",
+        ".agents/skills/research-docs-to-base/SKILL.md": "0a76cd87b3b9704c35a6677505515e38c40bb933f21feed1aea15e4d13028521",
+        ".agents/skills/research-docs-to-base/assets/research-base.example.json": "0852d20e8f42d676cdab8c047e89ccc1e169a1397403cf05f955d4637151683c",
+        ".agents/skills/research-docs-to-base/references/mapping.md": "4c6275aafa959d3be2659509aaa4c0bfc3c2eb85c7189638d96d02741c8862eb",
+        ".agents/skills/research-docs-to-base/references/operations.md": "cf69a1c287cfbc4cf37afbe678066dd245b8fc0e3f41101af2ce167171fe2626",
+        ".agents/skills/research-docs-to-base/scripts/research_base.py": "c2c42c99618affcfb9b71776c1efbfd551feb2ed031374e30260a5a9d4bafc8c",
+        ".agents/skills/upgrade-larkdown/SKILL.md": "d06e82b36b9ffc9bdf8ab28850c31aade9cc270c414e0429553d81a43e065e9d",
+        "AGENTS.md": "6197cc7e1e92791dae7e0ffcd600c09daa004fb16a0321217aa71ca2cf42bed1",
+        "UPGRADING.md": "ffe3d6a016888c923776eb7d2d2826883dc536924cac96da5a9264d73481cef8",
+        "requirements.txt": "78bf116f3d08d939e1754704663b20ab1decb817be244a635ac94ce2c87e2e16",
+        "upgrade_larkdown.py": "0d1b971e1ade2fd5e7d833fcfc43231586580fc383ea08e1e1bc87eda2bb1ca2"
+      },
+      "merge_base": {
+        "AGENTS.md": "# laRkdown\n\n独立科研工具项目：豆包工作 + 飞书原生文档 + Python。维护四个上游适配技能及两个 laRkdown 原生扩展，共六个技能。上游版本与逐文件来源记录在 `.agents/config/upstream.json`，不修改 maRkdown 或其原科研项目。\n\n创建或移动文件前读取 `.agents/instructions/project-layout.md`，按 `.agents/config/project-layout.json` 执行。正式本地产物唯一根目录为 `outputs/`；飞书文档是科研记录和用户交付的默认载体，本地 XML/JSON 是工作稿、读取快照与校验记录。\n\n## 科研事实与范围\n\n用户的只读问答不写科研记录。先按稳定 ID、标题和关键词定位，再读取直接相关条目；纯工具维护不读取科研状态。OBS 只记直接观察，CON 链接 OBS 并标注证据等级，HYP 保持未验证解释。保留阴性、矛盾、不显著与缺失信息，不猜测关键参数。\n\nCURRENT_STATE 对应的飞书文档是事实权威；RESEARCH_QUESTIONS 管问题与优先级；PROJECT_STORY 管目标叙事；指定 RQ 的 SOL 管候选路线。稳定研究 ID 不改号、不复用。可靠新结果先更新 CURRENT_STATE，后续文档仅在受影响时更新。路线变化只在明确授权时执行。\n\n## 六个技能\n\n- 学术正文起草、改写、翻译、润色、审阅：`.agents/skills/academic-writing-editor/SKILL.md`。审阅只报告问题；其他流程先处理事实与结构再编辑。\n- 空白科研初始化和研究条目结构维护：`.agents/skills/maintain-research-state/SKILL.md`。已有科研状态不重新初始化。\n- 指定实验 PPTX 导入：`.agents/skills/pptx-to-research-state/SKILL.md`。结构与视觉两条路径均完成后才录入事实。\n- 外部学术文献：`.agents/skills/literature-source-gate/SKILL.md`。指定文献与自主检索分别执行来源政策；工具官方文档不触发学术指标门槛。\n- 三篇飞书科研文档构建/同步多维表格：`.agents/skills/research-docs-to-base/SKILL.md`。六表是派生协作视图，源文档仍为事实权威；保护 AI/人工字段，缺失条目归档不删，不回写源文档。\n- 已初始化项目的版本升级：`.agents/skills/upgrade-larkdown/SKILL.md`。从新版完整发行包运行 `upgrade_larkdown.py`，先预览冲突；保留科研资料、本机配置、飞书文档和多维表格同步基线。\n\n## 飞书操作\n\n默认使用官方 `lark-cli`，优先 `docs +fetch/+create/+update`，默认 `--as user`。先读 `.agents/instructions/feishu-workflow.md`，再查当前 CLI 内嵌的官方技能或 `--help`；不凭旧教程猜参数。文档采用飞书 DocxXML 原生块，交付实际返回的飞书 URL。原生 Markdown 云盘文件不是默认交付。\n\n飞书记录每次修改前读取最新正文、版本及当前 block ID。保护人类编辑、评论、图片和附件；优先局部补丁，不自动整篇覆盖。`ok=true`、warnings 检查和写后回读共同构成完成条件。创建结果不确定时停止重复创建并查证已创建的文档。\n\n飞书文档是唯一正式科研记录，本地快照不作为独立事实层。研究 ID 与飞书 block ID 分开：前者永久，后者在结构修改后重新查询。关联条目使用真实飞书文档/块链接；不使用双括号链接、行尾锚点、专有笔记属性或自动反向链接。\n\n缺失 CLI、权限、渲染器或视觉入口只阻塞相关部分。不得宣称豆包已经看过未实际加载的图片；不得用标题或 OCR 代替图形证据。当前环境的能力检查优先于产品宣传。\n\n## 工具项目开发\n\n只改用户指定范围。保留第三方 LICENSE。修改可执行脚本后做对应行为检查；没有科研条目变更时不运行真实科研状态审计。文档中引用官方来源并记录核验日期，推断与未实测能力分开。\n\n## 每个发行版本的升级合同\n\n未来每个公开 Release 必须携带 `upgrade_larkdown.py`、`upgrade-larkdown` 技能、`.agents/config/release-manifest.json`、旧版基线和 [UPGRADING.md](UPGRADING.md)。发布前运行 `tools/build_release.py --check` 与项目测试；打包只使用该脚本的 `--build`。推送版本 tag 后，由 `.github/workflows/release-contract.yml` 在全部检查通过后自动创建 Release 并上传 ZIP 与同名 `.sha256` 附件；不要绕过该流程手工创建 Release。不能为方便发布删除升级器或跳过冲突/恢复检查。科研项目结构版本变化时先实现并验证迁移，否则发布检查必须失败。发行版本与 maRkdown 的引用版本分别记录。\n"
+      },
+      "project_schema_version": 1
     }
   },
   "schema_version": 1
