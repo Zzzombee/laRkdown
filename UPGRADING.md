@@ -15,4 +15,4 @@ v0.1.0/v0.2.0 没有 `release-manifest.json`。升级器通过项目 `.agents/co
 
 升级器在 `.work/upgrades/` 保存改动前副本和 `pending.json`。正常失败会校验并回滚本地托管文件；进程中断时运行 `python <新包目录>/upgrade_larkdown.py --project <已有项目目录> --recover`。如文件已被他人改动，恢复会停止并保留日志，避免覆盖新修改。该目录属于用户项目，应随项目备份，不进入公开 ZIP。
 
-成功后 `.agents/config/release-manifest.json` 记录当前安装发行版本和受托管文件哈希。根目录 `USER_GUIDE.md` 也属于托管文档，升级时补装或更新为目标版本的使用指南；用户已有同名文件或修改与新版冲突时停止并报告。以后升级直接以这份清单比较用户改动；缺失的研究资料不会被“补齐”或删除。发行版只声明它实际支持的旧版本；无法跨越的版本先逐版升级。
+成功后 `.agents/config/release-manifest.json` 记录当前安装发行版本和受托管文件哈希。随包的 `.agents/instructions/version-notes.md` 更新为目标版本说明，供豆包在对话中解释变化；仓库使用指南 `USER_GUIDE.md` 不进入产品 ZIP 或升级托管清单。以后升级直接以这份清单比较用户改动；缺失的研究资料不会被“补齐”或删除。发行版只声明它实际支持的旧版本；无法跨越的版本先逐版升级。

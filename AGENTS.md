@@ -35,6 +35,12 @@ laRkdown 使用豆包工作、飞书知识库和 Python 管理科研进度。六
 - “根据这次新结果修订知识库文档《项目故事》，保留当前证据边界。”
 - “把三篇知识库文档构建为知识库多维表格”；建好后可说“同步知识库多维表格”。
 
+## 版本与使用帮助
+
+豆包工作是用户的产品交互入口。安装后的用法、版本变化和下一步操作直接在对话中说明，不要求用户查阅项目内部文件或访问 GitHub。
+
+用户问“我安装的是哪个版本”“这个版本更新了什么”时，读取当前项目 `.agents/config/upstream.json` 的 laRkdown 版本及 `.agents/instructions/version-notes.md`，有发行清单时核对其版本一致。更新记录从高于 v0.2.5 的发行版本开始，v0.2.5 及更早版本不追溯补写。按说明给出主要变化和可直接使用的提问示例；仅解释本地说明已覆盖的版本差异，不从当前技能反推新增功能，不将仓库 main 或最新 Release 当作已安装版本。说明缺失或版本不一致时明确无法确认相应变化。只读帮助不触发初始化、科研记录写入或升级；用法询问按前述规则优先引导即时实验记录。
+
 ## 飞书操作
 
 使用官方 `lark-cli --as user`。空白初始化在同名知识空间创建“项目现状”“项目故事”“研究问题”；日常读写使用 Docs 命令。具体操作读 `.agents/instructions/feishu-workflow.md` 和当前 CLI 帮助，交付真实飞书 URL。
@@ -47,4 +53,4 @@ laRkdown 使用豆包工作、飞书知识库和 Python 管理科研进度。六
 
 ## 发布维护
 
-根目录 [USER_GUIDE.md](USER_GUIDE.md) 是正式使用指南，纳入 Git、发行 ZIP 与升级托管清单。每次发布新版本前必须根据实际功能更新指南正文、适用版本、发布页和下载链接，并与 README.md 保持一致。按 [仓库发布规范](https://github.com/Zzzombee/laRkdown/blob/main/tools/RELEASING.md) 完成发行清单准备、测试与发布检查；检查通过后才可推送版本 tag。
+仓库根目录的 [USER_GUIDE.md](https://github.com/Zzzombee/laRkdown/blob/main/USER_GUIDE.md) 是部署前介绍与发版沟通使用的正式指南，纳入 Git，不进入产品 ZIP 或升级托管清单。每次发布新版本前根据实际功能更新指南正文、适用版本、发布页和下载链接，并与 README.md 保持一致。同时更新随包交付的 `.agents/instructions/version-notes.md`，说明相较上一版的变化、用法和必要的能力边界，供豆包回答并用于 Release 正文。按 [仓库发布规范](https://github.com/Zzzombee/laRkdown/blob/main/tools/RELEASING.md) 完成发行清单准备、测试与发布检查；检查通过后才可推送版本 tag。

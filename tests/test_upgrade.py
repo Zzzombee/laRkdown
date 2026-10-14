@@ -82,7 +82,9 @@ class UpgradeTests(unittest.TestCase):
         self.assertEqual(json.loads((user / up.MANIFEST).read_text(encoding='utf-8'))['version'], release.manifest['version'])
         self.assertTrue((user / '.agents/skills/upgrade-larkdown/SKILL.md').is_file())
         self.assertTrue((user / 'upgrade_larkdown.py').is_file())
-        self.assertEqual((user / 'USER_GUIDE.md').read_bytes(), release.files['USER_GUIDE.md'])
+        notes = '.agents/instructions/version-notes.md'
+        self.assertEqual((user / notes).read_bytes(), release.files[notes])
+        self.assertFalse((user / 'USER_GUIDE.md').exists())
         self.assertEqual(before, {name: up.sha((user / name).read_bytes()) for name in private})
         self.assertEqual(up.make_plan(user, release)['operations'], [])
 
@@ -115,14 +117,14 @@ class UpgradeTests(unittest.TestCase):
         (user / 'upgrade_larkdown.py').write_text('my own unrelated script', encoding='utf-8')
         self.assertIn('upgrade_larkdown.py', [x['path'] for x in up.make_plan(user, release)['conflicts']])
 
-    def test_existing_unknown_user_guide_is_preserved_as_a_conflict(self):
+    def test_local_user_guide_is_preserved_outside_upgrade_management(self):
         release, user, _ = self.fixture()
         custom_guide = b'My research project guide\n'
         (user / 'USER_GUIDE.md').write_bytes(custom_guide)
         plan = up.make_plan(user, release)
-        self.assertIn('USER_GUIDE.md', [x['path'] for x in plan['conflicts']])
-        with self.assertRaises(ValueError):
-            up.apply_plan(user, release, plan)
+        self.assertFalse(plan['conflicts'])
+        self.assertNotIn('USER_GUIDE.md', [x['path'] for x in plan['operations']])
+        self.assertTrue(up.apply_plan(user, release, plan)['ok'])
         self.assertEqual((user / 'USER_GUIDE.md').read_bytes(), custom_guide)
 
     def test_controlled_failure_restores_package_files(self):

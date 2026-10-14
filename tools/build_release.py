@@ -16,9 +16,10 @@ from upgrade_larkdown import LEGACY, MANIFEST, PUBLIC_CONFIG, Release, encoded, 
 
 BOOTSTRAP_TAGS = ('v0.1.0', 'v0.2.0')
 USER_GUIDE = 'USER_GUIDE.md'
-EXACT = {'AGENTS.md', USER_GUIDE, 'UPGRADING.md', 'requirements.txt', 'upgrade_larkdown.py'}
+VERSION_NOTES = '.agents/instructions/version-notes.md'
+EXACT = {'AGENTS.md', 'UPGRADING.md', 'requirements.txt', 'upgrade_larkdown.py'}
 RUNTIME_ROOTS = ('.agents/instructions/', '.agents/skills/')
-PACKAGE_EXACT = EXACT | {'README.md', MANIFEST}
+PACKAGE_EXACT = EXACT | {'README.md', MANIFEST, VERSION_NOTES}
 PRIVATE_ROOTS = ('outputs/', 'sources/', '.work/', '.planning/')
 
 
@@ -57,6 +58,17 @@ def check_user_guide(files, version):
     references += re.findall(r'laRkdown-v(\d+\.\d+\.\d+)\.zip', guide)
     if any(reference != version for reference in references):
         raise ValueError('USER_GUIDE.md contains stale laRkdown release links or ZIP filenames')
+
+
+def check_version_notes(files, version):
+    """Keep the installed agent's update explanation tied to the package version."""
+    if VERSION_NOTES not in files:
+        raise ValueError('Stage version-notes.md before checking a release')
+    lines = files[VERSION_NOTES].decode('utf-8-sig').splitlines()
+    if not lines or lines[0] != f'# laRkdown 版本说明（v{version}）':
+        raise ValueError('version-notes.md title is stale; update the notes before release')
+    if not any(line.strip() for line in lines[1:]):
+        raise ValueError('version-notes.md has no release explanation')
 
 
 def git(*args):
@@ -158,7 +170,9 @@ def check():
     if (ROOT / MANIFEST).read_bytes() != expected_manifest:
         raise ValueError('Release manifest is stale; run --prepare')
     info = json.loads(expected_manifest)
-    check_user_guide(current_files(), info['version'])
+    guide = {USER_GUIDE: git('show', ':' + USER_GUIDE)} if USER_GUIDE in tracked else {}
+    check_user_guide(guide, info['version'])
+    check_version_notes(current_files(), info['version'])
     if not {'upgrade_larkdown.py', '.agents/skills/upgrade-larkdown/SKILL.md'} <= info['managed_files'].keys():
         raise ValueError('Automatic upgrader is missing from release-managed files')
     if info['project_schema_version'] != 1:

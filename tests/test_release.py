@@ -21,6 +21,7 @@ class PackageBoundaryTests(unittest.TestCase):
             '.gitignore': b'git configuration',
             'tools/build_release.py': b'build script',
             'tools/RELEASING.md': b'publisher specification',
+            'USER_GUIDE.md': b'reader guide',
             'tests/test_release.py': b'test code',
             '.planning/plan.md': b'private plan',
         }
@@ -37,10 +38,17 @@ class PackageBoundaryTests(unittest.TestCase):
             build_release.package_files({'README.md': b'fixture'})
 
 
-    def test_package_requires_user_guide(self):
-        files = {name: b'fixture' for name in build_release.PACKAGE_EXACT if name != 'USER_GUIDE.md'}
-        with self.assertRaisesRegex(ValueError, 'USER_GUIDE.md'):
+    def test_package_requires_version_notes(self):
+        files = {name: b'fixture' for name in build_release.PACKAGE_EXACT
+                 if name != build_release.VERSION_NOTES}
+        with self.assertRaisesRegex(ValueError, 'version-notes.md'):
             build_release.package_files(files)
+
+    def test_repository_guide_is_not_packaged_or_upgrade_managed(self):
+        self.assertFalse(build_release.managed('USER_GUIDE.md'))
+        files = {name: b'fixture' for name in build_release.PACKAGE_EXACT}
+        files['USER_GUIDE.md'] = b'repository guide'
+        self.assertNotIn('USER_GUIDE.md', build_release.package_files(files))
 
 
 class UserGuideReleaseTests(unittest.TestCase):
@@ -72,6 +80,20 @@ class UserGuideReleaseTests(unittest.TestCase):
                       'laRkdown-v1.2.2.zip'):
             with self.subTest(stale=stale), self.assertRaisesRegex(ValueError, 'stale'):
                 self.check_guide(self.guide() + stale)
+
+
+class VersionNotesReleaseTests(unittest.TestCase):
+    def test_matching_version_notes_are_accepted(self):
+        notes = '# laRkdown 版本说明（v1.2.3）\n\n相较上一版的实际变化。\n'
+        build_release.check_version_notes({build_release.VERSION_NOTES: notes.encode('utf-8')}, '1.2.3')
+
+    def test_missing_stale_or_empty_version_notes_block_release(self):
+        cases = [({}, 'Stage version-notes.md'),
+                 ({build_release.VERSION_NOTES: '# laRkdown 版本说明（v1.2.2）\n旧版内容'.encode('utf-8')}, 'stale'),
+                 ({build_release.VERSION_NOTES: '# laRkdown 版本说明（v1.2.3）\n\n'.encode('utf-8')}, 'no release explanation')]
+        for files, reason in cases:
+            with self.subTest(reason=reason), self.assertRaisesRegex(ValueError, reason):
+                build_release.check_version_notes(files, '1.2.3')
 
 
 if __name__ == '__main__':
