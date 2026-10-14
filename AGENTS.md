@@ -44,3 +44,7 @@ laRkdown 使用豆包工作、飞书知识库和 Python 管理科研进度。六
 研究 ID 永久，飞书 block ID 在结构修改后重新查询。跨条目引用使用真实文档和块链接。
 
 缺少工具或权限只阻塞相关部分。图片证据须实际打开查看，不能仅凭标题或 OCR 判断。
+
+## 发布维护
+
+根目录 [USER_GUIDE.md](USER_GUIDE.md) 是正式使用指南，纳入 Git、发行 ZIP 与升级托管清单。每次发布新版本前必须根据实际功能更新指南正文、适用版本、发布页和下载链接，并与 README.md 保持一致。按 [仓库发布规范](https://github.com/Zzzombee/laRkdown/blob/main/tools/RELEASING.md) 完成发行清单准备、测试与发布检查；检查通过后才可推送版本 tag。

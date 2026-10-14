@@ -192,7 +192,7 @@ class Release:
                 raise ValueError('Private/user-owned path declared as managed')
             if name.startswith('.agents/config/') and PurePosixPath(name).name not in PUBLIC_CONFIG:
                 raise ValueError('Unrecognized config declared as managed')
-            if name not in {'AGENTS.md', 'UPGRADING.md', 'requirements.txt', 'upgrade_larkdown.py'} and not name.startswith(('.agents/config/', '.agents/instructions/', '.agents/skills/')):
+            if name not in {'AGENTS.md', 'USER_GUIDE.md', 'UPGRADING.md', 'requirements.txt', 'upgrade_larkdown.py'} and not name.startswith(('.agents/config/', '.agents/instructions/', '.agents/skills/')):
                 raise ValueError('Path outside the release-managed tool surface')
             if name not in self.files or sha(self.files[name]) != wanted:
                 raise ValueError(f'Release file failed manifest verification: {name}')

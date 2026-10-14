@@ -2,7 +2,7 @@
 
 创建和移动文件前读取本合同；目录清单由 `.agents/config/project-layout.json` 管理。
 
-- 根目录：AGENTS.md、README.md、UPGRADING.md、upgrade_larkdown.py 和依赖清单；不在此维护第二套科研状态正文。
+- 根目录：AGENTS.md、README.md、USER_GUIDE.md、UPGRADING.md、upgrade_larkdown.py 和依赖清单；USER_GUIDE.md 为纳入 Git 并随版本更新的正式使用指南。不在此维护第二套科研状态正文。
 - `.agents/instructions/`：共享规则；`.agents/config/`：版本来源、发行/升级清单、长期配置与本机飞书文档登记；`.agents/skills/`：六个科研技能及资源。
 - 豆包实际打开的项目根目录须直接包含上述 `.agents/skills/`；把整个仓库放在已打开项目的 `laRkdown/` 子目录时，须改为打开该子目录或安全地将发行包内容放到根目录。
 - `sources/presentations/`：输入 PPTX；`sources/literature/`：指定论文与补充材料。原始数据可留在项目外，不为目录整理搬动唯一副本。

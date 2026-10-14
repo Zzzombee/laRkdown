@@ -15,7 +15,8 @@ sys.path.insert(0, str(ROOT))
 from upgrade_larkdown import LEGACY, MANIFEST, PUBLIC_CONFIG, Release, encoded, sha
 
 BOOTSTRAP_TAGS = ('v0.1.0', 'v0.2.0')
-EXACT = {'AGENTS.md', 'UPGRADING.md', 'requirements.txt', 'upgrade_larkdown.py'}
+USER_GUIDE = 'USER_GUIDE.md'
+EXACT = {'AGENTS.md', USER_GUIDE, 'UPGRADING.md', 'requirements.txt', 'upgrade_larkdown.py'}
 RUNTIME_ROOTS = ('.agents/instructions/', '.agents/skills/')
 PACKAGE_EXACT = EXACT | {'README.md', MANIFEST}
 PRIVATE_ROOTS = ('outputs/', 'sources/', '.work/', '.planning/')
@@ -39,6 +40,23 @@ def package_files(files):
     if missing:
         raise ValueError(f'Release package is missing required files: {sorted(missing)}')
     return selected
+
+
+def check_user_guide(files, version):
+    """Require the guide and its release references to match the package version."""
+    if USER_GUIDE not in files:
+        raise ValueError('Stage USER_GUIDE.md before checking a release')
+    guide = files[USER_GUIDE].decode('utf-8-sig')
+    if not guide.splitlines() or guide.splitlines()[0] != f'# laRkdown 使用指南（v{version}）':
+        raise ValueError('USER_GUIDE.md title is stale; update the guide before release')
+    base = 'https://github.com/Zzzombee/laRkdown/releases/'
+    required = (f'{base}tag/v{version}', f'{base}download/v{version}/laRkdown-v{version}.zip')
+    if any(link not in guide for link in required):
+        raise ValueError('USER_GUIDE.md lacks the matching release page or ZIP download link')
+    references = re.findall(re.escape(base) + r'(?:tag|download)/v(\d+\.\d+\.\d+)', guide)
+    references += re.findall(r'laRkdown-v(\d+\.\d+\.\d+)\.zip', guide)
+    if any(reference != version for reference in references):
+        raise ValueError('USER_GUIDE.md contains stale laRkdown release links or ZIP filenames')
 
 
 def git(*args):
@@ -140,6 +158,7 @@ def check():
     if (ROOT / MANIFEST).read_bytes() != expected_manifest:
         raise ValueError('Release manifest is stale; run --prepare')
     info = json.loads(expected_manifest)
+    check_user_guide(current_files(), info['version'])
     if not {'upgrade_larkdown.py', '.agents/skills/upgrade-larkdown/SKILL.md'} <= info['managed_files'].keys():
         raise ValueError('Automatic upgrader is missing from release-managed files')
     if info['project_schema_version'] != 1:
