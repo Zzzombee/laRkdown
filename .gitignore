@@ -9,6 +9,14 @@ node_modules/
 .agents/config/feishu.json
 .agents/config/feishu-documents.json
 .agents/config/*.local.json
+product/.agents/config/feishu.json
+product/.agents/config/feishu-documents.json
+product/.agents/config/*.local.json
+product/.work/
+product/.planning/
+product/outputs/
+product/sources/
+product/.venv/
 .env
 .env.*
 !.env.example

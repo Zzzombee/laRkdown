@@ -1,14 +1,19 @@
 {
+  "distribution_schema_version": 3,
+  "maintenance_files": {
+    "UPGRADING.md": "08e1dcc06aeaf0dc87bc22751205445e287a9e88c3f4e2e14467af19bb0583f0",
+    "release/legacy-release-baselines.json": "67c92cc97e515587af58ba37f79d7ceca49ce779b2c492ae4bd2f25259f0011d",
+    "release/upstream.json": "ee8933d6db25eb1fe2eca67241f57fd308a4199bbc70dda514af509d5d722f8d",
+    "release/version-notes.md": "032d5f47d061d1016350bbec2bfda0afdddf4cb92051b022e1d2887f377facb6",
+    "upgrade_larkdown.py": "6bcb30755599978edba5d0f9f76706bfac0eb5f2b15c8136fe5ce02487ba0ebb"
+  },
   "managed_files": {
     ".agents/config/feishu.example.json": "62fac7918e48e8d182591fab96acc23252b0d367c5d43dd9db22b92938daca79",
-    ".agents/config/legacy-release-baselines.json": "e9e81d9220b42c6f2ca8ee6b7d96040f78b87a6ba4511592311b86dd11656ccd",
     ".agents/config/official-sources.json": "97acbc2cb5ff5f308adb17bec20d7a2824df49ce368694995223b5d6a1ad8ed2",
-    ".agents/config/project-layout.json": "9c867fbe6899c76945a415a50897bfb84fbc00f9d067d1c11f2b1aef3566495e",
-    ".agents/config/upstream.json": "42dbc0f8c69c7fd4451fab630ee409fe63250e18568f7d40e98e9bffb170d50a",
+    ".agents/config/project-layout.json": "c40fad0107884ccd2ea02f3f9e5c92ace6cbb59899867f480deec7661332b6ad",
     ".agents/instructions/feishu-workflow.md": "9cebc30192b430447f1c7a72783e8d46a9dcbf63a82bd4b9964cb7a48decb70d",
-    ".agents/instructions/project-layout.md": "c1465e8b28228e5d5d911240beef1c31d34f2c9ea0d0f125d221a02d06832985",
+    ".agents/instructions/project-layout.md": "6d72eb3ce0e0b01a36808f0a4d94605012f9aec87de0e8e37e28ddabae832475",
     ".agents/instructions/story-policy.md": "d330c2969f61071f2dc6b9d9705d5e1f805b930d225102c69507564b3f97f7c5",
-    ".agents/instructions/version-notes.md": "64fe8d6f10d30baa241acb6db210f8e888b0ccf023e341446f10dce004aa9cbe",
     ".agents/skills/academic-writing-editor/LICENSE": "a5c9e79aea3eb4e5375a440f490d0da6e1a9a59c9e843be797bd48ca57774fc4",
     ".agents/skills/academic-writing-editor/SKILL.md": "6ed8e9039c8e138d63e4e6a4f117e3cd8b2ad2c15cf23df55ae7ba70b74d7322",
     ".agents/skills/literature-source-gate/SKILL.md": "8e991d245394d6be6a0123dd662a40efd7d124a24f43e99d05b82acf2e6e1287",
@@ -16,10 +21,10 @@
     ".agents/skills/literature-source-gate/references/normal-screening.md": "d0b019e2d3f215cffe0fa469954008c24eac327337e4151c6f12ee6befed40dc",
     ".agents/skills/literature-source-gate/references/screening-policy.md": "4ef2528df38e399ab4a83329f06719d366472ae23eeb48ef746c9d93dffdb207",
     ".agents/skills/maintain-research-state/SKILL.md": "4d16ba59ba764fb9669c8b8f5642ce643d158559159a54571f889e3359a6035b",
-    ".agents/skills/maintain-research-state/references/initialization.md": "f1f0794c676f01b16d6f6ccf32bc92c3eec05d0d9c3f2b178500cfb83cc5ed5c",
+    ".agents/skills/maintain-research-state/references/initialization.md": "b54b1281a124f9c41cc1be812303aad5811d5268f7a60f57fb0317a4b49754a2",
     ".agents/skills/maintain-research-state/references/state-schema.md": "d847083eb3b4c4dfb5bfb8c2d2d8b5912c5200fce9897d690b416ca692045e8c",
-    ".agents/skills/maintain-research-state/scripts/feishu_bridge.py": "df7ad44dbd8ac4b2bd7079f21a0890329aeffee67c74a93f8f1bf167c23c94b5",
-    ".agents/skills/maintain-research-state/scripts/initialize_project.py": "1d4820634198fbb7823a92e6afcda94f05fe661532ef63361d527de81bf1e435",
+    ".agents/skills/maintain-research-state/scripts/feishu_bridge.py": "80d718cdca9d2c0238d842c9cd0ce3127e472ad7fb4066b65e2508374b587a20",
+    ".agents/skills/maintain-research-state/scripts/initialize_project.py": "4919989e2177079411a0d15ea3b9fd087f7fa60d530894d904b3892f266a161b",
     ".agents/skills/maintain-research-state/scripts/validate_state.py": "040ab66c0f032b73b6d8cc46851897d6ac3b57499ff2d4a97e07f5e1dd92a978",
     ".agents/skills/pptx-to-research-state/SKILL.md": "92eb045d0d09e19fc9e4c47b09c911da9d0d358d71aef113b73c0d4652308f00",
     ".agents/skills/pptx-to-research-state/references/incremental-update.md": "03947d8e86b9d51b9772195d9a48e2c2785ae8f984aa9b7a7b4cb5f9bcfc1623",
@@ -37,12 +42,10 @@
     ".agents/skills/research-docs-to-base/assets/research-base.example.json": "0852d20e8f42d676cdab8c047e89ccc1e169a1397403cf05f955d4637151683c",
     ".agents/skills/research-docs-to-base/references/mapping.md": "4586a9b0723c8782f772418a364c783fda233aa52ab2f6ea753c5f77d6f644f3",
     ".agents/skills/research-docs-to-base/references/operations.md": "181dd696d5e6c196e2dee8831477941dd30b30c6eaffbd91f6990ce401eb976f",
-    ".agents/skills/research-docs-to-base/scripts/research_base.py": "3992bea417f037b5678404e82a5e876bf52e486c69105edf475cfc34c0c5c40b",
-    ".agents/skills/upgrade-larkdown/SKILL.md": "2e0b0e739713b69f3305aa6612663e17210c16a9eef7bfda0d1c177d9824cf3a",
-    "AGENTS.md": "c169eb7002cabce00d8638777cc4755d66b0e1aeb5fa7ad0a4331ecd6dcc8c4a",
-    "UPGRADING.md": "20a334e422e95edb0b9cb184d75211c6910afb3a12bf36f67249f3b0bf5da120",
-    "requirements.txt": "78bf116f3d08d939e1754704663b20ab1decb817be244a635ac94ce2c87e2e16",
-    "upgrade_larkdown.py": "0d1b971e1ade2fd5e7d833fcfc43231586580fc383ea08e1e1bc87eda2bb1ca2"
+    ".agents/skills/research-docs-to-base/scripts/research_base.py": "9062900b0122af94d74fad608446404d82e3f289870fd243c8eb05486749069d",
+    "AGENTS.md": "0f79d4ab2fe8d2c1185ac892d88d7e7230cd2c739959ed8ce40766bdf4cdb835",
+    "README.md": "9857b535d153d12b2b90d7c6535a10d6e2b1ea17036e138d948905c5bf6a8e4c",
+    "requirements.txt": "78bf116f3d08d939e1754704663b20ab1decb817be244a635ac94ce2c87e2e16"
   },
   "project": "laRkdown",
   "project_schema_version": 1,
@@ -53,7 +56,8 @@
     "0.2.1",
     "0.2.2",
     "0.2.3",
-    "0.2.4"
+    "0.2.4",
+    "0.2.5"
   ],
-  "version": "0.2.5"
+  "version": "0.2.6"
 }

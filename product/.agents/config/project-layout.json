@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "output_root": "outputs",
+  "directories": [
+    ".agents/instructions",
+    ".agents/config",
+    ".agents/skills",
+    "sources/presentations",
+    "sources/literature",
+    ".work",
+    ".planning",
+    "outputs/reports"
+  ],
+  "forbidden_roots": [
+    "output",
+    "out",
+    "result",
+    "results",
+    "figures",
+    "reports",
+    "tmp",
+    "staging"
+  ],
+  "workspace_kind": "personal-research"
+}

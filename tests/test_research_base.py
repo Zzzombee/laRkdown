@@ -8,8 +8,22 @@ import unittest
 from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / '.agents/skills/research-docs-to-base/scripts'))
+sys.path.insert(0, str(ROOT / 'product/.agents/skills/research-docs-to-base/scripts'))
 import research_base as rb
+
+class WorkspaceBoundaryTests(unittest.TestCase):
+    def test_development_source_rejected_before_cache_or_cli(self):
+        with tempfile.TemporaryDirectory() as directory:
+            repository = Path(directory)
+            (repository / 'tools').mkdir()
+            (repository / 'tools/build_release.py').write_text('fixture', encoding='utf-8')
+            (repository / 'product').mkdir()
+            for root in (repository, repository / 'product'):
+                with self.subTest(root=root), patch.object(rb, 'call') as operation:
+                    with self.assertRaisesRegex(ValueError, 'Development source'):
+                        rb.Sync(root)
+                    operation.assert_not_called()
+                    self.assertFalse((root / '.work').exists())
 
 def fixture(xml, doc, revision=1):
     return {'ok': True, 'data': {'document': {'document_id': doc, 'revision_id': revision,

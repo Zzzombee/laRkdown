@@ -26,7 +26,10 @@ def prepare(root: Path, name: str, scope: str, date: str):
     layout = root / '.agents/config/project-layout.json'
     if not layout.is_file() or not (root / 'AGENTS.md').is_file():
         raise ValueError('Copy laRkdown rules and skills to the specified research workspace first')
-    for folder in json.loads(layout.read_text(encoding='utf-8'))['directories']:
+    contract = json.loads(layout.read_text(encoding='utf-8'))
+    if contract.get('workspace_kind') != 'personal-research':
+        raise ValueError('Target lacks the personal research preset; do not initialize a development directory')
+    for folder in contract['directories']:
         local(root, folder).mkdir(parents=True, exist_ok=True)
     headings = {
         'CURRENT_STATE': ['研究范围与实验体系', '直接观察 OBS', '证据结论 CON', '待验证假设 HYP', '矛盾、阴性与缺失信息'],

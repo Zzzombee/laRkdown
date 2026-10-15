@@ -18,12 +18,12 @@ def load_script(name, path):
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SCRIPTS = ROOT / '.agents/skills/maintain-research-state/scripts'
+SCRIPTS = ROOT / 'product/.agents/skills/maintain-research-state/scripts'
 sys.path.insert(0, str(SCRIPTS))
 import feishu_bridge as fb
 import initialize_project as initializer
 import validate_state as validator
-media = load_script('larkdown_media', ROOT / '.agents/skills/pptx-to-research-state/scripts/prepare_media_preview.py')
+media = load_script('larkdown_media', ROOT / 'product/.agents/skills/pptx-to-research-state/scripts/prepare_media_preview.py')
 
 def snapshot(doc, xml):
     return {'ok': True, 'data': {'document': {'document_id': doc, 'revision_id': 1, 'content': xml}}}
@@ -79,6 +79,29 @@ class PictureTests(unittest.TestCase):
             self.assertEqual(record['frames'][0]['preview_transform']['mapping'], 'linear-minmax')
 
 class BridgeTests(unittest.TestCase):
+    def test_development_source_is_rejected_before_any_research_operation(self):
+        with tempfile.TemporaryDirectory() as directory:
+            repository = Path(directory)
+            (repository / 'tools').mkdir()
+            (repository / 'tools/build_release.py').write_text('fixture', encoding='utf-8')
+            (repository / 'product').mkdir()
+            for root in (repository, repository / 'product'):
+                with self.subTest(root=root), patch.object(fb, 'call') as operation:
+                    with self.assertRaisesRegex(ValueError, 'Development source'):
+                        initializer.prepare(root, 'Fixture', 'Synthetic only', '2026-10-14')
+                    operation.assert_not_called()
+                    self.assertFalse((root / '.work').exists())
+
+    def test_initialization_requires_personal_research_contract(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / '.agents/config').mkdir(parents=True)
+            (root / 'AGENTS.md').write_text('Local developer rules', encoding='utf-8')
+            (root / '.agents/config/project-layout.json').write_text('{"directories": [".work"]}', encoding='utf-8')
+            with self.assertRaisesRegex(ValueError, 'personal research preset'):
+                initializer.prepare(root, 'Fixture', 'Synthetic only', '2026-10-14')
+            self.assertFalse((root / '.work').exists())
+
     def test_new_research_system_creates_wiki_space_and_fills_docx_node(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -174,7 +197,7 @@ class BridgeTests(unittest.TestCase):
             root = Path(directory)
             (root / '.agents/config').mkdir(parents=True)
             (root / 'AGENTS.md').write_text('User rules', encoding='utf-8')
-            (root / '.agents/config/project-layout.json').write_text(json.dumps({'directories': ['.work', 'outputs/reports']}), encoding='utf-8')
+            (root / '.agents/config/project-layout.json').write_text(json.dumps({'workspace_kind': 'personal-research', 'directories': ['.work', 'outputs/reports']}), encoding='utf-8')
             manifest = initializer.prepare(root, 'Synthetic project', 'Fixture only', '2026-10-13')
             self.assertEqual(len(manifest['documents']), 3)
             self.assertEqual([fb.parse_xml((root / path).read_text(encoding='utf-8'))[0].text

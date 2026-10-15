@@ -20,13 +20,35 @@ import urllib.request
 import uuid
 import zipfile
 
-MANIFEST = '.agents/config/release-manifest.json'
-LEGACY = '.agents/config/legacy-release-baselines.json'
+MANIFEST = '.work/upgrades/installed.json'
+OLD_MANIFEST = '.agents/config/release-manifest.json'
+LEGACY = 'legacy-release-baselines.json'
+METADATA = Path(__file__).resolve().parent / 'release'
+MAINTENANCE_FILES = {'upgrade_larkdown.py', 'UPGRADING.md', 'release/upstream.json',
+                     'release/release-manifest.json', 'release/legacy-release-baselines.json',
+                     'release/version-notes.md'}
 PENDING = '.work/upgrades/pending.json'
 REPOSITORY = 'Zzzombee/laRkdown'
 MAX_ARCHIVE = 200 * 1024 * 1024
-PUBLIC_CONFIG = {'feishu.example.json', 'official-sources.json', 'project-layout.json',
-                 'upstream.json', 'legacy-release-baselines.json'}
+PUBLIC_CONFIG = {'feishu.example.json', 'official-sources.json', 'project-layout.json'}
+RESEARCH_SKILLS = {'academic-writing-editor', 'maintain-research-state',
+                   'pptx-to-research-state', 'literature-source-gate', 'research-docs-to-base'}
+RESEARCH_INSTRUCTIONS = {'project-layout.md', 'feishu-workflow.md', 'story-policy.md'}
+
+
+def research_path(name: str) -> bool:
+    """The product surface is shared by build and upgrade verification."""
+    safe_name(name)
+    parts = PurePosixPath(name).parts
+    if '__pycache__' in parts or name.endswith(('.pyc', '.pyo', '.local.json')):
+        return False
+    if name in {'AGENTS.md', 'README.md', 'requirements.txt'}:
+        return True
+    if name.startswith('.agents/config/'):
+        return len(parts) == 3 and parts[-1] in PUBLIC_CONFIG
+    if name.startswith('.agents/instructions/'):
+        return len(parts) == 3 and parts[-1] in RESEARCH_INSTRUCTIONS
+    return len(parts) >= 4 and parts[:2] == ('.agents', 'skills') and parts[2] in RESEARCH_SKILLS
 
 
 def sha(blob: bytes) -> str:
@@ -146,6 +168,7 @@ class Release:
         if self.archive.stat().st_size > MAX_ARCHIVE:
             raise ValueError('Release ZIP exceeds the supported size')
         self.files = {}
+        self.maintenance = {}
         with zipfile.ZipFile(self.archive) as package:
             names = [item for item in package.infolist() if not item.is_dir()]
             total = 0
@@ -160,54 +183,88 @@ class Release:
                 if (item.external_attr >> 16) & 0o170000 == 0o120000:
                     raise ValueError('Release contains a symbolic link')
                 full = safe_name(item.filename)
-                if not full.startswith('laRkdown/'):
+                if full.startswith('laRkdown/'):
+                    name = safe_name(full[len('laRkdown/'):])
+                    destination = self.files
+                elif full.startswith('maintenance/'):
+                    name = safe_name(full[len('maintenance/'):])
+                    destination = self.maintenance
+                else:
                     raise ValueError('Release has an unexpected root directory')
-                name = safe_name(full[len('laRkdown/'):])
-                folded = name.casefold()
+                folded = full.casefold()
                 if folded in seen:
                     raise ValueError('Release contains duplicate case-insensitive paths')
                 seen.add(folded)
-                self.files[name] = package.read(item)
-        if MANIFEST not in self.files or LEGACY not in self.files:
-            raise ValueError('Release lacks the upgrade manifest or legacy baseline')
-        self.manifest = json.loads(self.files[MANIFEST])
-        self.legacy = json.loads(self.files[LEGACY])
+                destination[name] = package.read(item)
+        self._load_metadata()
+
+    @classmethod
+    def from_directory(cls, research: Path, maintenance: Path):
+        """Use the already downloaded sibling files without another ZIP/download."""
+        instance = cls.__new__(cls)
+        instance.archive = None
+        instance.maintenance = {name: project_path(maintenance, name).read_bytes()
+                                for name in MAINTENANCE_FILES}
+        manifest = json.loads(instance.maintenance['release/release-manifest.json'])
+        instance.files = {name: project_path(research, name).read_bytes()
+                          for name in manifest['managed_files']}
+        if sum(map(len, instance.files.values())) + sum(map(len, instance.maintenance.values())) > MAX_ARCHIVE:
+            raise ValueError('Release expands beyond the supported size')
+        instance._load_metadata()
+        return instance
+
+    def _load_metadata(self):
+        if set(self.maintenance) != MAINTENANCE_FILES:
+            raise ValueError('Release maintenance members are missing or unexpected')
+        self.manifest = json.loads(self.maintenance['release/release-manifest.json'])
+        self.legacy = json.loads(self.maintenance['release/' + LEGACY])
+        provenance = json.loads(self.maintenance['release/upstream.json'])
+        if provenance['version'] != self.manifest['version']:
+            raise ValueError('Maintenance bundle version differs from its manifest')
         self._verify()
+        # A receipt is operational state, never an agent instruction or ZIP member.
+        self.files[MANIFEST] = encoded(self.manifest)
 
     def _verify(self):
         info = self.manifest
-        if info.get('schema_version') != 1 or info.get('project') != 'laRkdown':
+        if (info.get('schema_version') != 1 or info.get('project') != 'laRkdown'
+                or info.get('distribution_schema_version') != 3):
             raise ValueError('Unsupported release manifest')
         if not isinstance(info.get('version'), str) or not isinstance(info.get('project_schema_version'), int):
             raise ValueError('Release version/schema is missing')
         layout = json.loads(self.files['.agents/config/project-layout.json'])
-        if layout.get('schema_version') != info['project_schema_version']:
+        if (layout.get('schema_version') != info['project_schema_version']
+                or layout.get('workspace_kind') != 'personal-research'):
             raise ValueError('Release project layout and schema declaration differ')
         files = info.get('managed_files')
         if not isinstance(files, dict) or not files or MANIFEST in files:
             raise ValueError('Invalid managed-file list')
+        if set(self.files) != set(files):
+            raise ValueError('Research ZIP members differ from the maintenance manifest')
         for name, wanted in files.items():
-            safe_name(name)
-            if name.startswith(('.work/', 'outputs/', 'sources/', '.planning/')) or name.endswith('.local.json'):
-                raise ValueError('Private/user-owned path declared as managed')
-            if name.startswith('.agents/config/') and PurePosixPath(name).name not in PUBLIC_CONFIG:
-                raise ValueError('Unrecognized config declared as managed')
-            if name not in {'AGENTS.md', 'UPGRADING.md', 'requirements.txt', 'upgrade_larkdown.py'} and not name.startswith(('.agents/config/', '.agents/instructions/', '.agents/skills/')):
+            if not research_path(name):
                 raise ValueError('Path outside the release-managed tool surface')
             if name not in self.files or sha(self.files[name]) != wanted:
                 raise ValueError(f'Release file failed manifest verification: {name}')
-        required = {'AGENTS.md', 'UPGRADING.md', 'requirements.txt', 'upgrade_larkdown.py',
-                    '.agents/skills/upgrade-larkdown/SKILL.md', LEGACY}
+        required = {'AGENTS.md', 'README.md', 'requirements.txt',
+                    '.agents/config/project-layout.json'} | {
+                        f'.agents/skills/{skill}/SKILL.md' for skill in RESEARCH_SKILLS}
         if not required <= set(files):
-            raise ValueError('Release lacks its upgrade entrypoint or required resources')
-        if json.loads(self.files['.agents/config/upstream.json'])['version'] != info['version']:
-            raise ValueError('Release version differs from upstream provenance config')
+            raise ValueError('Release lacks required personal research presets')
+        maintenance_hashes = info.get('maintenance_files', {})
+        if set(maintenance_hashes) != MAINTENANCE_FILES - {'release/release-manifest.json'}:
+            raise ValueError('Invalid maintenance hash list')
+        for name, digest in maintenance_hashes.items():
+            if sha(self.maintenance[name]) != digest:
+                raise ValueError(f'Maintenance file failed manifest verification: {name}')
         if self.legacy.get('schema_version') != 1 or not isinstance(self.legacy.get('releases'), dict):
             raise ValueError('Invalid legacy baseline catalog')
 
 
 def source_state(root: Path, release: Release):
     current = project_path(root, MANIFEST)
+    if not current.exists():
+        current = project_path(root, OLD_MANIFEST)
     if current.exists():
         manifest = json.loads(current.read_text(encoding='utf-8'))
         if manifest.get('schema_version') != 1 or manifest.get('project') != 'laRkdown':
@@ -225,24 +282,38 @@ def source_state(root: Path, release: Release):
     else:
         upstream = project_path(root, '.agents/config/upstream.json')
         if not upstream.is_file():
-            raise ValueError('Existing project has no laRkdown version marker')
-        version = json.loads(upstream.read_text(encoding='utf-8'))['version']
-        known = release.legacy['releases'].get(version)
-        if not known:
-            raise ValueError(f'No trusted baseline for installed version {version}')
+            candidates = [(release.manifest['version'], release.manifest)] + list(release.legacy['releases'].items())
+            matches = [(v, entry) for v, entry in candidates
+                       if all(existing_hash(project_path(root, name)) == digest
+                              for name, digest in entry['managed_files'].items())]
+            if len(matches) != 1:
+                raise ValueError('No trusted exact package fingerprint; bind the installed version through maintenance before changing presets')
+            version, known = matches[0]
+        else:
+            version = json.loads(upstream.read_text(encoding='utf-8'))['version']
+            known = release.legacy['releases'].get(version)
+            if not known:
+                raise ValueError(f'No trusted baseline for installed version {version}')
         baseline, schema, manifest_hash = known['managed_files'], known['project_schema_version'], None
     if version != release.manifest['version'] and version not in release.manifest.get('supported_from', []):
         raise ValueError(f'Unsupported upgrade from {version} to {release.manifest["version"]}')
     if schema != release.manifest['project_schema_version']:
         raise ValueError('Research project schema change needs an explicit migration; this release only upgrades code')
-    return version, baseline, manifest_hash
+    return version, baseline, manifest_hash, current.relative_to(root).as_posix()
 
 
 def make_plan(root: Path, release: Release):
     root = root.resolve(strict=True)
     if not root.is_dir() or not project_path(root, 'AGENTS.md').is_file():
         raise ValueError('Target is not an initialized laRkdown project')
-    version, old, old_manifest_hash = source_state(root, release)
+    for candidate in (root, root.parent if root.name == 'product' else root):
+        if (candidate / 'tools/build_release.py').is_file() and (candidate / 'product').is_dir():
+            raise ValueError('Target is development source, not a personal research project')
+    version, old, old_manifest_hash, source_manifest = source_state(root, release)
+    old = dict(old)
+    # Historical README was shipped but not managed. Only its published bytes may
+    # be replaced; preserve unknown user copies through the normal conflict path.
+    old.update(release.legacy['releases'].get(version, {}).get('unmanaged_files', {}))
     new = release.manifest['managed_files']
     operations, conflicts = [], []
     for name in sorted(set(old) | set(new)):
@@ -275,10 +346,14 @@ def make_plan(root: Path, release: Release):
                 operations.append({'path': name, 'action': 'merge', 'before': actual, 'after': sha(combined)})
         else:
             conflicts.append({'path': name, 'reason': 'user-modified or unrecognized managed path'})
-    actual_manifest = existing_hash(project_path(root, MANIFEST))
-    if actual_manifest != old_manifest_hash:
-        conflicts.append({'path': MANIFEST, 'reason': 'installed release manifest changed'})
+    actual_source_manifest = existing_hash(project_path(root, source_manifest))
+    if actual_source_manifest != old_manifest_hash:
+        conflicts.append({'path': source_manifest, 'reason': 'installed release manifest changed'})
     else:
+        if source_manifest == OLD_MANIFEST and old_manifest_hash is not None:
+            operations.append({'path': OLD_MANIFEST, 'action': 'remove',
+                               'before': old_manifest_hash, 'after': None})
+        actual_manifest = existing_hash(project_path(root, MANIFEST))
         wanted = sha(release.files[MANIFEST])
         if actual_manifest != wanted:
             operations.append({'path': MANIFEST, 'action': 'add' if actual_manifest is None else 'update',
@@ -452,22 +527,39 @@ def fetch_latest(destination: Path) -> Path:
     return destination
 
 
+def compact_result(result):
+    """Keep normal user/model output bounded, independent of the file count."""
+    output = {key: result[key] for key in ('ok', 'from_version', 'version', 'pending',
+              'completed', 'rolled_back', 'report', 'report_saved') if key in result}
+    if 'to_version' in result:
+        output['version'] = result['to_version']
+    if 'changed' in result:
+        output['changed'] = result['changed']
+    elif 'operations' in result:
+        output['changes'] = len(result['operations'])
+    conflicts = result.get('conflicts', [])
+    if conflicts:
+        output['conflict_count'] = len(conflicts)
+        output['conflicts'] = conflicts[:5]
+    return output
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--project', required=True, type=Path, help='existing initialized research project directory')
     group = parser.add_mutually_exclusive_group()
-    group.add_argument('--package', type=Path, help='new laRkdown release ZIP')
+    group.add_argument('--package', type=Path, help='release ZIP; default uses the adjacent laRkdown directory')
     group.add_argument('--latest', action='store_true', help='download latest public GitHub release with SHA256 verification')
     modes = parser.add_mutually_exclusive_group()
     modes.add_argument('--apply', action='store_true', help='apply the verified plan; default is preview only')
     modes.add_argument('--recover', action='store_true', help='verify/rollback an interrupted local upgrade')
+    parser.add_argument('--verbose', action='store_true', help='show the full plan; default output is a compact summary')
     args = parser.parse_args(argv)
+    plan = None
     try:
         if args.recover:
             result = recover(args.project)
         else:
-            if not args.package and not args.latest:
-                parser.error('provide --package or --latest')
             if pending_path(args.project.resolve()).exists():
                 raise ValueError('Previous upgrade is pending; run --recover first')
             if args.latest:
@@ -475,15 +567,24 @@ def main(argv=None):
                     archive = fetch_latest(Path(directory) / 'release.zip')
                     release = Release(archive)
                     plan = make_plan(args.project, release)
-                    result = apply_plan(args.project, release, plan) if args.apply else {'ok': not plan['conflicts'], **plan}
+                    result = apply_plan(args.project, release, plan) if args.apply and not plan['conflicts'] else {'ok': not plan['conflicts'], **plan}
             else:
-                release = Release(args.package)
+                release = (Release(args.package) if args.package else
+                           Release.from_directory(METADATA.parent.parent / 'laRkdown', METADATA.parent))
                 plan = make_plan(args.project, release)
-                result = apply_plan(args.project, release, plan) if args.apply else {'ok': not plan['conflicts'], **plan}
-        print(json.dumps(result, ensure_ascii=False, indent=2))
+                result = apply_plan(args.project, release, plan) if args.apply and not plan['conflicts'] else {'ok': not plan['conflicts'], **plan}
+        if args.apply and plan is not None:
+            try:
+                report = project_path(args.project, '.work/upgrades/last-report.json')
+                write_atomic(report, encoded({'result': result, 'plan': plan}))
+                result['report'] = '.work/upgrades/last-report.json'
+            except OSError:
+                result['report_saved'] = False
+        output = {**result, 'plan': plan} if args.verbose else compact_result(result)
+        print(json.dumps(output, ensure_ascii=False, separators=(',', ':')))
         return 0 if result.get('ok') else 2
     except (OSError, KeyError, ValueError, RuntimeError, zipfile.BadZipFile) as error:
-        print(json.dumps({'ok': False, 'message': str(error)}, ensure_ascii=False), file=sys.stderr)
+        print(json.dumps({'ok': False, 'message': str(error)}, ensure_ascii=False, separators=(',', ':')), file=sys.stderr)
         return 1
 
 

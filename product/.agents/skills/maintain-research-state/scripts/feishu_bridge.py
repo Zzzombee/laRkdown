@@ -67,8 +67,17 @@ def call(args: list[str], root: Path, content: str | None = None):
         raise RuntimeError(f"CLI operation stopped (exit {process.returncode}, {error.get('type', 'unknown')}/{error.get('subtype', 'unknown')}): {error.get('message', 'see current CLI help')}")
     return response
 
+def research_workspace(root: Path):
+    """Reject a source checkout before any local or remote research mutation."""
+    root = root.resolve()
+    for candidate in (root, root.parent if root.name == 'product' else root):
+        if (candidate / 'tools/build_release.py').is_file() and (candidate / 'product').is_dir():
+            raise ValueError('Development source is not a personal research workspace; use a separate research directory')
+
+
 class Bridge:
     def __init__(self, root: Path):
+        research_workspace(root)
         self.root = root.resolve()
         self.registry_path = local(self.root, '.agents/config/feishu-documents.json')
         self.cache = local(self.root, '.work/feishu')

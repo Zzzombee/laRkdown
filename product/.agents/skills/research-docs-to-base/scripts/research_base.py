@@ -13,7 +13,7 @@ from urllib.parse import urlsplit, urlunsplit
 import uuid
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / 'maintain-research-state/scripts'))
-from feishu_bridge import Bridge, call, cli_prefix, dump, local, parse_xml, timestamp
+from feishu_bridge import Bridge, call, cli_prefix, dump, local, parse_xml, timestamp, research_workspace
 
 DOCS = ('CURRENT_STATE', 'RESEARCH_QUESTIONS', 'PROJECT_STORY')
 TABLES = ('项目概览', '实验观察OBS', '结论与假设', '研究问题RQ', '关键参考文献', '近期优先事项')
@@ -494,6 +494,7 @@ def locked(cache):
 
 class Sync:
     def __init__(self, root):
+        research_workspace(root)
         self.root = root.resolve()
         self.cache = local(self.root, '.work/research-base')
         self.cache.mkdir(parents=True, exist_ok=True)

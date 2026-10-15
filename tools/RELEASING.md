@@ -1,27 +1,31 @@
-# 仓库发布规范（不进入用户产品 ZIP）
+# 仓库发布规范
 
-`laRkdown-v<版本>.zip` 是供豆包工作打开的精简产品包。它只包含根目录 `README.md`、`AGENTS.md`、`UPGRADING.md`、`requirements.txt`、`upgrade_larkdown.py`、发行清单，以及运行时的 `.agents/instructions/`、`.agents/skills/` 和白名单公开配置。仓库的 `USER_GUIDE.md`、`.github/`、`.gitignore`、`tests/`、`tools/`、计划与构建资料均不打包。运行时目录合同 `.agents/instructions/project-layout.md`、`.agents/config/project-layout.json` 和版本说明 `.agents/instructions/version-notes.md` 必须保留。
+## 单一发行 ZIP，两个隔离目录
 
-只改用户指定范围。保留第三方 LICENSE。修改可执行脚本后做对应行为检查；没有科研条目变更时不运行真实科研状态审计。文档中引用官方来源并记录核验日期，推断与未实测能力分开。
+只发布 laRkdown-v<版本>.zip 和同名 .sha256。ZIP 内：
 
-每个公开 Release 必须携带 `.agents/instructions/version-notes.md`、`upgrade_larkdown.py`、`upgrade-larkdown` 技能、`.agents/config/release-manifest.json`、旧版基线和 `UPGRADING.md`。发行版本与 maRkdown 引用版本分别记录。科研项目结构版本变化时先实现并验证迁移，否则发布检查必须失败。不能为方便发布删除升级器或跳过冲突与恢复检查。
+- laRkdown/：从 product/ 映射的个人科研 AGENTS.md、README.md、依赖和五个科研技能。无开发、维护或版本管理指引。
+- maintenance/：升级器、UPGRADING.md、release/ 中的来源、清单、历史基线与版本说明。无 AGENTS.md 或 .agents 技能入口。
 
-## 使用指南的发布要求
+科研目录与维护目录分别校验，统一封装。禁止直接使用 git archive 构建产品。哈希及历史 AGENTS 基线取实际科研文件；维护文件另列哈希，不进入科研项目托管范围。保留已发布 Windows 字节基线。
 
-根目录 `USER_GUIDE.md` 是长期维护的正式项目文档，文件名不带版本号，纳入 Git，不进入产品 ZIP 或升级托管清单。README 提供公开仓库阅读入口；面向非 GitHub 用户，发布者可在部署前介绍或发版沟通时直接发送指南。版本 tag 保留对应版本正文；需要飞书文档或 PDF 时从此源文件生成，避免独立维护多份正文。每次发布新版本前必须复核并更新：
+## 高优先级：节省用户 token
 
-- 与目标版本实际功能一致的安装、初始化、日常工作和能力边界说明，并核对与 README.md 的一致性。
-- 标题 `# laRkdown 使用指南（v<版本>）`、正文适用版本与来源说明；laRkdown 版本以 `.agents/config/upstream.json` 为准，maRkdown 引用版本保持独立。
-- 目标版本发布页、ZIP 文件名和下载链接。
+开发侧完成完整测试与发行检查。用户侧一次下载、一次 --apply，不要求先预览或反复让模型读取清单。确定性检查、备份与恢复由脚本完成，成功短回执，明细本地按需读。普通科研任务不触发发行校验；环境检查按需执行。科研证据与写后回读保留。
 
-将指南更新与版本改动一起提交。`tools/build_release.py --check` 校验暂存的指南标题与 laRkdown 发布页、ZIP 下载链接、文件名；缺失指南或版本不一致时失败，现有 CI 在发布前执行这项检查。正文是否准确仍须发布者逐项复核，不能仅替换版本号后跳过内容检查。
+## 指南与版本
 
-## 对话中的版本与使用帮助
+版本来源为 tools/release/upstream.json，独立于 maRkdown 引用版本。每次发布前根据实际功能更新 README.md、USER_GUIDE.md、产品用法和 tools/release/version-notes.md，核对版本、发布页与唯一 ZIP 下载链接。版本说明作为 Release 正文，不复制进科研目录。
 
-安装后以豆包对话为帮助入口，不要求用户查阅项目文件夹或访问 GitHub。豆包读取本地版本标记与 `.agents/instructions/version-notes.md` 后解释变化，日常用法按 AGENTS.md 和对应技能回答。只读帮助不执行初始化、科研写入或升级。
+## 检查与构建
 
-v0.2.5 是版本说明起始基线，不补写该版本及更早版本的历史。仅从高于 v0.2.5 的发行版本开始描述更新。每次发布前更新版本说明：标题 `# laRkdown 版本说明（v<版本>）` 与发行版本一致，正文列出相较上一版的实际变化、可直接发送的用法和必要的能力边界；无法确认的变化不推测。发布检查拦截说明缺失、标题版本不一致或正文为空。
+```text
+python tools/build_release.py --prepare
+python -m unittest discover -s tests -v
+python tools/build_release.py --check
+python tools/build_release.py --preview-build outputs/releases/laRkdown-v<版本>.zip
+```
 
-版本说明进入 ZIP 与升级托管清单，GitHub Actions 同时以该文件作为 Release 正文，保证豆包和公开发布页使用同一份说明。向用户通知新版本时附部署或升级提问，并提示：“升级后，在豆包中问‘这个版本更新了什么？’。”
+prepare/check 使用工作树中可提交的源文件，按 .gitattributes 规范化文本。预览构建供未提交改动审核。检查通过后提交所有公开变更，从干净提交运行 --build。变更科研 schema 时先实现并验证迁移；私人登记、凭证、科研资料和缓存不得进入发行物。
 
-发布前暂存所有发行文件，运行 `python tools/build_release.py --prepare` 并暂存生成的清单；再运行 `python -m unittest discover -s tests -v`、`python tools/build_release.py --check`，提交后用 `python tools/build_release.py --build <ZIP路径>` 构建并核对成员清单。打包只使用该脚本的 `--build`。推送版本 tag 后，由 `.github/workflows/release-contract.yml` 在检查通过时自动创建 Release 并上传 ZIP 与同名 `.sha256` 附件；不要绕过流程手工创建 Release，也不可修改已发布 tag 的内容。
+推送版本 tag 前完成全部测试和发布检查。CI 核对 tag 与版本，发布唯一 ZIP 和校验附件，使用维护版本说明创建 Release。不手工绕过流程，不改写已发布 tag。

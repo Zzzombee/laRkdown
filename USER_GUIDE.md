@@ -1,6 +1,6 @@
-# laRkdown 使用指南（v0.2.5）
+# laRkdown 使用指南（v0.2.6）
 
-这是一份给尝试使用 AI 管理科研项目的研究者的入门指南，供部署前了解产品，也可随新版本通知直接发送。你只需要会在豆包工作中打开文件夹、发送一句话，并按提示完成飞书授权。安装后，通过豆包对话使用产品、了解版本变化和获取帮助。
+这是一份给尝试使用 AI 管理科研项目的研究者的入门指南，供部署前了解产品，也可随新版本通知直接发送。你只需要会在豆包工作中打开文件夹、发送一句话，并按提示完成飞书授权。安装后，通过豆包对话管理科研记录和获取用法帮助。一次下载即可取得科研预设和维护工具；二者分目录隔离。
 
 ## 🧭 laRkdown 是什么
 
@@ -14,13 +14,13 @@ laRkdown 是面向**豆包工作 + 飞书（lark) + Python**的版本。它把�
 
 在能够访问本地文件并运行命令的**豆包工作**任务中，直接发送：
 
-> 请读取 https://raw.githubusercontent.com/Zzzombee/laRkdown/main/README.md 并安装最新版 laRkdown。把包含 `.agents/skills/` 的目录作为当前项目打开，确认六个技能可用，配置 Python 与官方飞书 CLI，并引导我完成飞书授权。
+> 请读取 https://raw.githubusercontent.com/Zzzombee/laRkdown/main/README.md 并安装最新版 laRkdown。把包含 `.agents/skills/` 的目录作为当前项目打开，确认五个科研技能可用，配置 Python 与官方飞书 CLI，并引导我完成飞书授权。
 
 你可以在这句话末尾补充想安装到的文件夹路径。豆包会按仓库指引下载安装、检查技能和环境；你需要按提示亲自完成飞书授权。安装结束后，让豆包确认当前打开的项目根目录直接包含 `.agents/skills/` 并完成环境验收。
 
 ### 📦 如果自动下载不成功，再手动安装。
 
-从 [laRkdown v0.2.5 发布页](https://github.com/Zzzombee/laRkdown/releases/tag/v0.2.5)下载 `laRkdown-v0.2.5.zip` 并解压，也可以使用[压缩包直链](https://github.com/Zzzombee/laRkdown/releases/download/v0.2.5/laRkdown-v0.2.5.zip)。在豆包工作中打开解压后直接包含 `README.md`、`AGENTS.md` 和 `.agents/skills/` 的 `laRkdown` 文件夹，然后发送：
+从 [laRkdown v0.2.6 发布页](https://github.com/Zzzombee/laRkdown/releases/tag/v0.2.6)下载 `laRkdown-v0.2.6.zip` 并解压，也可以使用[压缩包直链](https://github.com/Zzzombee/laRkdown/releases/download/v0.2.6/laRkdown-v0.2.6.zip)。解压后包含并列的 laRkdown/ 和 maintenance/。在豆包工作中只打开直接包含 `README.md`、`AGENTS.md` 和 `.agents/skills/` 的 `laRkdown` 文件夹，然后发送：
 
 > 请按当前项目的 README.md 和 AGENTS.md 安装并识别 laRkdown 技能，检查 Python 和飞书 CLI，缺少的环境请指导我安装，然后带我完成飞书授权。
 
@@ -34,11 +34,11 @@ laRkdown 是面向**豆包工作 + 飞书（lark) + Python**的版本。它把�
 
 刚开始没有完整的论文故事很正常。“项目故事”可以先是一个框架，等积累实验结果后再让豆包生成或修订。
 
-这份指南按 **v0.2.5** 编写；上面的一句话自动安装的是执行时的最新发布版。如果需要固定使用 v0.2.5，请使用手动下载方式。
+这份指南为 **v0.2.6 待发布版本**准备；实际下载以发布页已有附件为准。上面的一句话自动安装的是执行时的最新发布版。如果需要固定使用 v0.2.6，请使用手动下载方式。
 
 ## 🧰 平时可以做什么
 
-安装或升级后，直接问豆包：“我安装的是哪个版本？这个版本更新了什么？”或“接下来怎么用？”豆包会依据当前安装版本的说明回答，并给出可以直接发送的操作示例。无需打开项目内部文件或自行访问 GitHub。
+日常可直接问豆包“接下来怎么用？”，它会根据科研项目的当前状态给出操作示例。科研项目只包含个人科研预设；日常不会检查发行版本或反复校验工具环境，豆包按任务读取必要内容；科研写入仍会核对和回读。
 
 ### 🧪 做完实验，立刻记进文档。
 
@@ -66,4 +66,16 @@ laRkdown 还可以帮助你润色学术文字（保留数据和引用），以�
 
 ## 🔗 版本与来源
 
-本指南对应 **laRkdown v0.2.5**：[远程仓库](https://github.com/Zzzombee/laRkdown) · [版本发布页](https://github.com/Zzzombee/laRkdown/releases/tag/v0.2.5)。该版本 laRkdown 改写自 [maRkdown v0.1.0](https://github.com/Zzzombee/maRkdown/releases/tag/v0.1.0)。后续使用其他版本时，请以该版本仓库中的说明为准。
+本指南对应 **laRkdown v0.2.6**：[远程仓库](https://github.com/Zzzombee/laRkdown) · [版本发布页](https://github.com/Zzzombee/laRkdown/releases/tag/v0.2.6)。该版本 laRkdown 改写自 [maRkdown v0.1.0](https://github.com/Zzzombee/maRkdown/releases/tag/v0.1.0)。后续使用其他版本时，请以该版本仓库中的说明为准。
+
+## 已有项目：下载一次、执行一次
+
+v0.2.5 及更早的受支持用户也下载同一个 `laRkdown-v0.2.6.zip`，解压到原科研项目之外。让豆包执行新包 maintenance/ 中的脚本：
+
+```text
+python <新解压目录>/maintenance/upgrade_larkdown.py --project <原科研目录> --apply
+```
+
+不需要另下维护包或先做一轮预览。脚本自动识别旧版、检查冲突、备份并更新，成功仅给简短结果。发生冲突时再处理相关文件；用户增补、飞书登记、实验资料和多维表格基线受保护。升级后重新打开原科研目录，继续使用，无需重新初始化。
+
+节省用户 token 是高优先级：确定性检查由脚本完成，明细留本地按需看；日常只读取相关科研内容，不重复检查整个项目或环境。科研事实核验与写后回读仍然保留。

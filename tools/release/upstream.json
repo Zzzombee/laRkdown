@@ -1,6 +1,6 @@
 {
   "project": "laRkdown",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "adapted_at": "2026-10-13",
   "source": {
     "repository": "https://github.com/Zzzombee/maRkdown",
@@ -38,7 +38,8 @@
     "Feishu DocxXML and official lark-cli delivery",
     "native-document state schema and validation",
     "explicit PPTX visual evidence path",
-    "remove editor-specific links, properties and plugins"
+    "remove editor-specific links, properties and plugins",
+    "Isolate personal research presets from repository development and external maintenance tooling"
   ],
   "file_lineage": {
     ".agents/skills/academic-writing-editor/LICENSE": {
@@ -197,13 +198,13 @@
       "added_at": "2026-10-13",
       "upstream_status": "not present in pinned maRkdown v0.1.0",
       "purpose": "Derive six collaboration Base tables from three native Feishu research documents"
-    },
+    }
+  ],
+  "maintenance_tools": [
     {
-      "skill": "upgrade-larkdown",
-      "origin": "laRkdown-native",
-      "added_at": "2026-10-13",
-      "upstream_status": "not present in pinned maRkdown v0.1.0",
-      "purpose": "Upgrade initialized user projects between laRkdown release versions without rewriting research data"
+      "name": "upgrade_larkdown.py",
+      "source": "tools/upgrade_larkdown.py",
+      "delivery": "separate-maintenance-bundle"
     }
   ]
 }
