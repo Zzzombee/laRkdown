@@ -5,7 +5,7 @@
 只发布 laRkdown-v<版本>.zip 和同名 .sha256。ZIP 内：
 
 - laRkdown/：从 product/ 映射的个人科研 AGENTS.md、README.md、依赖和五个科研技能。无开发、维护或版本管理指引。
-- maintenance/：升级器、UPGRADING.md、release/ 中的来源、清单、历史基线与版本说明。无 AGENTS.md 或 .agents 技能入口。
+- maintenance/：升级器、环境入口、ENVIRONMENT.md、固定组件来源及 wheel 锁、第三方许可、UPGRADING.md、release/ 中的来源、清单、历史基线与版本说明。无 AGENTS.md 或 .agents 技能入口。分发 schema 4 含环境工具，读取旧 schema 3 仍受其原白名单约束；科研 schema 保持 1。
 
 科研目录与维护目录分别校验，统一封装。禁止直接使用 git archive 构建产品。哈希及历史 AGENTS 基线取实际科研文件；维护文件另列哈希，不进入科研项目托管范围。保留已发布 Windows 字节基线。
 

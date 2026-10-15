@@ -439,7 +439,7 @@ def prepare_plan(dataset, current, state, owner):
 
 def artifact_call(args, root):
     env = dict(os.environ, LARKSUITE_CLI_NO_UPDATE_NOTIFIER='1', LARKSUITE_CLI_NO_SKILLS_NOTIFIER='1')
-    proc = subprocess.run(cli_prefix() + args, cwd=root, capture_output=True, text=True,
+    proc = subprocess.run(cli_prefix(root) + args, cwd=root, capture_output=True, text=True,
                           encoding='utf-8', env=env, timeout=180)
     if proc.returncode:
         raise RuntimeError(f'Base read failed (exit {proc.returncode}); inspect local CLI permissions/help')

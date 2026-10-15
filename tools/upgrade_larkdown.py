@@ -24,9 +24,12 @@ MANIFEST = '.work/upgrades/installed.json'
 OLD_MANIFEST = '.agents/config/release-manifest.json'
 LEGACY = 'legacy-release-baselines.json'
 METADATA = Path(__file__).resolve().parent / 'release'
-MAINTENANCE_FILES = {'upgrade_larkdown.py', 'UPGRADING.md', 'release/upstream.json',
+LEGACY_MAINTENANCE_FILES = {'upgrade_larkdown.py', 'UPGRADING.md', 'release/upstream.json',
                      'release/release-manifest.json', 'release/legacy-release-baselines.json',
                      'release/version-notes.md'}
+MAINTENANCE_FILES = LEGACY_MAINTENANCE_FILES | {'setup_larkdown.py', 'bootstrap.ps1',
+    'bootstrap.sh', 'runtime-assets.tsv', 'pptx-requirements.lock', 'ENVIRONMENT.md',
+    'third-party/uv-LICENSE-MIT', 'third-party/uv-LICENSE-APACHE', 'third-party/lark-cli-LICENSE'}
 PENDING = '.work/upgrades/pending.json'
 REPOSITORY = 'Zzzombee/laRkdown'
 MAX_ARCHIVE = 200 * 1024 * 1024
@@ -42,7 +45,7 @@ def research_path(name: str) -> bool:
     parts = PurePosixPath(name).parts
     if '__pycache__' in parts or name.endswith(('.pyc', '.pyo', '.local.json')):
         return False
-    if name in {'AGENTS.md', 'README.md', 'requirements.txt'}:
+    if name in {'AGENTS.md', 'README.md', 'requirements.txt', 'run.py', 'run.ps1'}:
         return True
     if name.startswith('.agents/config/'):
         return len(parts) == 3 and parts[-1] in PUBLIC_CONFIG
@@ -203,9 +206,9 @@ class Release:
         """Use the already downloaded sibling files without another ZIP/download."""
         instance = cls.__new__(cls)
         instance.archive = None
-        instance.maintenance = {name: project_path(maintenance, name).read_bytes()
-                                for name in MAINTENANCE_FILES}
-        manifest = json.loads(instance.maintenance['release/release-manifest.json'])
+        manifest = json.loads(project_path(maintenance, 'release/release-manifest.json').read_bytes())
+        members = MAINTENANCE_FILES if manifest.get('distribution_schema_version') == 4 else LEGACY_MAINTENANCE_FILES
+        instance.maintenance = {name: project_path(maintenance, name).read_bytes() for name in members}
         instance.files = {name: project_path(research, name).read_bytes()
                           for name in manifest['managed_files']}
         if sum(map(len, instance.files.values())) + sum(map(len, instance.maintenance.values())) > MAX_ARCHIVE:
@@ -214,9 +217,10 @@ class Release:
         return instance
 
     def _load_metadata(self):
-        if set(self.maintenance) != MAINTENANCE_FILES:
-            raise ValueError('Release maintenance members are missing or unexpected')
         self.manifest = json.loads(self.maintenance['release/release-manifest.json'])
+        expected = MAINTENANCE_FILES if self.manifest.get('distribution_schema_version') == 4 else LEGACY_MAINTENANCE_FILES
+        if set(self.maintenance) != expected:
+            raise ValueError('Release maintenance members are missing or unexpected')
         self.legacy = json.loads(self.maintenance['release/' + LEGACY])
         provenance = json.loads(self.maintenance['release/upstream.json'])
         if provenance['version'] != self.manifest['version']:
@@ -228,7 +232,7 @@ class Release:
     def _verify(self):
         info = self.manifest
         if (info.get('schema_version') != 1 or info.get('project') != 'laRkdown'
-                or info.get('distribution_schema_version') != 3):
+                or info.get('distribution_schema_version') not in {3, 4}):
             raise ValueError('Unsupported release manifest')
         if not isinstance(info.get('version'), str) or not isinstance(info.get('project_schema_version'), int):
             raise ValueError('Release version/schema is missing')
@@ -249,10 +253,13 @@ class Release:
         required = {'AGENTS.md', 'README.md', 'requirements.txt',
                     '.agents/config/project-layout.json'} | {
                         f'.agents/skills/{skill}/SKILL.md' for skill in RESEARCH_SKILLS}
+        if info['distribution_schema_version'] == 4:
+            required |= {'run.py', 'run.ps1'}
         if not required <= set(files):
             raise ValueError('Release lacks required personal research presets')
         maintenance_hashes = info.get('maintenance_files', {})
-        if set(maintenance_hashes) != MAINTENANCE_FILES - {'release/release-manifest.json'}:
+        expected = MAINTENANCE_FILES if info['distribution_schema_version'] == 4 else LEGACY_MAINTENANCE_FILES
+        if set(maintenance_hashes) != expected - {'release/release-manifest.json'}:
             raise ValueError('Invalid maintenance hash list')
         for name, digest in maintenance_hashes.items():
             if sha(self.maintenance[name]) != digest:

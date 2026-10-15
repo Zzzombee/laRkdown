@@ -2,13 +2,15 @@
 
 核验日期 2026-10-13，本机 CLI 1.0.97。[官方 CLI](https://github.com/larksuite/cli)、[Base 技能](https://github.com/larksuite/cli/blob/main/skills/lark-base/SKILL.md)、[字段 schema](https://github.com/larksuite/cli/blob/main/skills/lark-base/references/lark-base-field-schema.md)、[读取与分页 SOP](https://github.com/larksuite/cli/blob/main/skills/lark-base/references/lark-base-record-query-and-analysis-sop.md)。后续版本参数改变时按本机官方帮助修复，不退回猜测 REST API。
 
-脚本复用 laRkdown 的 `feishu_bridge.py` 作为官方 CLI 启动器，Windows 直接执行 npm 的 Node runner，JSON 不经过 shell 插值。保留用户身份和当前认证，不自动重新授权。权限不足按实际缺失 scope 提示用户本人授权，不打印密钥。
+脚本复用 laRkdown 的 `feishu_bridge.py` 作为官方 CLI 启动器，显式复用本机登记的 CLI；Windows npm 启动器优先使用原生程序，必要时用已定位 Node runner，JSON 不经过 shell 插值。保留用户身份和当前认证，不自动重新授权。权限不足按实际缺失 scope 提示用户本人授权，不打印密钥。
 
 `extract`/`preview` 可在无目标时运行；没有 Base 时 preview 仅显示待构建数据量。`init` 必须对应用户构建/绑定指令，先完整读取三文档，失败不创建知识库多维表格。新建使用 `+base-create` 自定义首表；复制母版使用 `+base-copy --without-content`。保存真实返回 token/URL；如果初始化已登记研究 Wiki 空间，用官方 `wiki +move --obj-type bitable --obj-token 实际BaseToken --target-space-id 实际SpaceID` 将新 Base 迁入该空间，再用 `wiki +node-get` 核对空间、节点与底层 Base token。移动结果不明时已设置一次性闩锁，后续只查询实际节点，不再次发起移动；异步任务按官方返回的 task_id 查证。用户绑定的已有 Base 不自动移动。随后补齐其它表和字段，复制地址与目标地址必须不同。已有 schema 不改类型、不删字段、不改原有视图/权限。六表补齐后用 `+view-list` 定位视图、`+view-set-visible-fields` 只展示阅读字段；新 Base 使用新建的网格视图，已有 Base 或模板副本另建“科研阅读”网格视图并保留其旧视图。设置结果和 view ID 写入本机配置；中断后先检查已建视图，不能重复创建同名视图。技术同步字段保持存在但在阅读视图隐藏。
 
 `+record-list --format ndjson --output ... --limit 2000` stdout 是 manifest，**没有常规 ok 包装**。逐行数据是字段名称映射加 record_id。读取下一页必须采用 next_offset；页间 rev/query_context 不一致、重复 record_id、记录计数不符或未到 has_more=false 都失败，禁止进行归档。未指定 view/filter，整表读完。
 
 `+record-upsert --json 字段映射`：无 record-id 是创建，有则更新，不自动按编号匹配。只写本技能管理字段；不批量覆盖整行。写前校验已有管理字段相对本机成功日志未被修改，并再次核对源版本。AI 扩展、formula/lookup/system 等不作为普通可写字段；链接值只能是真实目标 Record ID。保存每次 write-ahead 日志，回读确认字段和归档状态后才推进基线。未知 warnings/ignored_fields 停止并保留日志。
+
+统一入口为 `python run.py base --root . <操作>`；Windows 可用 run.ps1。仅接口变化或失败时定向读本机官方参考，不为每次同步重读全部 CLI 文档。
 
 ## 恢复
 

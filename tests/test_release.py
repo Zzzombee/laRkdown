@@ -1,6 +1,7 @@
 """Verify source, content and artifact boundaries between research and maintenance."""
 from __future__ import annotations
 import json
+import copy
 import os
 import subprocess
 import sys
@@ -127,6 +128,26 @@ class PackageBoundaryTests(unittest.TestCase):
         with patch.object(build, 'git', return_value=b' M AGENTS.md'):
             with self.assertRaisesRegex(ValueError, 'Commit'):
                 build.build(Path('unused.zip'))
+
+    def test_schema_three_bundle_remains_readable_without_new_environment_files(self):
+        sources = self.sources()
+        research = build.package_files(sources)
+        research = {n:b for n,b in research.items() if n not in {'run.py','run.ps1'}}
+        manifest = copy.deepcopy(json.loads(sources[build.RELEASE_MANIFEST]))
+        manifest['distribution_schema_version'] = 3
+        manifest['managed_files'] = {n:up.sha(b) for n,b in research.items()}
+        manifest['maintenance_files'] = {n:up.sha(sources['tools/'+n]) for n in up.LEGACY_MAINTENANCE_FILES if n != 'release/release-manifest.json'}
+        with tempfile.TemporaryDirectory() as directory:
+            archive = Path(directory) / 'legacy.zip'
+            with zipfile.ZipFile(archive, 'w') as package:
+                for name, blob in research.items(): package.writestr('laRkdown/'+name, blob)
+                for name in up.LEGACY_MAINTENANCE_FILES:
+                    blob = up.encoded(manifest) if name == 'release/release-manifest.json' else sources['tools/'+name]
+                    package.writestr('maintenance/'+name, blob)
+            self.assertEqual(up.Release(archive).manifest['distribution_schema_version'], 3)
+            with zipfile.ZipFile(archive) as package: package.extractall(Path(directory)/'installed')
+            sibling = Path(directory)/'installed'
+            self.assertEqual(up.Release.from_directory(sibling/'laRkdown', sibling/'maintenance').manifest, manifest)
 
 
 class UserGuideReleaseTests(unittest.TestCase):

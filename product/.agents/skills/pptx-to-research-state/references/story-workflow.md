@@ -1,36 +1,19 @@
-# Target paper narratives
+# 目标故事工作流
 
-Use for an authorized request to create, add or revise a story in PROJECT_STORY. An explicitly requested independent story uses the same structure. Default to the existing story file; do not infer a request for a separate note. A new story does not by itself authorize replacing another story or changing priorities.
+仅在用户要求生成、增加或修订 PROJECT_STORY 时执行；独立故事同样适用。默认更新指定/已有故事，新故事不授权替换其他故事或改变优先级。纯指令维护不读科研事实。
 
-Read relevant CURRENT_STATE and RESEARCH_QUESTIONS entries first, then only the story passages needed for positioning or comparison. Follow the project's `.agents/instructions/story-policy.md` when present; it owns section responsibilities, material-specific claim boundaries and target-abstract semantics. Instruction-only maintenance does not require reading scientific state files.
+## 输入
 
-## Frozen output structure
+先读相关 CURRENT_STATE 与 RESEARCH_QUESTIONS，再读必要故事片段。读取 `.agents/instructions/story-policy.md`：它是六节职责、目标摘要语义和证据隔离的权威来源。路线由用户选择及有界记录确定；无法确定时问必要的路线选择，不自行发明。无需 PPTX。
 
-Write native DocxXML headings in the registered PROJECT_STORY document and follow `.agents/instructions/story-policy.md`. Keep these six headings in this order; do not omit or merge them based on the current prompt:
+## 成文
 
-1. 摘要式故事
-2. 领域背景与未解决问题
-3. 文献定位与创新点
-4. 论文论证链
-5. 本项目的独特基础
-6. 当前证据与成立条件
+使用飞书原生标题，保留 policy 规定的六节及顺序。标题承担核心主张，不另造同义标题；叙事段落不分配 OBS/CON/HYP/RQ/SOL 编号。摘要、领域背景、文献定位、论证链、真实基础与当前证据各守职责，不跨节重复台账和限制。
 
-The story heading is its title-level claim; do not add a second core-proposition heading. Use only necessary subgroups within the six sections. Preserve stable research IDs and real Feishu links; refetch platform block IDs after structural changes. Do not assign OBS/CON/HYP/RQ/SOL IDs to narrative paragraphs.
+目标叙事身份在摘要外说明一次。摘要按所选路线成功完成后的正式论文叙述，补齐定性结果关系；不改计划/条件语气，也不加入证据缺口。不补造测量值、样本量、统计、关键参数、引用或未选机制。第六节逐项对应真实支持、决定性缺口、阴性/矛盾和替代解释；该叙事不升级 CON、不适用于实际投稿或真实汇报。
 
-## Content and evidence separation
+## 文献与完成
 
-- Write the abstract as a completed, formally published paper. Complete insufficient evidence chains with the successful qualitative outcomes of the user's selected story, using direct result language. Do not use “预期”, “拟”, “计划”, “如果成功”, “有望”, “尚待验证”, or equivalent prospective/conditional wording. State the document's target-narrative identity once outside the abstract. Do not invent measurements, sample sizes, statistics, key parameters, citations or an unselected mechanism/route.
-- The field-background section explains why the field's problem arises, how prior research addresses it, and why those answers remain limited. The project's missing experiments, controls or unverified conclusions belong in section six.
-- Keep separate short groups for capabilities already covered by prior work and this study's innovation contributions. Retain matched citations for prior coverage; highlight each contribution with a short statement and its precise difference. Do not force a fixed number of innovations or treat every result-chain step as independently novel.
-- The argument chain states the proposition and paper role of each result in short ordered items. The project-basis section links actual enabling observations, material foundations and capabilities. Neither section repeats a slide-by-slide extraction ledger or the full limitations list.
-- Section six maps each core claim to current support and the decisive missing connection, preserving negative/conflicting evidence and alternatives. Link OBS/CON/HYP/RQ and relevant SOL routes; put minor provenance discrepancies in an optional collapsed note. Do not turn success-complete abstract language into a CON.
+仅整理已有材料不自动外搜；未核验的幻灯片引文只作背景，在第三节或来源注说明。需要文献定位时用 literature-source-gate，区分已有覆盖与精确新增关系，不凑创新数量，不无界宣称首次/独一。
 
-For an initial story, draw its selected direction from the user's stated route and relevant bounded findings and unresolved questions; a presentation is optional. If the route cannot be determined from the user's request or registered records, ask for that choice without inventing one. For updates, change only the authorized stories or affected content. Ranking remains governed by evidence fit and decisive experiments, not by the abstract's assumed success.
-
-## Literature and final edit
-
-Do not launch an external search merely to organize slides into a story. Unverified slide literature remains background; state verification limits briefly in section three or the provenance note, not in the abstract. For literature-backed positioning, execute literature-source-gate, match covered capabilities to sources, and identify the remaining material-system-stimulation-readout contribution. Success-complete narration does not verify novelty or authorize “first”, “unique” or unbounded absence claims.
-
-After section responsibilities, project evidence and citations are established, apply academic-writing-editor with the target-abstract distinction intact. Review for a complete abstract, separate field and project gaps, explicit covered-versus-new contributions, preserved negative/conflicting evidence, and removal of cross-section repetition.
-
-Use maintain-research-state only for structural mutations and run the selected validation once on the changed notes after the edit batch. Do not audit the entire project solely to update story instructions or templates. Report the deliverable and material unresolved limits concisely.
+结构、证据与引用明确后用 academic-writing-editor，保留目标摘要分支。只更新授权故事及受影响内容；稳定 ID 与真实链接保留，结构变化重取块 ID。只有研究结构变动才调用维护技能并在批次末定向校验一次。写后回读，简短交付链接及实质未解决项。

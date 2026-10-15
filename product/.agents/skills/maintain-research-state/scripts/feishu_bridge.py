@@ -40,12 +40,26 @@ def parse_xml(text: str):
 def text_blocks(text: str):
     return [''.join(e.itertext()).strip() for e in parse_xml(text) if e.tag in {'title', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'} and ''.join(e.itertext()).strip()]
 
-def cli_prefix():
+def cli_prefix(root=None):
+    configured = os.environ.get('LARKDOWN_CLI')
+    path = Path(root or Path.cwd()) / '.agents/config/runtime.local.json'
+    if not configured and path.is_file():
+        configured = json.dumps(json.loads(path.read_text(encoding='utf-8'))['cli'])
+    if configured:
+        prefix = json.loads(configured)
+        if (not isinstance(prefix, list) or not prefix or any(not isinstance(p, str)
+                or not Path(p).is_absolute() or not Path(p).is_file() for p in prefix)
+                or Path(prefix[0]).suffix.lower() in {'.cmd', '.bat', '.ps1'}):
+            raise RuntimeError('Selected CLI changed; repeat environment preparation')
+        return prefix
     executable = shutil.which('lark-cli')
     if not executable:
         raise RuntimeError('Official lark-cli is not installed; follow the project Feishu workflow')
     if os.name == 'nt' and Path(executable).suffix.lower() in {'.cmd', '.bat', '.ps1'}:
         runner = Path(executable).parent / 'node_modules/@larksuite/cli/scripts/run.js'
+        native = runner.parent.parent / 'bin/lark-cli.exe'
+        if native.is_file():
+            return [str(native)]
         node = shutil.which('node')
         if not runner.is_file() or not node:
             raise RuntimeError('Cannot resolve the official npm CLI runner; configure an executable installation')
@@ -54,7 +68,7 @@ def cli_prefix():
 
 def call(args: list[str], root: Path, content: str | None = None):
     env = dict(os.environ, LARKSUITE_CLI_NO_UPDATE_NOTIFIER='1', LARKSUITE_CLI_NO_SKILLS_NOTIFIER='1')
-    process = subprocess.run(cli_prefix() + args, cwd=root, input=content, text=True, encoding='utf-8',
+    process = subprocess.run(cli_prefix(root) + args, cwd=root, input=content, text=True, encoding='utf-8',
                              capture_output=True, env=env, timeout=180)
     stream = process.stdout if process.returncode == 0 else process.stderr
     try:
@@ -319,7 +333,7 @@ def main():
     bridge = Bridge(args.root)
     try:
         if args.action == 'preflight':
-            process = subprocess.run(cli_prefix() + ['auth', 'status', '--json'], capture_output=True, text=True, encoding='utf-8', timeout=30)
+            process = subprocess.run(cli_prefix(args.root) + ['auth', 'status', '--json'], capture_output=True, text=True, encoding='utf-8', timeout=30)
             status = json.loads(process.stdout)
             user = status.get('identities', {}).get('user', {})
             result = {'ok': process.returncode == 0 and user.get('available') is True, 'identity': 'user', 'user_status': user.get('status'), 'token_status': user.get('tokenStatus')}

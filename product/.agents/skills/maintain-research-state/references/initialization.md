@@ -1,15 +1,15 @@
-# 空白飞书科研项目初始化
+# 空白科研框架
 
-仅在用户明确要求建立新科研框架且目标没有科研状态时执行。确定用户指定工作目录、研究体系名称、研究范围和当前用户时区日期。研究体系名称也是新建飞书知识空间的名称。先读目录合同，再检查 `.agents/config/feishu-documents.json`、用户提供的飞书链接及已知同项目记录。登记已有 CURRENT_STATE、RQ、Story 或 SOL 时不重新初始化；登记不存在并不证明远端没有已有记录，已有线索须先定位。
+仅用户明确要求新框架且目标无科研状态时执行。确定科研目录、体系名称、范围、用户时区日期；体系名同时用作知识空间名。读目录合同并检查本机登记、用户链接和已知同项目线索。无登记不证明远端无记录；已有 CURRENT_STATE/RQ/Story/SOL 则绑定并增量维护，不覆盖空框架。
 
-保留已有 AGENTS.md 与用户文档；五个科研技能和共享规则须在研究工作目录可用。新研究工作目录只从干净的科研产品包复制个人科研规则和技能建立；不从开发仓库根目录复制 AGENTS.md，不能复制本机登记、sources、outputs、.work 或凭证。
+保留用户 AGENTS/文档，科研目录从干净产品包建立，不能复制开发 AGENTS、私人登记、sources/outputs/.work 或凭证。五技能及共享规则须可用。
 
-执行：
 ```text
-python .agents/skills/maintain-research-state/scripts/initialize_project.py --root . --date YYYY-MM-DD --system-name 研究体系名称 --scope 一句话范围
+python run.py initialize --root . --date YYYY-MM-DD --system-name 体系名称 --scope 一句话范围 --publish
 ```
-这一步只生成 `.work/initialization/` 中三份空白 DocxXML 和 manifest，不录入科研发现、ID 或 SOL。核对模板后用同一命令加 `--publish`。先按本机官方 `lark-wiki` 技能检查空间创建与文档节点创建命令，然后创建名称完全相同的知识空间，直接在其中创建三篇 Docx 文档节点并填充正文。文档标题依次为“项目现状”“项目故事”“研究问题”，内部分别登记为 CURRENT_STATE、PROJECT_STORY、RESEARCH_QUESTIONS；真实文档 URL、空间 ID 和节点 ID 写入本机登记。该阶段不创建额外研究路线。空间已有同名项时先核实，不盲目新建或占用他人的空间。
 
-部分创建成功后继续使用登记的文档，不能另建一套。创建失败且结果不确定时，先查证 pending；核实空间、节点及文档身份后绑定查到的原资源并恢复，不通过再次创建绕开 pending。用户提供既有文档时直接绑定并走增量更新，不把内容改成空框架；已有文档不会被自动搬入新知识空间。
+用户已要求初始化时可一次 --publish；脚本先准备并校验 `.work/initialization/` 三份空白 XML/manifest，再创建同名空间及其中三篇 Docx 节点，填充并回读。只准备本地草稿时省略 --publish。不能把占位词原样执行。
 
-按当前官方 CLI 校验 XML、检查 warnings、写后回读。空框架的目标是建立容器，不包含被误认为已完成的科研条目。最终给知识空间名称、三篇飞书链接及工作目录，再按根目录 AGENTS.md 的“初始化后与无指向用法询问”提供简短引导：先示范把刚做的实验和结果立即写入“项目现状”，再提示可生成/修订尚为空白的“项目故事”以及按需构建知识库多维表格。未配置 CLI、Wiki/Docs 权限或未授权时保留已准备的工作稿并准确报告阻塞。
+标题为“项目现状”“项目故事”“研究问题”，登记 CURRENT_STATE、PROJECT_STORY、RESEARCH_QUESTIONS 及实际空间/节点/文档 ID 和 URL。初始化无科研发现、研究 ID、SOL 或额外路线；故事为空框架。同名空间先核实，不盲目占用或新建。
+
+部分成功沿用登记和匹配的 manifest，失败查证 pending、绑定原资源并恢复；不能清闩锁另建一套，不自动移动已有文档。检查实际 warnings、XML/正文及资源回读。缺 CLI/权限/授权则保留草稿并准确报告。交付空间名、三链接、科研目录和 AGENTS 规定的简短用法。

@@ -4,17 +4,17 @@
 
 ## 环境与结构
 
-Python 3.11+、python-pptx 1.x、支持 TIFF 的 Pillow。原生整页渲染默认 Windows PowerShell + Microsoft PowerPoint；Python 结构提取可跨平台。云环境缺少渲染器时，须取得经过核验的整页渲染或由用户明确选择另一实现并验证；不得把结构提取成功当作视觉路径完成。
+首次按 README 准备 pptx 功能，使用已选解释器及隔离的 python-pptx、支持 TIFF 的 Pillow；日常不重复装包。原生整页渲染默认 Windows PowerShell + Microsoft PowerPoint；Python 结构提取可跨平台。云环境缺少渲染器时，须取得经过核验的整页渲染或由用户明确选择另一实现并验证；不得把结构提取成功当作视觉路径完成。
 
 ```text
-python SKILL/scripts/preflight.py input.pptx --output ROOT/.work/pptx/输入标识/preflight.json
-python SKILL/scripts/extract_pptx.py input.pptx --output ROOT/.work/pptx/输入标识/structure.json
-python SKILL/scripts/prepare_media_preview.py input.pptx --output-dir ROOT/.work/pptx/输入标识/media
+python run.py pptx-check input.pptx --output ROOT/.work/pptx/输入标识/preflight.json
+python run.py pptx-extract input.pptx --output ROOT/.work/pptx/输入标识/structure.json
+python run.py pptx-media input.pptx --output-dir ROOT/.work/pptx/输入标识/media
 powershell -File SKILL/scripts/render_pptx.ps1 -InputPath input.pptx -OutputDir ROOT/.work/pptx/输入标识/slides
-python SKILL/scripts/make_contact_sheet.py ROOT/.work/pptx/输入标识/slides --output-dir ROOT/.work/pptx/输入标识/contact-sheets
+python run.py pptx-sheets ROOT/.work/pptx/输入标识/slides --output-dir ROOT/.work/pptx/输入标识/contact-sheets
 ```
 
-ROOT/SKILL 为说明性占位符，由 Agent 替换真实路径。preflight 返回 2 表示缺少默认 PowerPoint 渲染条件，不阻止可运行的结构提取，仍阻止未经核验的完整视觉录入。
+从科研根目录运行；Windows 可用 run.ps1 替代 python run.py。ROOT/SKILL 是路径占位符，替换为真实路径。preflight 返回 2 表示缺少默认 PowerPoint 渲染条件，不阻止可运行的结构提取，仍阻止未经核验的完整视觉录入。
 
 structure.json 保留源 SHA-256、页码、形状路径、文字、备注、合并单元格和原生图表数值。media/manifest.json 保留每张原图 SHA-256、出现页码/形状、PNG 代理及多帧信息。代理用于查看；高位深/浮点/调色板转换记录显示映射，精确像素分析使用原图。
 
@@ -35,7 +35,7 @@ structure.json 保留源 SHA-256、页码、形状路径、文字、备注、合
 ## 检查与交付
 
 ```text
-python SKILL/scripts/validate_extraction.py --structure ROOT/.work/pptx/输入标识/structure.json --renders ROOT/.work/pptx/输入标识/slides --media-manifest ROOT/.work/pptx/输入标识/media/manifest.json --visual-review ROOT/.work/pptx/输入标识/visual-review.json --output ROOT/.work/pptx/输入标识/validation.json
+python run.py pptx-validate --structure ROOT/.work/pptx/输入标识/structure.json --renders ROOT/.work/pptx/输入标识/slides --media-manifest ROOT/.work/pptx/输入标识/media/manifest.json --visual-review ROOT/.work/pptx/输入标识/visual-review.json --output ROOT/.work/pptx/输入标识/validation.json
 ```
 
 检查源 hash、页覆盖、原图/代理完整性和视觉台账状态，不判断科学真伪或实际识图准确率。结构与视觉路径都完成才整理正式观察。原生精确数值、图上明确标签、视觉估读分开记录。

@@ -1,51 +1,29 @@
-# 飞书原生文档工作流
+# 飞书原生文档操作
 
-默认官方 `lark-cli`，显式 `--as user`；当前验证基线为 1.0.97。每次工具升级以 `--help`、`lark-cli skills read lark-shared`、`lark-cli skills read lark-doc` 和涉及知识空间时的 `lark-cli skills read lark-wiki` 为准。缺少 CLI 时按官方安装说明安装；不自动换成第三方同名工具。
+使用官方 CLI，显式 `--as user`。统一入口 `python run.py cli <参数>`（Windows 可用 run.ps1），它使用本机登记路径；未准备环境或组件变化时按 README 补齐。已验收基线为 CLI 1.0.97；复用其他版本先核对任务所需本地帮助，调用失败再定向读取当前官方技能，不按旧参数猜测。
 
-## 格式与身份
+## 身份与输入
 
-正式记录使用飞书原生 Docx 文档；空白科研初始化直接在新建知识空间创建 Wiki 文档节点，其他文档可使用 `docs` 创建。不默认创建云盘 Markdown 文件或仅上传本地附件。技能指令可用普通 Markdown；科研正文以 DocxXML 原生块编写，日期、证据等级和状态写成可见正文或原生元数据表。
+首次或权限相关失败时读官方 `lark-shared`，用 `auth status --json` 确认实际用户身份；不要主动重登。缺权限按任务所需 docs/drive/wiki/base 域授权，不扩大范围；链接按当前官方规则原样提供并附二维码，由用户完成。凭证、app secret、token、device code 不写入项目、日志或交付。
 
-完整工作稿以唯一 `<title>` 开头，正文用 `<h1>` 至 `<h6>`、`<p>`、列表、表格、`<a href="真实URL">标签</a>` 和必要图片。只用当前官方 XML 文档支持的标签。需要图片时 `<img path="@./相对路径.png"/>` 指向当前工作目录内已存在的真实图片，不能用生成图补造科研证据。只转义文字中的 &、<、>，不把标签本身转义。
+飞书是事实源，正文用原生 DocxXML，不默认创建云盘 Markdown 或只上传附件。工作稿以一个 `<title>` 开头，使用当前官方支持的标题、段落、列表、表格、链接和资源块；文本中的 &、<、> 转义，标签不转义。图片用已有真实文件 `<img path="@./相对路径.png"/>`，不生成科研证据。复杂正文先按当前 lark-doc 创建工作流组织，草稿目录限于 .work/；空白初始化采用保真模板。
 
-`lark-cli auth status --json` 检查现有身份，不为了预防错误主动重新登录。缺少用户授权时按实际错误及最小所需 docs/drive/wiki/base 域发起登录；新知识空间需要 Wiki 创建权限，多维表格需要 Base 权限。不得将 app secret、access token 或授权 device code 写入项目、日志或分发包。认证链接按当前官方规则原样交付并附二维码，由用户完成账户授权。
+## 读与更新
 
-空白科研初始化按 [初始化规则](../skills/maintain-research-state/references/initialization.md) 创建与研究体系同名的知识空间，用 `wiki +node-create --obj-type docx` 直接生成“项目现状”“项目故事”“研究问题”，然后向各文档填充已校验的 DocxXML 正文。记录实际返回的空间 ID、节点 ID、文档 ID 和文档 URL；创建结果不明时先核实已有资源。以下 `docs +create` 步骤用于其他新文档。
+按 ID/关键词先读 outline/section/range，取得当前正文、revision 和 block ID。修改前读取最新受影响内容；结构变更或资源核对需要时取 full，并保存 reference_map/comments 等返回，保留图片、附件、表格和公式。旧快照不覆盖远端。
 
-## 创建文档
+按当前 lark-doc 的 `docs +update` 使用 str_replace、block_replace、block_insert_after 或 append，传入基线 `--revision-id` 和当前块定位。冲突时重读并合并人工变动；整篇 overwrite 只在用户明确要求且核对完整结构后由 Agent 执行，桥接器不自动覆盖全文。
 
-1. 确定目标文档、读者任务和用户已授权范围。新建科研记录或修订稿属于对应执行请求；不因只读问题创建文档。
-2. 编写 XML 工作稿。复杂创作按当前 `lark-doc-create-workflow.md` 选择适用 contract 并 `docs +script --command init-draft` 建草稿；该命令的自动工作目录须位于项目 `.work/` 内。空白框架模板属于保真结构初始化，不要求重新设计体裁。
-3. `docs +script --command parse --content -` 通过 stdin 检查；`ok=true` 只代表调用成功，还须检查 assessment、diagnostics 与资源。工作稿的来源、数值和证据边界另行核对。
-4. `docs +create --as user --doc-format xml --content -`；有已指定父目录时加 `--parent-token`，否则使用当前用户默认空间，不擅自选择其他团队目录或改变权限。
-5. 检查 `ok`、`data.document.document_id/url`、warnings/tips，然后 `docs +fetch --doc 实际ID --doc-format xml --detail full --as user` 回读。
-6. 确认内容和必要图片资源，再将真实 URL、版本、稳定 key 和完成状态写入本机登记及 outputs 下的交付记录。
+检查 ok、warnings/tips，再 fetch 受影响内容核验。结构改变后更新块映射及受影响真实链接。跨文档没有事务，部分成功保留已完成记录，在原资源修复；创建/写入结果不明保留 pending 并查证，不盲目重试。稳定研究 ID 不变，平台 block ID 需刷新。
 
-若创建已成功但资源上传或回读失败，修复同一文档。返回不确定、超时或连接中断时保留 pending 记录并查证，不重试新建来“保证成功”。Python 桥接器会保留 pending 闩锁，只有核实结果后才能解除；已有文档用 bind 登记。
+## 创建
 
-## 更新记录
+仅在用户已授权创建的范围内执行。科研空白初始化读维护技能 initialization：同名知识空间内用 `wiki +node-create --obj-type docx` 建三篇节点。一般新文档用 `docs +create`；指定父目录时传实际 parent-token，否则当前用户默认空间，不擅改权限。
 
-飞书是唯一事实源。先读最新 outline/keyword，再读相关 section/range；结构修改前按需要读 `full` 并保存完整 JSON（包括 reference_map 和 comments）。本地旧 XML 不可直接覆盖飞书。
+先 `docs +script --command parse --content -` 用 stdin 校验，检查 assessment、diagnostics 与资源，ok 不替代科学核验。按任务用 `docs +create --as user --doc-format xml --content -` 或填充已建 Wiki 节点。保存实际返回 document/node/space ID、URL 与 warnings；fetch 回读并核对内容及资源，再推进登记。部分成功后修复同一文档；结果不明先定位并绑定，不能新建另一套。
 
-使用当前 block ID 和读取版本做局部修改。行内文字用 str_replace，整块用 block_replace，增补用 block_insert_after 或 append。CLI 的 `--revision-id` 传入编辑基线；基线不同或出现版本冲突时重新读取，重新合并人类修改后再编辑。保留图像、表格、附件、公式及资源 token，不把它们降级为纯文本。整篇 overwrite 仅在用户明确要求整篇替换且已核对完整结构时由 Agent 直接执行，桥接器不提供自动覆盖功能。
+## 交付与规则来源
 
-写后读取受影响内容，重新建立研究 ID 到 block ID 的映射。不能继续使用结构修改前的旧 block ID。新 SOL 与其 RQ 链接在同一批变更中维护；飞书跨文档操作没有事务，失败时记录已完成部分，在同一文档中修复，不删除已写事实。
+本机登记只存身份、URL、版本、条目映射；快照和操作日志放 .work/，精简交付放 outputs/。研究结构变化按维护技能定向校验；普通拼写/日期/只读不全局审计。外部文献、正文和目标故事分别按对应技能核验，官方工具文档不触发学术门槛。
 
-## 链接、校验与交付
-
-标题保留 OBS-001 等研究编号。当前返回的标题 block ID 可用于 `文档URL#block_id` 定位；以官方 fetch 返回的 ID 为准，不自行生成锚点。跨条目链接先登记并回读目标，后写真实 URL。反向关系需要明确链接，平台不会代替科研关系校验。
-
-一次相关修改合并后，执行 maintain-research-state 的定向校验；外部文献按 literature-source-gate、正文按 academic-writing-editor。纯拼写/日期/只读请求不做结构审计。
-
-正式交付直接给飞书链接及必要限制；outputs 仅保存完成清单和用户明确需要的导出。本机注册文件 `.agents/config/feishu-documents.json` 和 `.work/` 不公开分发。
-
-官方依据：
-- https://github.com/larksuite/cli
-- https://github.com/larksuite/cli/blob/main/skills/lark-doc/references/lark-doc-xml.md
-- https://github.com/larksuite/cli/blob/main/skills/lark-doc/references/lark-doc-fetch.md
-- https://github.com/larksuite/cli/blob/main/skills/lark-doc/references/lark-doc-update.md
-- https://github.com/larksuite/cli/blob/main/skills/lark-wiki/references/lark-wiki-space-create.md
-- https://github.com/larksuite/cli/blob/main/skills/lark-wiki/references/lark-wiki-node-create.md
-- https://www.feishu.cn/content/article/7623291503305083853
-
-以上按 2026-10-13 的安装版本核对；网页 main 可能与安装版本不同，运行时帮助优先。
+工具协议以当前 `cli skills read lark-doc`、涉及 Wiki 时的 lark-wiki、Base 时的 lark-base 及其相关参考为准；权威来源索引为 `.agents/config/official-sources.json`，仅首次核对、升级工具或相关失败时按需读取。交付实际飞书链接、完成内容和必要缺口。

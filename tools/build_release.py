@@ -14,7 +14,7 @@ import zipfile
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from tools.upgrade_larkdown import (LEGACY, METADATA, MANIFEST, Release, encoded, sha,
-                                  RESEARCH_SKILLS, RESEARCH_INSTRUCTIONS, PUBLIC_CONFIG, research_path)
+                                  RESEARCH_SKILLS, RESEARCH_INSTRUCTIONS, PUBLIC_CONFIG, research_path, MAINTENANCE_FILES)
 
 BOOTSTRAP_TAGS = ('v0.1.0', 'v0.2.0')
 USER_GUIDE = 'USER_GUIDE.md'
@@ -22,12 +22,11 @@ VERSION_NOTES = 'tools/release/version-notes.md'
 PROVENANCE = 'tools/release/upstream.json'
 RELEASE_MANIFEST = 'tools/release/release-manifest.json'
 LEGACY_SOURCE = 'tools/release/' + LEGACY
-PACKAGE_EXACT = {'AGENTS.md', 'README.md', 'requirements.txt'} | {
+PACKAGE_EXACT = {'AGENTS.md', 'README.md', 'requirements.txt', 'run.py', 'run.ps1'} | {
     '.agents/config/' + name for name in PUBLIC_CONFIG} | {
     '.agents/instructions/' + name for name in RESEARCH_INSTRUCTIONS} | {
     f'.agents/skills/{skill}/SKILL.md' for skill in RESEARCH_SKILLS}
-MAINTENANCE_SOURCES = {'tools/upgrade_larkdown.py', 'tools/UPGRADING.md', PROVENANCE,
-                       RELEASE_MANIFEST, LEGACY_SOURCE, VERSION_NOTES}
+MAINTENANCE_SOURCES = {'tools/' + name for name in MAINTENANCE_FILES}
 PRIVATE_ROOTS = ('outputs/', 'sources/', '.work/', '.planning/')
 FORBIDDEN_PRODUCT_TEXT = ('upgrade_larkdown', 'upgrade-larkdown', 'release-manifest',
     'legacy-release-baselines', 'upstream.json', 'version-notes', 'UPGRADING.md',
@@ -119,7 +118,7 @@ def working_files():
         if not name or not (ROOT / name).is_file():
             continue
         blob = (ROOT / name).read_bytes()
-        if (PurePosixPath(name).suffix in {'.md', '.py', '.json', '.txt', '.ps1', '.yml', '.yaml'}
+        if (PurePosixPath(name).suffix in {'.md', '.py', '.json', '.txt', '.ps1', '.sh', '.tsv', '.lock', '.yml', '.yaml'}
                 or PurePosixPath(name).name == 'LICENSE'):
             blob = blob.replace(b'\r\n', b'\n')
         result[name] = blob
@@ -200,7 +199,7 @@ def desired_manifest(files=None, legacy=None):
     legacy = legacy if legacy is not None else previous_releases()
     maintenance = {name[len('tools/'):]: files[name] for name in MAINTENANCE_SOURCES
                    if name != RELEASE_MANIFEST}
-    return {'schema_version': 1, 'distribution_schema_version': 3, 'project': 'laRkdown',
+    return {'schema_version': 1, 'distribution_schema_version': 4, 'project': 'laRkdown',
             'version': json.loads(files[PROVENANCE])['version'],
             'project_schema_version': json.loads(product['.agents/config/project-layout.json'])['schema_version'],
             'supported_from': sorted(legacy['releases']),

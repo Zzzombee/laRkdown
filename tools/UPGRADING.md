@@ -28,7 +28,7 @@ python <新解压目录>/maintenance/upgrade_larkdown.py --project <原科研目
 python <新解压目录>/maintenance/upgrade_larkdown.py --project <原科研目录> --recover
 ```
 
-发现中断后的人工修改时停止，不覆盖。升级不访问飞书或重新初始化科研状态。完成后在豆包重新打开原科研目录。
+发现中断后的人工修改时停止，不覆盖。升级不访问飞书或重新初始化科研状态。完成后用新包环境入口对原科研目录准备环境，再在豆包重新打开原科研目录；本机 runtime.local.json 不随升级覆盖。
 
 ## token 优先级
 

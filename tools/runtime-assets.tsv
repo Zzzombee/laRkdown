@@ -1,0 +1,14 @@
+component	platform	version	sha256	url
+python	all	3.13.15	-	-
+uv	windows-amd64	0.12.20	95f9bc30fbb3574d276e28ac4a6de932d25153645853d13da8c21eec3bc88d06	https://github.com/astral-sh/uv/releases/download/0.12.20/uv-x86_64-pc-windows-msvc.zip
+uv	windows-arm64	0.12.20	b6bd9218855591742ffd3b00fcf2044b4d2fb6446b6a3545e0dfee447e950388	https://github.com/astral-sh/uv/releases/download/0.12.20/uv-aarch64-pc-windows-msvc.zip
+uv	darwin-amd64	0.12.20	ac54283d211fd77cdc152b67606dbaf6406ff4ab03f3af4ae99468fa8e887141	https://github.com/astral-sh/uv/releases/download/0.12.20/uv-x86_64-apple-darwin.tar.gz
+uv	darwin-arm64	0.12.20	848fdeb602ff1a1baacd4f6c8b7bdc6cf1ad026a6d9cf59475fda17c179743ca	https://github.com/astral-sh/uv/releases/download/0.12.20/uv-aarch64-apple-darwin.tar.gz
+uv	linux-amd64	0.12.20	6590717592ace991ff83a63fef799e3ad9d33ecc8f96c5d6bdd732496e79337f	https://github.com/astral-sh/uv/releases/download/0.12.20/uv-x86_64-unknown-linux-gnu.tar.gz
+uv	linux-arm64	0.12.20	8a7aad7bc76a2fae5151566ff3e43eacce0b2a113d5e4de3e4afe3e58fa2441e	https://github.com/astral-sh/uv/releases/download/0.12.20/uv-aarch64-unknown-linux-gnu.tar.gz
+lark-cli	darwin-amd64	1.0.97	1f5d3899138bc058662a027d0034ed69d21287d83322993afc01fee559b78de0	https://github.com/larksuite/cli/releases/download/v1.0.97/lark-cli-1.0.97-darwin-amd64.tar.gz
+lark-cli	darwin-arm64	1.0.97	64e856a05c8dfdac5dbecd316766e4b05299f230f54833b674a623df3ac13f1c	https://github.com/larksuite/cli/releases/download/v1.0.97/lark-cli-1.0.97-darwin-arm64.tar.gz
+lark-cli	linux-amd64	1.0.97	7ce11848724f0b0bc8204012140adbf76fe7c1fc8abd41c1878bc97b7228126b	https://github.com/larksuite/cli/releases/download/v1.0.97/lark-cli-1.0.97-linux-amd64.tar.gz
+lark-cli	linux-arm64	1.0.97	2dec3e362ecce05b535854a0205035bb4ccdb72dbbed9a321890c2089da16bc5	https://github.com/larksuite/cli/releases/download/v1.0.97/lark-cli-1.0.97-linux-arm64.tar.gz
+lark-cli	windows-amd64	1.0.97	88ee81ec73be12432b2297df010098b5069e5ff0403123e1cd308ad0061f1397	https://github.com/larksuite/cli/releases/download/v1.0.97/lark-cli-1.0.97-windows-amd64.zip
+lark-cli	windows-arm64	1.0.97	4fef85e999fc54de1234b0bb622766f096870db2b86a396545e01a4156abfb3b	https://github.com/larksuite/cli/releases/download/v1.0.97/lark-cli-1.0.97-windows-arm64.zip

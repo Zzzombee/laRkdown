@@ -1,6 +1,6 @@
 {
   "project": "laRkdown",
-  "version": "0.2.6",
+  "version": "0.3.0",
   "adapted_at": "2026-10-13",
   "source": {
     "repository": "https://github.com/Zzzombee/maRkdown",
@@ -39,7 +39,9 @@
     "native-document state schema and validation",
     "explicit PPTX visual evidence path",
     "remove editor-specific links, properties and plugins",
-    "Isolate personal research presets from repository development and external maintenance tooling"
+    "Isolate personal research presets from repository development and external maintenance tooling",
+    "Reuse compatible local runtimes and prepare missing components with isolated optional PPTX dependencies",
+    "Reduce repeated model instructions through task-based loading while preserving research evidence and recovery rules"
   ],
   "file_lineage": {
     ".agents/skills/academic-writing-editor/LICENSE": {
