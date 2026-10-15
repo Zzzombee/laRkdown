@@ -22,7 +22,7 @@ spec.loader.exec_module(runner)
 
 class EnvironmentTests(unittest.TestCase):
     def project(self, folder):
-        root = (Path(folder) / '科研 project').resolve()
+        root = (Path(folder).resolve() / '科研 project').resolve()
         (root / '.agents/config').mkdir(parents=True)
         (root / '.agents/config/project-layout.json').write_text('{"workspace_kind":"personal-research"}')
         (root / 'run.py').write_text('fixture')
@@ -31,7 +31,7 @@ class EnvironmentTests(unittest.TestCase):
     def test_core_reuses_python_and_cli_without_pip_download_or_auth(self):
         with tempfile.TemporaryDirectory() as folder:
             root = self.project(folder)
-            native = Path(folder) / 'lark-cli.exe'
+            native = Path(folder).resolve() / 'lark-cli.exe'
             native.write_bytes(b'fixture')
             calls = []
             def invoke(args, **kwargs):
@@ -42,13 +42,13 @@ class EnvironmentTests(unittest.TestCase):
                     return 'lark-cli version 1.0.93'
                 return ' '.join(flag for _, flags in setup.CORE for flag in flags)
             with patch.object(setup, 'run', side_effect=invoke), patch.object(setup.shutil, 'which', return_value=str(native)), patch.object(setup, 'download') as download:
-                first = setup.prepare(root, Path(folder) / 'cache')
+                first = setup.prepare(root, Path(folder).resolve() / 'cache')
                 self.assertTrue(first['ok'])
                 self.assertEqual(first['features'], ['core'])
                 self.assertFalse(any('auth' in c or 'pip' in c or 'base' in c for c in calls))
                 download.assert_not_called()
                 calls.clear()
-                setup.prepare(root, Path(folder) / 'cache')
+                setup.prepare(root, Path(folder).resolve() / 'cache')
                 self.assertEqual(len(calls), 1)  # Only interpreter validation; unchanged CLI help is cached.
 
     def test_cli_compatibility_depends_on_flags_not_version(self):
@@ -81,17 +81,17 @@ class EnvironmentTests(unittest.TestCase):
         probe = {'executable':sys.executable, 'version':[3,13,13]}
         with tempfile.TemporaryDirectory() as folder:
             with patch.object(setup, 'python_probe', return_value=probe), patch.object(setup, 'run') as invoke, patch.object(setup, 'install_asset') as install:
-                self.assertEqual(setup.choose_python({}, Path(folder), None, 'core'), probe)
+                self.assertEqual(setup.choose_python({}, Path(folder).resolve(), None, 'core'), probe)
                 invoke.assert_not_called(); install.assert_not_called()
             def invoke(args, **kwargs):
                 if '-c' in args: raise RuntimeError('ensurepip missing')
                 if 'find' in args: return sys.executable
                 return ''
-            with patch.object(setup, 'python_probe', return_value=probe), patch.object(setup, 'run', side_effect=invoke) as command, patch.object(setup, 'host', return_value='windows-amd64'), patch.object(setup, 'install_asset', return_value=Path(folder)/'uv.exe'):
-                self.assertEqual(setup.choose_python({}, Path(folder), None, 'pptx'), probe)
+            with patch.object(setup, 'python_probe', return_value=probe), patch.object(setup, 'run', side_effect=invoke) as command, patch.object(setup, 'host', return_value='windows-amd64'), patch.object(setup, 'install_asset', return_value=Path(folder).resolve()/'uv.exe'):
+                self.assertEqual(setup.choose_python({}, Path(folder).resolve(), None, 'pptx'), probe)
                 install_call = next(c for c in command.call_args_list if 'install' in c.args[0])
                 self.assertIn('--no-registry', install_call.args[0])
-                self.assertEqual(install_call.kwargs['env']['UV_PYTHON_INSTALL_DIR'], str(Path(folder)/'python'))
+                self.assertEqual(install_call.kwargs['env']['UV_PYTHON_INSTALL_DIR'], str(Path(folder).resolve()/'python'))
 
     def test_pptx_is_isolated_and_failure_retains_resumable_pending(self):
         with tempfile.TemporaryDirectory() as folder:
@@ -124,18 +124,18 @@ class EnvironmentTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder:
             row = {'url': 'https://example.invalid/archive', 'sha256': '0' * 64}
             with patch.object(setup.urllib.request, 'urlopen', return_value=io.BytesIO(b'bad')):
-                with self.assertRaisesRegex(ValueError, 'checksum'): setup.download(row, Path(folder))
-            self.assertEqual(list((Path(folder) / 'downloads').iterdir()), [])
+                with self.assertRaisesRegex(ValueError, 'checksum'): setup.download(row, Path(folder).resolve())
+            self.assertEqual(list((Path(folder).resolve() / 'downloads').iterdir()), [])
 
     def test_archive_paths_are_not_extracted_and_modified_cache_is_preserved(self):
         with tempfile.TemporaryDirectory() as folder:
-            archive = Path(folder) / 'fixture.zip'
+            archive = Path(folder).resolve() / 'fixture.zip'
             with zipfile.ZipFile(archive, 'w') as package:
                 package.writestr('../../lark-cli.exe', b'fixture executable')
                 package.writestr('../../unknown.txt', b'never extracted')
                 package.writestr('LICENSE', b'fixture license')
             row = {'component':'lark-cli', 'version':'1.0.97', 'platform':'windows-amd64', 'sha256':setup.digest(archive.read_bytes()), 'url':'https://example.invalid/native.zip'}
-            cache = Path(folder) / 'cache'
+            cache = Path(folder).resolve() / 'cache'
             with patch.object(setup, 'download', return_value=archive):
                 executable = setup.install_asset(row, cache)
                 self.assertEqual(executable.read_bytes(), b'fixture executable')
@@ -148,7 +148,7 @@ class EnvironmentTests(unittest.TestCase):
     def test_runner_selects_own_environment_and_passes_cli_without_shell(self):
         with tempfile.TemporaryDirectory() as folder:
             root = self.project(folder)
-            native = Path(folder) / 'cli with spaces.exe'
+            native = Path(folder).resolve() / 'cli with spaces.exe'
             native.write_bytes(b'fixture')
             state = {'schema_version':1,'python':sys.executable,'cli':[str(native)],'features':['core']}
             setup.save(root / setup.STATE, state)
@@ -165,7 +165,7 @@ class EnvironmentTests(unittest.TestCase):
     def test_real_runner_keeps_arguments_literal(self):
         with tempfile.TemporaryDirectory() as folder:
             root = self.project(folder)
-            native = Path(folder) / 'fake-cli'
+            native = Path(folder).resolve() / 'fake-cli'
             native.write_bytes(b'fixture')
             (root / 'run.py').write_bytes((ROOT / 'product/run.py').read_bytes())
             setup.save(root / setup.STATE, {'schema_version':1,'python':sys.executable,'cli':[str(native)],'features':['core']})
@@ -179,7 +179,7 @@ class EnvironmentTests(unittest.TestCase):
 
     def test_native_npm_binary_does_not_require_node(self):
         with tempfile.TemporaryDirectory() as folder:
-            path = Path(folder)
+            path = Path(folder).resolve()
             shim = path / 'lark-cli.cmd'
             shim.write_bytes(b'fixture')
             native = path / 'node_modules/@larksuite/cli/bin/lark-cli.exe'
@@ -191,20 +191,20 @@ class EnvironmentTests(unittest.TestCase):
     def test_selected_cli_change_invalidates_cached_capabilities(self):
         with tempfile.TemporaryDirectory() as folder:
             root = self.project(folder)
-            native = Path(folder) / 'cli.exe'
+            native = Path(folder).resolve() / 'cli.exe'
             native.write_bytes(b'fixture')
             old = {'schema_version':1, 'python':sys.executable, 'cli':[str(native)], 'cli_fingerprint':setup.fingerprint([str(native)]), 'features':['core','base']}
             setup.save(root / setup.STATE, old)
             native.write_bytes(b'changed fixture')
             with patch.object(setup, 'cli_compatible', return_value=True) as compatible, patch.object(setup.shutil, 'which', return_value=None):
-                result = setup.prepare(root, Path(folder) / 'cache')
+                result = setup.prepare(root, Path(folder).resolve() / 'cache')
             self.assertEqual(result['features'], ['core'])
             compatible.assert_called_once()
 
     def test_download_refuses_linked_subdirectory(self):
         with tempfile.TemporaryDirectory() as folder:
-            cache = Path(folder) / 'cache'
-            target = Path(folder) / 'private'
+            cache = Path(folder).resolve() / 'cache'
+            target = Path(folder).resolve() / 'private'
             cache.mkdir(); target.mkdir()
             try: (cache / 'downloads').symlink_to(target, target_is_directory=True)
             except OSError: self.skipTest('Symlink creation is unavailable')
@@ -222,7 +222,7 @@ class EnvironmentTests(unittest.TestCase):
             before = path.read_bytes()
             with patch.object(setup, 'download') as download:
                 with self.assertRaisesRegex(ValueError, 'Unknown runtime'):
-                    setup.prepare(root, Path(folder)/'cache')
+                    setup.prepare(root, Path(folder).resolve()/'cache')
                 download.assert_not_called()
             self.assertEqual(path.read_bytes(), before)
 
@@ -232,11 +232,11 @@ class EnvironmentTests(unittest.TestCase):
         if not powershell: self.skipTest('Windows PowerShell unavailable')
         with tempfile.TemporaryDirectory() as folder:
             root = self.project(folder)
-            maintenance = Path(folder) / 'maintenance'
+            maintenance = Path(folder).resolve() / 'maintenance'
             maintenance.mkdir()
             (maintenance / 'bootstrap.ps1').write_bytes((ROOT / 'tools/bootstrap.ps1').read_bytes())
             (maintenance / 'setup_larkdown.py').write_text('import json,sys; print(json.dumps(sys.argv[1:]))')
-            proc = subprocess.run([powershell, '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', str(maintenance / 'bootstrap.ps1'), '-Project', str(root), '-Python', sys.executable, '-Feature', 'base', '-Cache', str(Path(folder) / 'cache')], capture_output=True, text=True, encoding='utf-8', errors='replace', timeout=30)
+            proc = subprocess.run([powershell, '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', str(maintenance / 'bootstrap.ps1'), '-Project', str(root), '-Python', sys.executable, '-Feature', 'base', '-Cache', str(Path(folder).resolve() / 'cache')], capture_output=True, text=True, encoding='utf-8', errors='replace', timeout=30)
             self.assertEqual(proc.returncode, 0, proc.stderr)
             args = json.loads(proc.stdout)
             self.assertEqual(args[args.index('--project')+1], str(root))

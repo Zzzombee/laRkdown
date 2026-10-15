@@ -449,6 +449,7 @@ def artifact_call(args, root):
     return result
 
 def read_records(root, token, table_id, cache, record_id=None):
+    root = root.resolve()
     rows, seen, offset, context, revision = [], set(), 0, None, None
     while True:
         output = local(root, cache / (uuid.uuid4().hex + '.ndjson'))

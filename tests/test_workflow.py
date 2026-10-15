@@ -198,7 +198,8 @@ class BridgeTests(unittest.TestCase):
             (root / '.agents/config').mkdir(parents=True)
             (root / 'AGENTS.md').write_text('User rules', encoding='utf-8')
             (root / '.agents/config/project-layout.json').write_text(json.dumps({'workspace_kind': 'personal-research', 'directories': ['.work', 'outputs/reports']}), encoding='utf-8')
-            manifest = initializer.prepare(root, 'Synthetic project', 'Fixture only', '2026-10-13')
+            (root / 'path-alias').mkdir()
+            manifest = initializer.prepare(root / 'path-alias' / '..', 'Synthetic project', 'Fixture only', '2026-10-13')
             self.assertEqual(len(manifest['documents']), 3)
             self.assertEqual([fb.parse_xml((root / path).read_text(encoding='utf-8'))[0].text
                               for path in manifest['documents'].values()],

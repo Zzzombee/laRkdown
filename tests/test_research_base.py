@@ -189,7 +189,10 @@ class IncrementalPlanTests(unittest.TestCase):
 class ArtifactTests(unittest.TestCase):
     def run_pages(self, pages):
         directory = tempfile.TemporaryDirectory(); self.addCleanup(directory.cleanup)
-        root = Path(directory.name); cache = root / '.work/research-base'; cache.mkdir(parents=True)
+        root = Path(directory.name)
+        (root / 'path-alias').mkdir()
+        root = root / 'path-alias' / '..'
+        cache = root / '.work/research-base'; cache.mkdir(parents=True)
         offsets = []
         def export(args, workroot):
             offsets.append(int(args[args.index('--offset') + 1]))

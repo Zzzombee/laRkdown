@@ -15,6 +15,7 @@ def prepare(root: Path, name: str, scope: str, date: str):
     if dt.date.fromisoformat(date).isoformat() != date:
         raise ValueError('Use a YYYY-MM-DD date in the user timezone')
     bridge = Bridge(root)
+    root = bridge.root
     name = name.strip()
     if not name:
         raise ValueError('Provide the research-system name for the Wiki space')
