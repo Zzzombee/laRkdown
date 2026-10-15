@@ -1,6 +1,7 @@
 """Verify source, content and artifact boundaries between research and maintenance."""
 from __future__ import annotations
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -11,6 +12,33 @@ import zipfile
 
 from tools import build_release as build
 from tools import upgrade_larkdown as up
+
+
+class LegacyArchiveTests(unittest.TestCase):
+    def test_bootstrap_readme_baseline_is_independent_of_git_autocrlf(self):
+        pinned = json.loads((build.ROOT / build.LEGACY_SOURCE).read_bytes())['releases']
+        def minimal_committed(tag):
+            return {'README.md': build.git('show', f'{tag}:README.md')}
+        with patch.dict(os.environ, {'GIT_CONFIG_COUNT': '1', 'GIT_CONFIG_KEY_0': 'core.autocrlf',
+                                     'GIT_CONFIG_VALUE_0': 'false'}):
+            with patch.object(build, 'historical_tags', return_value=build.BOOTSTRAP_TAGS), \
+                 patch.object(build, 'committed_files', side_effect=minimal_committed):
+                catalog = build.previous_releases()['releases']
+        for tag in build.BOOTSTRAP_TAGS:
+            with self.subTest(tag=tag):
+                self.assertEqual(up.sha(up.encoded(catalog[tag[1:]])), up.sha(up.encoded(pinned[tag[1:]])))
+
+    def test_bootstrap_tree_matches_published_windows_bytes_under_lf_settings(self):
+        pinned = json.loads((build.ROOT / build.LEGACY_SOURCE).read_bytes())['releases']
+        with patch.dict(os.environ, {'GIT_CONFIG_COUNT': '1', 'GIT_CONFIG_KEY_0': 'core.autocrlf',
+                                     'GIT_CONFIG_VALUE_0': 'false'}):
+            with patch.object(build, 'committed_files', return_value={}):
+                for tag in build.BOOTSTRAP_TAGS:
+                    files = build.tree(tag)
+                    actual = {name: up.sha(blob) for name, blob in files.items()}
+                    with self.subTest(tag=tag):
+                        self.assertEqual(up.sha(up.encoded(actual)),
+                                         up.sha(up.encoded(pinned[tag[1:]]['managed_files'])))
 
 
 class PackageBoundaryTests(unittest.TestCase):

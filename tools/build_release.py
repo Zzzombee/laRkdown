@@ -137,14 +137,22 @@ def historical_managed(name):
     return name.startswith(('.agents/instructions/', '.agents/skills/'))
 
 
+@lru_cache(maxsize=None)
+def bootstrap_files(tag):
+    # These two ZIPs were published with Windows CRLF bytes. Reproduce that
+    # immutable contract explicitly, including when CI runs on Linux.
+    archive_bytes = git('-c', 'core.autocrlf=true', '-c', 'core.eol=crlf',
+                        'archive', '--format=zip', tag)
+    with zipfile.ZipFile(io.BytesIO(archive_bytes)) as archive:
+        return {item.filename: archive.read(item) for item in archive.infolist() if not item.is_dir()}
+
+
 def tree(tag):
     files = committed_files(tag)
     if 'product/AGENTS.md' in files:
         return package_files(files)
     if tag in BOOTSTRAP_TAGS:
-        with zipfile.ZipFile(io.BytesIO(git('archive', '--format=zip', tag))) as archive:
-            return {i.filename: archive.read(i) for i in archive.infolist()
-                    if not i.is_dir() and historical_managed(i.filename)}
+        return {name: blob for name, blob in bootstrap_files(tag).items() if historical_managed(name)}
     return {name: blob for name, blob in files.items() if historical_managed(name)}
 
 
@@ -180,8 +188,7 @@ def previous_releases():
         if 'product/AGENTS.md' not in committed and 'README.md' in committed:
             blob = committed['README.md']
             if tag in BOOTSTRAP_TAGS:
-                with zipfile.ZipFile(io.BytesIO(git('archive', '--format=zip', tag))) as archive:
-                    blob = archive.read('README.md')
+                blob = bootstrap_files(tag)['README.md']
             entry['unmanaged_files'] = {'README.md': sha(blob)}
         catalog[tag[1:]] = entry
     return {'schema_version': 1, 'releases': catalog}
